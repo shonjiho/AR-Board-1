@@ -1,14 +1,58 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11134" systemVersion="15F34" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="0Rf-ja-RoS">
+    <device id="retina4_7" orientation="portrait">
+        <adaptation id="fullscreen"/>
+    </device>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11106"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
+        <!--Sign In View Controller-->
+        <scene sceneID="Xra-h5-b0A">
+            <objects>
+                <viewController id="0Rf-ja-RoS" customClass="ARBSignInViewController" customModule="ARBoard" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="OzV-m9-EOZ"/>
+                        <viewControllerLayoutGuide type="bottom" id="deJ-gV-QsK"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="ZbS-fm-OnM">
+                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="1PG-v1-dZr">
+                                <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                            </imageView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Ri-uL-mGh" customClass="FBSDKLoginButton">
+                                <rect key="frame" x="37" y="587" width="300" height="30"/>
+                                <state key="normal" title="Button"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="8Ri-uL-mGh" firstAttribute="centerX" secondItem="ZbS-fm-OnM" secondAttribute="centerX" id="2vK-XG-sPX"/>
+                            <constraint firstItem="deJ-gV-QsK" firstAttribute="top" secondItem="8Ri-uL-mGh" secondAttribute="bottom" constant="50" id="3sF-DU-tcC"/>
+                            <constraint firstItem="1PG-v1-dZr" firstAttribute="leading" secondItem="ZbS-fm-OnM" secondAttribute="leading" id="JMi-XS-iar"/>
+                            <constraint firstItem="1PG-v1-dZr" firstAttribute="top" secondItem="ZbS-fm-OnM" secondAttribute="top" id="S2y-bC-x6H"/>
+                            <constraint firstItem="deJ-gV-QsK" firstAttribute="top" secondItem="1PG-v1-dZr" secondAttribute="bottom" id="T7i-WQ-kpE"/>
+                            <constraint firstAttribute="trailing" secondItem="1PG-v1-dZr" secondAttribute="trailing" id="Udf-I6-XKk"/>
+                            <constraint firstItem="8Ri-uL-mGh" firstAttribute="width" secondItem="1PG-v1-dZr" secondAttribute="width" multiplier="0.8" id="Xpb-s1-eIe"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="facebookLoginButton" destination="8Ri-uL-mGh" id="h4q-gh-wEO"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="BeK-Rw-j3g" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-677.60000000000002" y="38.23088455772114"/>
+        </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="ARBoard" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="y3c-jy-aDJ"/>
                         <viewControllerLayoutGuide type="bottom" id="wfy-db-euE"/>

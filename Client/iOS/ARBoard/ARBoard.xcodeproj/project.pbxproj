@@ -12,6 +12,10 @@
 		961BA30B1E7D1A5E0011126F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 961BA3041E7D1A5E0011126F /* Assets.xcassets */; };
 		961BA30C1E7D1A5E0011126F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 961BA3061E7D1A5E0011126F /* LaunchScreen.storyboard */; };
 		961BA30D1E7D1A5E0011126F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 961BA3081E7D1A5E0011126F /* Main.storyboard */; };
+		9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9642912D1E829001007D1862 /* ARBSignInViewController.swift */; };
+		964291301E829162007D1862 /* ARBDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9642912F1E829162007D1862 /* ARBDataManager.swift */; };
+		964291321E82934C007D1862 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964291311E82934C007D1862 /* User.swift */; };
+		EFCD8F1BE76F6B40CBC449A1 /* Pods_ARBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -22,6 +26,13 @@
 		961BA3041E7D1A5E0011126F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		961BA3071E7D1A5E0011126F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		961BA3091E7D1A5E0011126F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		9642912B1E828EFD007D1862 /* ARBoard-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "ARBoard-Bridging-Header.h"; sourceTree = "<group>"; };
+		9642912D1E829001007D1862 /* ARBSignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBSignInViewController.swift; sourceTree = "<group>"; };
+		9642912F1E829162007D1862 /* ARBDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBDataManager.swift; sourceTree = "<group>"; };
+		964291311E82934C007D1862 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		AF5623BA412E39C1FB57B736 /* Pods-ARBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.debug.xcconfig"; sourceTree = "<group>"; };
+		F000FB4DB7B367C58C2D7846 /* Pods-ARBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.release.xcconfig"; sourceTree = "<group>"; };
+		FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -29,17 +40,28 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				EFCD8F1BE76F6B40CBC449A1 /* Pods_ARBoard.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		12071CCD2238D2481F6061C1 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		961BA2E01E7D19C70011126F = {
 			isa = PBXGroup;
 			children = (
 				961BA2EB1E7D19C70011126F /* ARBoard */,
 				961BA2EA1E7D19C70011126F /* Products */,
+				C49221CE084A9657F4943824 /* Pods */,
+				12071CCD2238D2481F6061C1 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -70,6 +92,7 @@
 			isa = PBXGroup;
 			children = (
 				961BA2FF1E7D1A5E0011126F /* ViewController.swift */,
+				9642912D1E829001007D1862 /* ARBSignInViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -84,6 +107,7 @@
 		961BA3011E7D1A5E0011126F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				9642912B1E828EFD007D1862 /* ARBoard-Bridging-Header.h */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -91,6 +115,8 @@
 		961BA3021E7D1A5E0011126F /* Models */ = {
 			isa = PBXGroup;
 			children = (
+				9642912F1E829162007D1862 /* ARBDataManager.swift */,
+				964291311E82934C007D1862 /* User.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -112,6 +138,15 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		C49221CE084A9657F4943824 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				AF5623BA412E39C1FB57B736 /* Pods-ARBoard.debug.xcconfig */,
+				F000FB4DB7B367C58C2D7846 /* Pods-ARBoard.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -119,9 +154,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 961BA2FB1E7D19C70011126F /* Build configuration list for PBXNativeTarget "ARBoard" */;
 			buildPhases = (
+				A02CA6B9181D1AA9B0ACE9A3 /* [CP] Check Pods Manifest.lock */,
 				961BA2E51E7D19C70011126F /* Sources */,
 				961BA2E61E7D19C70011126F /* Frameworks */,
 				961BA2E71E7D19C70011126F /* Resources */,
+				10D73E6AD6216728AD9C238F /* [CP] Embed Pods Frameworks */,
+				A5CEB4826F686AAE5913E500 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -145,6 +183,7 @@
 					961BA2E81E7D19C70011126F = {
 						CreatedOnToolsVersion = 8.2.1;
 						DevelopmentTeam = 22XN7UBS5Y;
+						LastSwiftMigration = 0820;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -180,12 +219,63 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		10D73E6AD6216728AD9C238F /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		A02CA6B9181D1AA9B0ACE9A3 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		A5CEB4826F686AAE5913E500 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		961BA2E51E7D19C70011126F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				961BA30A1E7D1A5E0011126F /* ViewController.swift in Sources */,
+				964291301E829162007D1862 /* ARBDataManager.swift in Sources */,
+				9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */,
+				964291321E82934C007D1862 /* User.swift in Sources */,
 				961BA2ED1E7D19C70011126F /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -305,26 +395,33 @@
 		};
 		961BA2FC1E7D19C70011126F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = AF5623BA412E39C1FB57B736 /* Pods-ARBoard.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 22XN7UBS5Y;
 				INFOPLIST_FILE = ARBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = team.HPM.ARBoard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ARBoard/Helpers/ARBoard-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
 		};
 		961BA2FD1E7D19C70011126F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = F000FB4DB7B367C58C2D7846 /* Pods-ARBoard.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = 22XN7UBS5Y;
 				INFOPLIST_FILE = ARBoard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = team.HPM.ARBoard;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "ARBoard/Helpers/ARBoard-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;
@@ -348,6 +445,7 @@
 				961BA2FD1E7D19C70011126F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
