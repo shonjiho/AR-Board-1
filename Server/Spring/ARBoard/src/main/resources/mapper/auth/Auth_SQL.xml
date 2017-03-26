@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="auth">
+	<!-- SELECT BOARD LIST -->
+	<select id="selectUserProfileToEmail" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[
+            SELECT 
+            	userName,
+            	userEmail,
+            	oauthToken,
+            	oauthType
+            FROM user 
+            WHERE userEmail=#{userEmail} 
+        ]]>
+	</select>
+	<select id="selectUserProfileToId" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[
+            SELECT 
+            	userName,
+            	userEmail,
+            	oauthToken,
+            	oauthType
+            FROM user 
+            WHERE id=#{id} 
+        ]]>
+	</select>
+ 
+	<insert id="insertUser" parameterType="hashmap"
+		useGeneratedKeys="true" keyProperty="id">
+    <![CDATA[
+            INSERT INTO user (
+            	userName,
+            	userEmail,
+            	oauthType,
+            	oauthToken
+            ) 
+            VALUES 
+            (
+                #{userName},
+                #{userEmail},
+                #{oauthType},
+                #{oauthToken}
+            );
+    ]]>
+	</insert>
+</mapper>
