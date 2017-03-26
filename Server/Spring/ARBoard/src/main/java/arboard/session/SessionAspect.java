@@ -1,19 +1,14 @@
 package arboard.session;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect; 
+import org.aspectj.lang.annotation.Aspect;
 import org.springframework.stereotype.Component;
 
-import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.common.logger.LoggerAspect;
 

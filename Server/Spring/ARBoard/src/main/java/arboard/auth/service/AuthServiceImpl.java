@@ -1,6 +1,5 @@
 package arboard.auth.service;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
