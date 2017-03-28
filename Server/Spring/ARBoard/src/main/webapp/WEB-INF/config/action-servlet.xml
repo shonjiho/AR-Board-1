@@ -22,8 +22,8 @@
 	 <bean id="loggerAspect" class="arboard.common.logger.LoggerAspect" /> 
 	 <bean id="sessionAspect" class="arboard.session.SessionAspect"/>
 	 
-	<bean
-		class="org.springframework.web.servlet.mvc.annotation.DefaultAnnotationHandlerMapping" />
+	<bean class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerMapping"/>
+ 
 
 	<bean class="org.springframework.web.servlet.view.BeanNameViewResolver"
 		p:order="0" />
