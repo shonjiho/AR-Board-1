@@ -92,7 +92,7 @@ public class FBGraph {
 
 		String graph = null;
 		try {
-			String urltext = "https://graph.facebook.com/debug_token?input_token=" + accessToken + "&"
+			String urltext = "https://graph.facebook.com/debug_token?input_token=" + accessToken + "&access_token="
 					+ getAppAccessToken();
 
 			URL url = new URL(urltext);
