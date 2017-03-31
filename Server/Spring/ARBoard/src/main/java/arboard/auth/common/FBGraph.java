@@ -69,8 +69,8 @@ public class FBGraph {
 				
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
-				System.out.println("bad request");
-				throw new AccessTokenInvalidException();
+				System.out.println("AppAccess Request bad request");
+				throw new UnknowException();
 				 
 			default:
 				throw new UnknowException();
@@ -92,17 +92,25 @@ public class FBGraph {
 
 		String graph = null;
 		try {
-			String urltext = "https://graph.facebook.com/debug_token?input_token=" + accessToken + "&access_token="
-					+ getAppAccessToken();
+			String urltext = "https://graph.facebook.com/debug_token?input_token=" + accessToken +"&access_token="+ getAppAccessToken();
 
 			URL url = new URL(urltext);
 			// Connection debug_token
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.connect();
- 
-			graph = convertStreamToString(urlConnection.getInputStream());
+			switch (urlConnection.getResponseCode()) {
+			case HttpURLConnection.HTTP_OK:
+				graph = convertStreamToString(urlConnection.getInputStream()); 
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST:
+				System.out.println("bad request");
+				throw new UnknowException();
+				 
+			default:
+				throw new UnknowException();
 
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in getting FB graph debugAccessToken " + e);
