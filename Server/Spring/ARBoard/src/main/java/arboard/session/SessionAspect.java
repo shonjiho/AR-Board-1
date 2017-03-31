@@ -28,12 +28,12 @@ public class SessionAspect {
 				 session = (HttpSession)obj;
 			 }
 		 } 
+		 
 		 Object status = null;
 		 
 		 if((status = session.getAttribute("status")) == null){ 
 			 throw new SessionUnAuthorizedException();
-		 }else{  
-			  
+		 }else{   
 			 return joinPoint.proceed();
 		 }
 		 

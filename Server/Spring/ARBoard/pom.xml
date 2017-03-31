@@ -2,9 +2,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>com.company</groupId>
-	<artifactId>first</artifactId>
-	<name>first</name>
+	<groupId>com.capstone</groupId>
+	<name>ARBoard</name>
 	<packaging>war</packaging>
 	<version>1.0.0-BUILD-SNAPSHOT</version>
 	<properties>
@@ -359,8 +358,6 @@
 				<version>2.5</version>
 			</plugin>
 			
-			 
-
 			<!--톰캣 자동배포 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
@@ -378,4 +375,5 @@
 			
 		</plugins>
 	</build>
+	<artifactId>ARBoard</artifactId>
 </project> 
