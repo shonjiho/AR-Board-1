@@ -13,8 +13,7 @@ public class SampleController {
 
 	@RequestMapping(value = "/game/openSampleList.do")
 	public ModelAndView openSampleList(Map<String, Object> commandMap) throws Exception {
-		ModelAndView mv = new ModelAndView("");
-		log.debug("인터셉터 테스트");
+		ModelAndView mv = new ModelAndView(""); 
 
 		return mv;
 	}

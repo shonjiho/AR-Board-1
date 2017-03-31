@@ -7,7 +7,8 @@
      
     <bean id="dataSourceSpied" class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
         <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
-        <property name="url" value="jdbc:mysql://192.168.1.2:3306/arboard"/>
+       <!--   <property name="url" value="jdbc:mysql://192.168.1.2:3306/arboard"/> -->
+        <property name="url" value="jdbc:mysql://localhost/arboard"/>
         <property name="username" value="spring"/>
         <property name="password" value="Ths3rla1*"/>
     </bean>

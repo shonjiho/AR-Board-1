@@ -12,9 +12,11 @@
 
 
 	<mvc:annotation-driven>
+	
 		<mvc:argument-resolvers>
-			<bean class="arboard.common.resolver.CustomMapArgumentResolver"></bean>
+		  	<bean class="arboard.common.resolver.CustomMapArgumentResolver"></bean>
 		</mvc:argument-resolvers>
+		 
 	</mvc:annotation-driven>
 
 
