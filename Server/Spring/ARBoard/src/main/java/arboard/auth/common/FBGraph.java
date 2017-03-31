@@ -12,10 +12,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.json.JSONObject;
-import org.springframework.http.HttpStatus;
 
-import arboard.auth.exception.AccessTokenInvalidException;
-import arboard.auth.exception.UnknowException;
+import arboard.auth.exception.UnKnownException;
 
 public class FBGraph {
 
@@ -61,6 +59,7 @@ public class FBGraph {
 			urlConnection.connect();
 			
 			switch (urlConnection.getResponseCode()) {
+			
 			case HttpURLConnection.HTTP_OK:
 				
 				graph = convertStreamToString(urlConnection.getInputStream());
@@ -70,15 +69,12 @@ public class FBGraph {
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST:
 				System.out.println("AppAccess Request bad request");
-				throw new UnknowException();
-				 
+				throw new UnKnownException();
 			default:
-				throw new UnknowException();
-
+				throw new UnKnownException();
 			}
 
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
+		} catch (IOException e) { 
 			e.printStackTrace();
 
 			// APP register problem
@@ -99,16 +95,16 @@ public class FBGraph {
 			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
 			urlConnection.setRequestMethod("GET");
 			urlConnection.connect();
+			
 			switch (urlConnection.getResponseCode()) {
 			case HttpURLConnection.HTTP_OK:
 				graph = convertStreamToString(urlConnection.getInputStream()); 
 				break;
-			case HttpURLConnection.HTTP_BAD_REQUEST:
-				System.out.println("bad request");
-				throw new UnknowException();
+			case HttpURLConnection.HTTP_BAD_REQUEST: 
+				throw new UnKnownException();
 				 
 			default:
-				throw new UnknowException();
+				throw new UnKnownException();
 
 			}
 		} catch (Exception e) {
@@ -117,23 +113,30 @@ public class FBGraph {
 		}
 		return graph;
 	}
-
+	//HTTP request to Graph API request Profile
 	public static String req_getFBGraphProfile(String accessToken) {
 		String graph = null;
 		try {
 			String urltext = "https://graph.facebook.com/me?fields=name,email,id&access_token=" + accessToken;
 			URL url = new URL(urltext);
-			URLConnection urlConnection = url.openConnection();
+			HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
 			
-			graph = convertStreamToString(urlConnection.getInputStream());
-			
+			switch (urlConnection.getResponseCode()) {
+			case HttpURLConnection.HTTP_OK:
+				graph = convertStreamToString(urlConnection.getInputStream()); 
+				break;
+			case HttpURLConnection.HTTP_BAD_REQUEST: 
+				throw new UnKnownException();
+			default:
+				throw new UnKnownException();
+			} 
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in getting FB graph data " + e);
 		}
 		return graph;
 	}
-
+	//AccessToken Valify.
 	public static Map<String, Object> isValified_AccessToken(String accessToken) {
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		String result = FBGraph.req_debugAccessCode(accessToken);
@@ -166,8 +169,7 @@ public class FBGraph {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in parsing FB graph data. " + e);
 		}
-
-		System.out.println(fbProfile);
+ 
 		return fbProfile;
 
 	}

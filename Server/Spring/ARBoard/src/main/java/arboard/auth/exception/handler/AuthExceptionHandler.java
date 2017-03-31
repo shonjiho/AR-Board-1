@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
 import arboard.auth.exception.SessionUnAuthorizedException;
+import arboard.auth.exception.UnKnownException;
 
 @ControllerAdvice
 public class AuthExceptionHandler {
@@ -32,7 +33,7 @@ public class AuthExceptionHandler {
 
 	@ExceptionHandler(value = AccessTokenNotFoundException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Map<String, Object> AccessTokenNotFoundException() { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
@@ -44,11 +45,23 @@ public class AuthExceptionHandler {
 	
 	@ExceptionHandler(value = SessionUnAuthorizedException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	public Map<String, Object> SessionUnAuthorizedException() { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "denial request (Unauthorized)");
+		body.put("error", subJSONObject);
+		return body;
+	}
+	
+	@ExceptionHandler(value= UnKnownException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	public Map<String,Object> UnKnownException(){
+		
+		Map<String,Object> body = new HashMap<String,Object>();
+		Map<String,String> subJSONObject = new HashMap<String,String>();
+		subJSONObject.put("message", "Server Internal Error");
 		body.put("error", subJSONObject);
 		return body;
 	}

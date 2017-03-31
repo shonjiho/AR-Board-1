@@ -31,7 +31,7 @@ public class SessionAspect {
 		 
 		 Object status = null;
 		 
-		 if((status = session.getAttribute("status")) == null){ 
+		 if((status = session.getAttribute("status")).equals(null)){ 
 			 throw new SessionUnAuthorizedException();
 		 }else{   
 			 return joinPoint.proceed();

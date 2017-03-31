@@ -1,9 +1,9 @@
 package arboard.auth.exception;
 
 @SuppressWarnings("serial")
-public class UnknowException extends RuntimeException{
+public class UnKnownException extends RuntimeException{
 
-	public UnknowException(){
+	public UnKnownException(){
 		super("unknown Exception");
 	}
 }
