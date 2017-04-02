@@ -18,7 +18,7 @@ public class AuthServiceImpl implements AuthService {
 	private AuthDAO authDAO;
 
 	@Override
-	public boolean valifyAccessToken(String accessToken) {
+	public boolean valifyAccessToken(String accessToken) throws Exception {
 		Map<String, Object> result = FBGraph.isValified_AccessToken(accessToken);
 		if (result.get("is_valid").equals(true)) {
 			return true;
@@ -28,7 +28,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public Map<String, Object> reqFacebookProfile(String accessToken) {
+	public Map<String, Object> reqFacebookProfile(String accessToken) throws Exception {
 
 		Map<String, Object> resultMap = FBGraph.getFBGraphProfile(accessToken);
 		log.debug(resultMap);

@@ -13,6 +13,7 @@ import java.util.Map;
 
 import org.json.JSONObject;
 
+import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.UnKnownException;
 
 public class FBGraph {
@@ -84,7 +85,7 @@ public class FBGraph {
 	}
 
 	// HTTP request to Facebook Graph API for checking AccessToken(User)
-	public static String req_debugAccessCode(String accessToken) {
+	public static String req_debugAccessCode(String accessToken) throws Exception{
 
 		String graph = null;
 		try {
@@ -101,12 +102,20 @@ public class FBGraph {
 				graph = convertStreamToString(urlConnection.getInputStream()); 
 				break;
 			case HttpURLConnection.HTTP_BAD_REQUEST: 
+				graph = convertStreamToString(urlConnection.getErrorStream()); 
+				JSONObject json = new JSONObject(graph);
+				if(json.has("error")){
+					throw new AccessTokenInvalidException();
+				}
 				throw new UnKnownException();
-				 
 			default:
 				throw new UnKnownException();
 
 			}
+		}catch (AccessTokenInvalidException e){
+			throw e;
+		} catch(UnKnownException e){
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in getting FB graph debugAccessToken " + e);
@@ -114,7 +123,7 @@ public class FBGraph {
 		return graph;
 	}
 	//HTTP request to Graph API request Profile
-	public static String req_getFBGraphProfile(String accessToken) {
+	public static String req_getFBGraphProfile(String accessToken)  throws Exception{
 		String graph = null;
 		try {
 			String urltext = "https://graph.facebook.com/me?fields=name,email,id&access_token=" + accessToken;
@@ -130,6 +139,9 @@ public class FBGraph {
 			default:
 				throw new UnKnownException();
 			} 
+		 
+		} catch (UnKnownException e){
+			throw e;
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in getting FB graph data " + e);
@@ -137,7 +149,7 @@ public class FBGraph {
 		return graph;
 	}
 	//AccessToken Valify.
-	public static Map<String, Object> isValified_AccessToken(String accessToken) {
+	public static Map<String, Object> isValified_AccessToken(String accessToken) throws Exception{
 		Map<String, Object> resultMap = new HashMap<String, Object>();
 		String result = FBGraph.req_debugAccessCode(accessToken);
 		JSONObject json = new JSONObject(result);
@@ -153,7 +165,7 @@ public class FBGraph {
 		return resultMap;
 	}
 
-	public static Map<String, Object> getFBGraphProfile(String accessToken) {
+	public static Map<String, Object> getFBGraphProfile(String accessToken) throws Exception {
 		String result = req_getFBGraphProfile(accessToken);
 		Map<String, Object> fbProfile = new HashMap<String, Object>();
 		try {
