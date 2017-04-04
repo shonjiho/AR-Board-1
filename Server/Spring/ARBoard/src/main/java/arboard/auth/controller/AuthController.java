@@ -30,7 +30,7 @@ public class AuthController {
 
 	@RequestMapping(value = "/auth/facebook/login", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object FaceBooklogin(CommandMap commandMap,  HttpSession session) throws Exception {
+	public @ResponseBody Object FaceBooklogin(Map commandMap,  HttpSession session) throws Exception {
 		
 		Object accessToken = commandMap.get("access_token");
 		if (accessToken == null) { 
@@ -55,6 +55,14 @@ public class AuthController {
 		
 		return userProfile;
 	}
+	@RequestMapping(value = "/auth/test", method = RequestMethod.GET )
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object session(HttpServletResponse reponse, HttpSession session) {
+		Map<String,Object> jsonObject = new HashMap<String, Object>();
+		jsonObject.put("status", session.getAttribute("status"));
+	
+		return jsonObject;
+	}
 	// ----------------------------test---------------------------------------
 
 	@RequestMapping(value = "/auth/test/session", method = RequestMethod.GET)
@@ -62,8 +70,6 @@ public class AuthController {
 	public @ResponseBody Object sessionTest(HttpServletResponse reponse, HttpSession session) {
 		Map<String,Object> jsonObject = new HashMap<String, Object>();
 		jsonObject.put("status", session.getAttribute("status"));
-		
-		
 		return jsonObject;
 	}
 }
