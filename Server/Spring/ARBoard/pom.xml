@@ -357,7 +357,12 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>2.5</version>
 			</plugin>
-			
+			<!-- websocket -->
+			<plugin>
+				<groupId>org.springframework</groupId>
+				<artifactId>spring-websocket</artifactId>
+				<version>${org.springframework-version}</version>
+			</plugin>
 			<!--톰캣 자동배포 -->
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
