@@ -55,14 +55,7 @@ public class AuthController {
 		
 		return userProfile;
 	}
-	@RequestMapping(value = "/auth/test", method = RequestMethod.GET )
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object session(HttpServletResponse reponse, HttpSession session) {
-		Map<String,Object> jsonObject = new HashMap<String, Object>();
-		jsonObject.put("status", session.getAttribute("status"));
 	
-		return jsonObject;
-	}
 	// ----------------------------test---------------------------------------
 
 	@RequestMapping(value = "/auth/test/session", method = RequestMethod.GET)
@@ -70,6 +63,14 @@ public class AuthController {
 	public @ResponseBody Object sessionTest(HttpServletResponse reponse, HttpSession session) {
 		Map<String,Object> jsonObject = new HashMap<String, Object>();
 		jsonObject.put("status", session.getAttribute("status"));
+		return jsonObject;
+	}
+	@RequestMapping(value = "/auth/test", method = RequestMethod.GET )
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object session(HttpServletResponse reponse, HttpSession session) {
+		Map<String,Object> jsonObject = new HashMap<String, Object>();
+		jsonObject.put("status", session.getAttribute("status"));
+	
 		return jsonObject;
 	}
 }
