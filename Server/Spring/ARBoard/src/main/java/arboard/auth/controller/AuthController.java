@@ -12,6 +12,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -30,9 +31,8 @@ public class AuthController {
 
 	@RequestMapping(value = "/auth/facebook/login", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object FaceBooklogin(Map commandMap,  HttpSession session) throws Exception {
-		
-		Object accessToken = commandMap.get("access_token");
+	public @ResponseBody Object FaceBooklogin(@RequestParam(value="access_token",required=false) String accessToken,  HttpSession session) throws Exception {
+		 
 		if (accessToken == null) { 
 			throw new AccessTokenNotFoundException();
 		}
