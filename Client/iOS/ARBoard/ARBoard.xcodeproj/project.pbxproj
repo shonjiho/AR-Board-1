@@ -15,6 +15,8 @@
 		9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9642912D1E829001007D1862 /* ARBSignInViewController.swift */; };
 		964291301E829162007D1862 /* ARBDataManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9642912F1E829162007D1862 /* ARBDataManager.swift */; };
 		964291321E82934C007D1862 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964291311E82934C007D1862 /* User.swift */; };
+		964F30D11E9609B400221986 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D01E9609B400221986 /* Constants.swift */; };
+		964F30D31E960F0700221986 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D21E960F0700221986 /* FoundationExtensions.swift */; };
 		EFCD8F1BE76F6B40CBC449A1 /* Pods_ARBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */; };
 /* End PBXBuildFile section */
 
@@ -30,6 +32,8 @@
 		9642912D1E829001007D1862 /* ARBSignInViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBSignInViewController.swift; sourceTree = "<group>"; };
 		9642912F1E829162007D1862 /* ARBDataManager.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBDataManager.swift; sourceTree = "<group>"; };
 		964291311E82934C007D1862 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
+		964F30D01E9609B400221986 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		964F30D21E960F0700221986 /* FoundationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
 		AF5623BA412E39C1FB57B736 /* Pods-ARBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.debug.xcconfig"; sourceTree = "<group>"; };
 		F000FB4DB7B367C58C2D7846 /* Pods-ARBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.release.xcconfig"; sourceTree = "<group>"; };
 		FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -100,6 +104,7 @@
 		961BA3001E7D1A5E0011126F /* Extensions */ = {
 			isa = PBXGroup;
 			children = (
+				964F30D21E960F0700221986 /* FoundationExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -117,6 +122,7 @@
 			children = (
 				9642912F1E829162007D1862 /* ARBDataManager.swift */,
 				964291311E82934C007D1862 /* User.swift */,
+				964F30D01E9609B400221986 /* Constants.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -272,7 +278,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				964F30D31E960F0700221986 /* FoundationExtensions.swift in Sources */,
 				961BA30A1E7D1A5E0011126F /* ViewController.swift in Sources */,
+				964F30D11E9609B400221986 /* Constants.swift in Sources */,
 				964291301E829162007D1862 /* ARBDataManager.swift in Sources */,
 				9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */,
 				964291321E82934C007D1862 /* User.swift in Sources */,

@@ -9,7 +9,7 @@
 import UIKit
 import FBSDKLoginKit
 class ARBSignInViewController: UIViewController {
-    let dataManager:ARBDataManager = ARBDataManager.shared
+    let dataManager:ARBDataManager = ARBDataManager.getInstance()
     @IBOutlet weak var facebookLoginButton: FBSDKLoginButton!
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,7 +28,7 @@ extension ARBSignInViewController: FBSDKLoginButtonDelegate {
             return
         }
         dump(accessTokenString)
-        dataManager.authRequest(self, token: accessTokenString) { (isSuccess) in
+        dataManager.authRequest(self, domain: OAuthDomain.facebook, token: accessTokenString) { (isSuccess) in
             if isSuccess {
                 
             }
