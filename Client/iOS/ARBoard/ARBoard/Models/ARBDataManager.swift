@@ -9,8 +9,8 @@ import Alamofire
 import Foundation
 import AlamofireObjectMapper
 //import SVProgressHUD
+import CircularSpinner
 
-import Foundation
 class ARBDataManager : NSObject {
 //    static let shared = ARBDataManager()
     var currentUser: User?
@@ -29,24 +29,16 @@ class ARBDataManager : NSObject {
         }
         return StaticInstance.instance!
     }
+    
+    func showCircularSpinner(){
+        DispatchQueue.main.async {
+            CircularSpinner.trackBgColor = UIColor.black
+            CircularSpinner.trackPgColor = UIColor.redTintColor
+            CircularSpinner.show("Matching...", animated: true, type: .indeterminate, showDismissButton: true)
+        }
+    }
  
     func authRequest(_ viewController: UIViewController, domain:OAuthDomain, token:String, completion: @escaping ((Bool) -> Void)){
-        // ifconfig 로 ipv4 쓰면됨. (시뮬레이션으로 돌릴땐 localhost)
-        // 시뮬은 OAuth가 안될거임.
-        // ex : 192.168.0.30
-//        let requestUrl:String = "http://192.168.0.30:3000/auth/facebook/token?access_token=\(token)"
-        /*
-        let requestUrl:String = "http://dev-yutae.me/auth/facebook/token?access_token=\(token)"
-        dump(requestUrl)
-        Alamofire.request(requestUrl).responseJSON { (dataResponse) in
-            dump(dataResponse.response?.statusCode)
-            dump(dataResponse.result.value)
-            if let json = dataResponse.result.value as? [String:Any] {
-                dump(json)
-            }
-        }
-         */
-        
         let requestUrl:String = URL.auth(domain: domain.description, token: token)
         dump(requestUrl)
         Alamofire.request(requestUrl).responseObject { (dataResponse: DataResponse<User>) in
@@ -56,8 +48,16 @@ class ARBDataManager : NSObject {
                 return
             }
             self.currentUser = dataResponse.result.value
-            dump(self.currentUser)
             completion(true)
+        }
+    }
+    
+    func gameJoinRequest(_ viewController: UIViewController, completion: @escaping ((Bool) -> Void)){
+        self.showCircularSpinner()
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
+            CircularSpinner.hide({
+                completion(true)
+            })
         }
     }
 }

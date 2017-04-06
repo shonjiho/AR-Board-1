@@ -9,6 +9,7 @@ target 'ARBoard' do
   pod 'SVProgressHUD', :git => 'https://github.com/SVProgressHUD/SVProgressHUD.git'
   pod 'FacebookCore'
   pod 'FacebookLogin'
+  pod 'CircularSpinner'
   # Pods for ARBoard
 
 end

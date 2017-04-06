@@ -16,12 +16,32 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     let facebookDelegate:FBSDKApplicationDelegate = FBSDKApplicationDelegate.sharedInstance()
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        
+        setupColorsUIKitAppearance()
         facebookDelegate.application(application, didFinishLaunchingWithOptions: launchOptions)
         return true
     }
-    func application(_ application: UIApplication, willFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey : Any]? = nil) -> Bool {
-        return true
+    private func setupColorsUIKitAppearance(){
+        let navigationBarAppearance:UINavigationBar = UINavigationBar.appearance()
+        navigationBarAppearance.tintColor = UIColor.white
+        navigationBarAppearance.barTintColor = UIColor.barTintColor
+        
+        let navigationBarFont = UIFont.init(name: "GodoB", size: 18.0)
+        if let navigationBarFont = navigationBarFont {
+            navigationBarAppearance.titleTextAttributes = [
+                NSForegroundColorAttributeName : UIColor.white,
+                NSFontAttributeName : navigationBarFont]
+        }
+        let tabBarAppearance:UITabBar = UITabBar.appearance()
+        tabBarAppearance.tintColor = UIColor.red
+        tabBarAppearance.barTintColor = UIColor.barTintColor
+        tabBarAppearance.tintColor = UIColor.redTintColor
+        
+        let toolBarAppearance:UIToolbar = UIToolbar.appearance()
+        toolBarAppearance.barTintColor = UIColor.barTintColor
+        toolBarAppearance.tintColor = UIColor.white
+        
+        let application:UIApplication = UIApplication.shared
+        application.statusBarStyle = .lightContent
     }
     func applicationWillResignActive(_ application: UIApplication) {
         // Sent when the application is about to move from active to inactive state. This can occur for certain types of temporary interruptions (such as an incoming phone call or SMS message) or when the user quits the application and it begins the transition to the background state.

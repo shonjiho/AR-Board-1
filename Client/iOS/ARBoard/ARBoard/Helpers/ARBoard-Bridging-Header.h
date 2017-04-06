@@ -3,3 +3,4 @@
 //
 
 #import <SVProgressHUD/SVProgressHUD.h>
+#import "UIView+YGPulseView.h"

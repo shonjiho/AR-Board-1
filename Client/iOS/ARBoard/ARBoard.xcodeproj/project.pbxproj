@@ -17,6 +17,13 @@
 		964291321E82934C007D1862 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964291311E82934C007D1862 /* User.swift */; };
 		964F30D11E9609B400221986 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D01E9609B400221986 /* Constants.swift */; };
 		964F30D31E960F0700221986 /* FoundationExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D21E960F0700221986 /* FoundationExtensions.swift */; };
+		964F30D71E9615A600221986 /* ARBGameJoinViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D61E9615A600221986 /* ARBGameJoinViewController.swift */; };
+		964F30D91E96161200221986 /* UIKitExtensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30D81E96161200221986 /* UIKitExtensions.swift */; };
+		964F30DB1E9619B000221986 /* ARBEtcTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 964F30DA1E9619B000221986 /* ARBEtcTableViewController.swift */; };
+		964F30E51E96324700221986 /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = 964F30DF1E96324700221986 /* LICENSE */; };
+		964F30E61E96324700221986 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 964F30E01E96324700221986 /* README.md */; };
+		964F30E71E96324700221986 /* UIView+YGPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 964F30E31E96324700221986 /* UIView+YGPulseView.m */; };
+		964F30EA1E96611A00221986 /* GodoB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 964F30E91E96611A00221986 /* GodoB.otf */; };
 		EFCD8F1BE76F6B40CBC449A1 /* Pods_ARBoard.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */; };
 /* End PBXBuildFile section */
 
@@ -34,6 +41,14 @@
 		964291311E82934C007D1862 /* User.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		964F30D01E9609B400221986 /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		964F30D21E960F0700221986 /* FoundationExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundationExtensions.swift; sourceTree = "<group>"; };
+		964F30D61E9615A600221986 /* ARBGameJoinViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBGameJoinViewController.swift; sourceTree = "<group>"; };
+		964F30D81E96161200221986 /* UIKitExtensions.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIKitExtensions.swift; sourceTree = "<group>"; };
+		964F30DA1E9619B000221986 /* ARBEtcTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBEtcTableViewController.swift; sourceTree = "<group>"; };
+		964F30DF1E96324700221986 /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		964F30E01E96324700221986 /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		964F30E21E96324700221986 /* UIView+YGPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+YGPulseView.h"; sourceTree = "<group>"; };
+		964F30E31E96324700221986 /* UIView+YGPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+YGPulseView.m"; sourceTree = "<group>"; };
+		964F30E91E96611A00221986 /* GodoB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GodoB.otf; sourceTree = "<group>"; };
 		AF5623BA412E39C1FB57B736 /* Pods-ARBoard.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.debug.xcconfig"; sourceTree = "<group>"; };
 		F000FB4DB7B367C58C2D7846 /* Pods-ARBoard.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARBoard.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARBoard/Pods-ARBoard.release.xcconfig"; sourceTree = "<group>"; };
 		FF7E1F3891A9AB5F03430343 /* Pods_ARBoard.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARBoard.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -97,6 +112,8 @@
 			children = (
 				961BA2FF1E7D1A5E0011126F /* ViewController.swift */,
 				9642912D1E829001007D1862 /* ARBSignInViewController.swift */,
+				964F30D61E9615A600221986 /* ARBGameJoinViewController.swift */,
+				964F30DA1E9619B000221986 /* ARBEtcTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -105,6 +122,7 @@
 			isa = PBXGroup;
 			children = (
 				964F30D21E960F0700221986 /* FoundationExtensions.swift */,
+				964F30D81E96161200221986 /* UIKitExtensions.swift */,
 			);
 			path = Extensions;
 			sourceTree = "<group>";
@@ -112,6 +130,7 @@
 		961BA3011E7D1A5E0011126F /* Helpers */ = {
 			isa = PBXGroup;
 			children = (
+				964F30DC1E9631E500221986 /* Library */,
 				9642912B1E828EFD007D1862 /* ARBoard-Bridging-Header.h */,
 			);
 			path = Helpers;
@@ -130,6 +149,7 @@
 		961BA3031E7D1A5E0011126F /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				964F30E81E96611A00221986 /* Fonts */,
 				961BA3041E7D1A5E0011126F /* Assets.xcassets */,
 			);
 			path = Resources;
@@ -142,6 +162,41 @@
 				961BA3081E7D1A5E0011126F /* Main.storyboard */,
 			);
 			path = Views;
+			sourceTree = "<group>";
+		};
+		964F30DC1E9631E500221986 /* Library */ = {
+			isa = PBXGroup;
+			children = (
+				964F30DD1E96324700221986 /* YGPulseView */,
+			);
+			path = Library;
+			sourceTree = "<group>";
+		};
+		964F30DD1E96324700221986 /* YGPulseView */ = {
+			isa = PBXGroup;
+			children = (
+				964F30DF1E96324700221986 /* LICENSE */,
+				964F30E01E96324700221986 /* README.md */,
+				964F30E11E96324700221986 /* YGPulseView */,
+			);
+			path = YGPulseView;
+			sourceTree = "<group>";
+		};
+		964F30E11E96324700221986 /* YGPulseView */ = {
+			isa = PBXGroup;
+			children = (
+				964F30E21E96324700221986 /* UIView+YGPulseView.h */,
+				964F30E31E96324700221986 /* UIView+YGPulseView.m */,
+			);
+			path = YGPulseView;
+			sourceTree = "<group>";
+		};
+		964F30E81E96611A00221986 /* Fonts */ = {
+			isa = PBXGroup;
+			children = (
+				964F30E91E96611A00221986 /* GodoB.otf */,
+			);
+			path = Fonts;
 			sourceTree = "<group>";
 		};
 		C49221CE084A9657F4943824 /* Pods */ = {
@@ -220,6 +275,8 @@
 				961BA30D1E7D1A5E0011126F /* Main.storyboard in Resources */,
 				961BA30B1E7D1A5E0011126F /* Assets.xcassets in Resources */,
 				961BA30C1E7D1A5E0011126F /* LaunchScreen.storyboard in Resources */,
+				964F30EA1E96611A00221986 /* GodoB.otf in Resources */,
+				964F30E51E96324700221986 /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -279,12 +336,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				964F30D31E960F0700221986 /* FoundationExtensions.swift in Sources */,
+				964F30D71E9615A600221986 /* ARBGameJoinViewController.swift in Sources */,
+				964F30D91E96161200221986 /* UIKitExtensions.swift in Sources */,
 				961BA30A1E7D1A5E0011126F /* ViewController.swift in Sources */,
 				964F30D11E9609B400221986 /* Constants.swift in Sources */,
 				964291301E829162007D1862 /* ARBDataManager.swift in Sources */,
 				9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */,
 				964291321E82934C007D1862 /* User.swift in Sources */,
 				961BA2ED1E7D19C70011126F /* AppDelegate.swift in Sources */,
+				964F30E61E96324700221986 /* README.md in Sources */,
+				964F30DB1E9619B000221986 /* ARBEtcTableViewController.swift in Sources */,
+				964F30E71E96324700221986 /* UIView+YGPulseView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
