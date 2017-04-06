@@ -1,11 +1,13 @@
 package arboard.game.controller;
  
+import java.nio.ByteBuffer;
 import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.log4j.LogManager;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -28,7 +30,9 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 		for(WebSocketSession session:this.sessionSet){
 			if(session.isOpen()){
 				try{
-					session.sendMessage(new TextMessage(message));
+					//session.sendMessage(new TextMessage(message));
+					String test = "test";
+					session.sendMessage(new BinaryMessage(test.getBytes()));
 				}catch ( Exception ignored){
 					this.logger.debug("fail to send message",ignored);
 				}
@@ -73,7 +77,12 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		super.handleMessage(session, message);
-		this.logger.debug("receive message:"+message.toString());
+
+		ByteBuffer buf = (ByteBuffer) message.getPayload();
+		
+		String msg = new String(buf.array());
+		
+		this.logger.debug("receive message:"+msg);
 	}
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
