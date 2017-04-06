@@ -24,5 +24,5 @@ enum OAuthDomain {
 struct CellIdentifier {
     static let etcBasic: String = "AREtcBasicTableCell"
     static let etcDetail: String = "AREtcDetailTableCell"
-    static let etcSubTitle: String = "AREtcSubTitleTableCell"
+    static let etcSubtitle: String = "AREtcSubTitleTableCell"
 }
