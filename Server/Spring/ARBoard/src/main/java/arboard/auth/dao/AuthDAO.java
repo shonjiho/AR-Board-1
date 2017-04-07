@@ -18,7 +18,7 @@ public class AuthDAO extends AbstractDAO {
 	
 	@SuppressWarnings("unchecked")
 	public Map<String, Object> selectUserProfileToId(Map<String, Object> map) {
-		// TODO Auto-generated method stub
+		 
 		return (Map<String, Object>) selectOne("auth.selectUserProfileToId", map);
 	}
 	public void insertUser(Map<String, Object> map) throws Exception {
