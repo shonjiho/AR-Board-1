@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public Map<String, Object> selectUser(Map<String, Object> map) throws Exception {
+	public Map<String, Object> getUserInfo(Map<String, Object> map) throws Exception {
 		 
 		//map ->  name email oauthToken oauthType userId
 		Map<String, Object> userProfile = authDAO.selectUserProfileToEmail(map);
@@ -44,8 +44,12 @@ public class AuthServiceImpl implements AuthService {
 		//if user is not found , generate user data and show profile
 		if(userProfile == null){
 			authDAO.insertUser(map);
-			userProfile = authDAO.selectUserProfileToId(map);
+		}else{ 
+			authDAO.updateUserToken(map);
 		}
+		
+		userProfile = authDAO.selectUserProfileToId(map);
+		
 		log.debug("user profile"+userProfile);
 		return userProfile;
 

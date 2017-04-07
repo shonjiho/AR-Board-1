@@ -46,4 +46,13 @@
             );
     ]]>
 	</insert>
+	<update id="updateToken" parameterType="hashmap"
+		useGeneratedKeys="true" keyProperty="id">
+		 <![CDATA[
+            UPDATE user SET 
+            oauthToken=#{oauthToken},
+            oauthType=#{oauthType}
+            WHERE userEmail=#{userEmail}
+        ]]>
+	</update>
 </mapper>

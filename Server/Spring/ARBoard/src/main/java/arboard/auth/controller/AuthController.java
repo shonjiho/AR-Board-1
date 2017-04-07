@@ -46,10 +46,10 @@ public class AuthController {
 		//Login profile generate (userName +userEmail + oauthToken + oauthType)
 		Map<String, Object> profile = authService.reqFacebookProfile(oauthToken);
 		profile.put("oauthToken", oauthToken);
-		profile.put("oauthType", "FACEBOOK");
+		profile.put("oauthType", "facebook");
 
 		//Login recently information update or insert.
-		Map<String, Object> userProfile = authService.selectUser(profile);
+		Map<String, Object> userProfile = authService.getUserInfo(profile);
  
 		session.setAttribute("status", true);
 		

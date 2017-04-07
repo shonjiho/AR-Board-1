@@ -24,5 +24,11 @@ public class AuthDAO extends AbstractDAO {
 	public void insertUser(Map<String, Object> map) throws Exception {
 		 insert("auth.insertUser", map);
 	}
+
+
+	public void updateUserToken(Map<String, Object> map) {
+		
+		update("auth.updateToken",map);
+	}
 	 
 }
