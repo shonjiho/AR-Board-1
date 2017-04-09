@@ -7,6 +7,7 @@
 		resultType="hashmap">
         <![CDATA[
             SELECT 
+            	id,
             	userName,
             	userEmail,
             	oauthToken,
@@ -18,7 +19,8 @@
 	<select id="selectUserProfileToId" parameterType="hashmap"
 		resultType="hashmap">
         <![CDATA[
-            SELECT 
+            SELECT
+            	id,
             	userName,
             	userEmail,
             	oauthToken,
@@ -46,4 +48,12 @@
             );
     ]]>
 	</insert>
+	<update id="updateToken" parameterType="hashmap" >
+		 <![CDATA[
+            UPDATE user SET 
+            oauthToken=#{oauthToken},
+            oauthType=#{oauthType}
+            WHERE userEmail=#{userEmail}
+        ]]>
+	</update>
 </mapper>

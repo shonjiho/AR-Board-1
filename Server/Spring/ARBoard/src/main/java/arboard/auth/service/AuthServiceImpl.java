@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import arboard.auth.common.FBGraph;
-import arboard.auth.dao.AuthDAO;
+import arboard.auth.dao.AuthDAO;;
 
 @Service("authservice")
 public class AuthServiceImpl implements AuthService {
@@ -36,7 +36,7 @@ public class AuthServiceImpl implements AuthService {
 	}
 
 	@Override
-	public Map<String, Object> selectUser(Map<String, Object> map) throws Exception {
+	public Map<String, Object> getUserInfo(Map<String, Object> map) throws Exception {
 		 
 		//map ->  name email oauthToken oauthType userId
 		Map<String, Object> userProfile = authDAO.selectUserProfileToEmail(map);
@@ -45,7 +45,11 @@ public class AuthServiceImpl implements AuthService {
 		if(userProfile == null){
 			authDAO.insertUser(map);
 			userProfile = authDAO.selectUserProfileToId(map);
+		}else{ 
+			authDAO.updateUserToken(map);
 		}
+		
+		
 		log.debug("user profile"+userProfile);
 		return userProfile;
 

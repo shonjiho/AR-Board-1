@@ -9,6 +9,6 @@ public interface AuthService {
 
 	boolean valifyAccessToken(String accessToken) throws Exception;
 
-	Map<String,Object> selectUser(Map<String, Object> map) throws Exception;
+	Map<String,Object> getUserInfo(Map<String, Object> map) throws Exception;
 
 }
