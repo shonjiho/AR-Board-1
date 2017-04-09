@@ -41,6 +41,7 @@ public class SessionChecker {
 			HttpSession httpSession = elem.getValue();
 			if (httpSession.getAttribute("status") == null) {
 				// not login user
+				log.debug("SESSION is NOT LOGIN");
 				continue;
 			}
 			Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
@@ -49,14 +50,15 @@ public class SessionChecker {
 
 			HashMap<String, Object> jsonObject = new HashMap<String, Object>();
 			jsonObject.put("id", userProfile.get("id"));
-			jsonObject.put("name", userProfile.get("userName"));
-			jsonObject.put("email", userProfile.get("userEmail"));
+			jsonObject.put("userName", userProfile.get("userName"));
+			jsonObject.put("userEmail", userProfile.get("userEmail"));
 			jsonArray.add(jsonObject);
 		}
 
 		return jsonArray;
 	}
 
+	//for test
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/sessionRemove", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
@@ -75,7 +77,7 @@ public class SessionChecker {
 		jsonObject.put("message", "remove " + sessionSelected.getId());
 		return jsonObject;
 	}
-
+	//for test
 	@RequestMapping(value = "/sessionList", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	@SuppressWarnings("unchecked")

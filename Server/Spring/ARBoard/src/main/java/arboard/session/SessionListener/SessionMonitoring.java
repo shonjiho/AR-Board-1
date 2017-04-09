@@ -22,12 +22,15 @@ public class SessionMonitoring implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-
+		
+		//test
+		session.setMaxInactiveInterval(30);
+		
 		ServletContext context = session.getServletContext();
 		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
 				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
 
-		System.out.print(String.format(" [ %s ] - Created.", session.getId()));
+		System.out.println(String.format(" [ %s ] - Created.", session.getId()));
 		activeUsers.put(session.getId(), session);
 	}
 

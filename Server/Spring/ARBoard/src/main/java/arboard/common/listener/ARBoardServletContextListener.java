@@ -21,9 +21,12 @@ public class ARBoardServletContextListener implements ServletContextListener {
 
 	@Override
 	public void contextInitialized(ServletContextEvent event) {
-
+		
 		ServletContext context = event.getServletContext();
-		context.setAttribute(ACTIVEUSERS_ATTRIBUTE_NAME, new HashMap<String, HttpSession>()); 
+		if(context.getAttribute(ACTIVEUSERS_ATTRIBUTE_NAME) == null){
+			System.out.println("Context Initialization");
+			context.setAttribute(ACTIVEUSERS_ATTRIBUTE_NAME, new HashMap<String, HttpSession>()); 
+		}
 		
 	}
 
