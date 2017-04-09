@@ -1,6 +1,5 @@
 package arboard.session.SessionListener;
-
-import java.util.HashMap;
+ 
 import java.util.Map;
 
 import javax.servlet.ServletContext;
@@ -11,6 +10,7 @@ import javax.servlet.http.HttpSessionListener;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import arboard.common.listener.ARBoardServletContextListener;
+ 
 
 public class SessionMonitoring implements HttpSessionListener {
 
@@ -24,7 +24,7 @@ public class SessionMonitoring implements HttpSessionListener {
 		HttpSession session = event.getSession();
 		
 		//test
-		session.setMaxInactiveInterval(30);
+		session.setMaxInactiveInterval(60);
 		
 		ServletContext context = session.getServletContext();
 		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
@@ -43,7 +43,7 @@ public class SessionMonitoring implements HttpSessionListener {
 
 		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
 				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
-		System.out.print(String.format(" [ %s ] - Destroyed.", session.getId()));
+		System.out.println(String.format(" [ %s ] - Destroyed.", session.getId()));
 
 		activeUsers.remove(session.getId());
 
