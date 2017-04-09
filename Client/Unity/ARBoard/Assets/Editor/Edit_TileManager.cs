@@ -57,16 +57,16 @@ public class Edit_TileManager : Editor {
 			DestroyImmediate(tileManager.gameObject);
 		}
 
-		if (GUILayout.Button("Grass2")) 
-		{
-			int idx = (int)Random.Range(0, grasses2.Length - 1);
+		// if (GUILayout.Button("Grass2")) 
+		// {
+		// 	int idx = (int)Random.Range(0, grasses2.Length - 1);
 
-			GameObject newGrass2 = (GameObject)GameObject.Instantiate(grasses2[idx]);
-			newGrass2.transform.parent = tileManager.transform.parent;
-			newGrass2.transform.position = tileManager.transform.position;
-			newGrass2.transform.localScale = tileManager.transform.localScale;
-			DestroyImmediate(tileManager.gameObject);
-		}
+		// 	GameObject newGrass2 = (GameObject)GameObject.Instantiate(grasses2[idx]);
+		// 	newGrass2.transform.parent = tileManager.transform.parent;
+		// 	newGrass2.transform.position = tileManager.transform.position;
+		// 	newGrass2.transform.localScale = tileManager.transform.localScale;
+		// 	DestroyImmediate(tileManager.gameObject);
+		// }
 
 		EditorGUILayout.EndHorizontal();
 		EditorGUILayout.EndVertical();
