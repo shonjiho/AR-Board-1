@@ -28,9 +28,8 @@ class ARBEtcTableViewController: UITableViewController {
         static func numberOfRows(of section: Int) -> Int {
             return rowTitles[section].count
         }
-        /*
         static func heightOfRows(of indexPath: IndexPath) -> CGFloat {
-            if dataManager.isCurrentUser {
+            if ARBDataManager.getInstance().isCurrentUser {
                 if indexPath.section == SectionType.signature.rawValue, indexPath.row == Signature.logIn.rawValue {
                     return 0.0
                 }
@@ -48,76 +47,86 @@ class ARBEtcTableViewController: UITableViewController {
             }
             return 50.0
         }
-         */
+        static func cellIdentifier(of section:Int) -> String {
+            var identifier:String
+            switch section {
+            case SectionType.userInformation.rawValue:
+                identifier = CellIdentifier.etcDetail
+            case SectionType.pushService.rawValue:
+                identifier = CellIdentifier.etcSubtitle
+            case SectionType.support.rawValue, SectionType.appInformation.rawValue, SectionType.signature.rawValue:
+                identifier = CellIdentifier.etcBasic
+            default:
+                dump("Section Range Error!")
+                return ""
+            }
+            return identifier
+        }
     }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let tableCell:UITableViewCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: indexPath.section), for: indexPath)
+        tableCell.textLabel?.text = Section.rowTitles[indexPath.section][indexPath.row]
+        // Selected Dark 효과
+        tableCell.selectedBackgroundView = UIVisualEffectView.dark
+        switch indexPath.section {
+        case SectionType.userInformation.rawValue:
+            if let currentUser = dataManager.currentUser {
+                switch indexPath.row {
+                case 0:
+                    tableCell.detailTextLabel?.text = currentUser.userName
+                case 1:
+                    tableCell.detailTextLabel?.text = currentUser.userEmail
+                default:
+                    tableCell.detailTextLabel?.text = " "
+                }
+            }
+        case SectionType.pushService.rawValue:
+            tableCell.detailTextLabel?.text = "게임 초대 알림을 설정"
+        case SectionType.signature.rawValue:
+            if indexPath.section == SectionType.signature.rawValue, indexPath.row == 2 {
+                tableCell.textLabel?.textColor = UIColor.redTintColor
+            } else {
+                tableCell.textLabel?.textColor = UIColor.white
+            }
+        default:
+            return tableCell
+        }
+        return tableCell
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupEtcTableView()
+    }
+    
+    fileprivate func setupEtcTableView(){
+        self.tableView.separatorInset.left = 30
+        self.tableView.separatorInset.right = 30
+        self.tableView.separatorColor = UIColor.lineColor
+        self.tableView.tableFooterView = UIView.init(frame: CGRect.zero)
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
     }
 
     // MARK: - Table view data source
     override func numberOfSections(in tableView: UITableView) -> Int {
-        // #warning Incomplete implementation, return the number of sections
-        return 0
+        return Section.headerTitles.count
     }
-
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 0
+        // #warning Incomplete implementation, return the number of rows
+        return Section.numberOfRows(of: section)
     }
-
-    /*
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier", for: indexPath)
-
-        // Configure the cell...
-
-        return cell
+    override func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        return Section.headerTitles[section]
     }
-    */
-
-    /*
-    // Override to support conditional editing of the table view.
-    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the specified item to be editable.
-        return true
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return Section.heightOfRows(of: indexPath)
     }
-    */
-
-    /*
-    // Override to support editing the table view.
-    override func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCellEditingStyle, forRowAt indexPath: IndexPath) {
-        if editingStyle == .delete {
-            // Delete the row from the data source
-            tableView.deleteRows(at: [indexPath], with: .fade)
-        } else if editingStyle == .insert {
-            // Create a new instance of the appropriate class, insert it into the array, and add a new row to the table view
-        }    
+    override func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        if let headerView = view as? UITableViewHeaderFooterView {
+            headerView.textLabel?.textColor = UIColor.lightGray
+        }
     }
-    */
-
-    /*
-    // Override to support rearranging the table view.
-    override func tableView(_ tableView: UITableView, moveRowAt fromIndexPath: IndexPath, to: IndexPath) {
-
-    }
-    */
-
-    /*
-    // Override to support conditional rearranging of the table view.
-    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        // Return false if you do not want the item to be re-orderable.
-        return true
-    }
-    */
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }
