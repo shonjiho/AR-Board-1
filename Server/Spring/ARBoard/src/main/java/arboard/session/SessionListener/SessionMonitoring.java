@@ -11,6 +11,8 @@ import javax.servlet.http.HttpSessionListener;
 public class SessionMonitoring implements HttpSessionListener {
  
 	public static final String activeKey =  "activeUsers";
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
@@ -25,13 +27,15 @@ public class SessionMonitoring implements HttpSessionListener {
 		activeUsers.put(session.getId(), session);
 		 
 	}
-
+	
+	@SuppressWarnings("unchecked")
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
 		
 		HttpSession session = event.getSession();
 		ServletContext context = session.getServletContext();
-		Map activeUsers = (Map) context.getAttribute(activeKey);
+		
+		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context.getAttribute(activeKey);
 		if(activeUsers == null){
 			context.setAttribute(activeKey, new HashMap<String, HttpSession>());
 			activeUsers = (Map<String, HttpSession>)context.getAttribute(activeKey);

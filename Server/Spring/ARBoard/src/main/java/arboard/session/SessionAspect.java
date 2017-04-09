@@ -29,13 +29,13 @@ public class SessionAspect {
 			 }
 		 } 
 		 
-		 Object status = null;
+		 Object oauthToken = null;
 		 
-		 if((status = session.getAttribute("oauthToken")).equals(null)){ 
+		 if((oauthToken = session.getAttribute("oauthToken")).equals(null)){ 
 			 
 			 throw new SessionUnAuthorizedException();
 		 }else{   
-			 
+			 log.debug("["+oauthToken+"]"+"User Access.");
 			 return joinPoint.proceed();
 		 }
 	 }

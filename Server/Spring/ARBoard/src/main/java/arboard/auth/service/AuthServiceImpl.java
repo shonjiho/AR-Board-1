@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import arboard.auth.common.FBGraph;
-import arboard.auth.dao.AuthDAO;
+import arboard.auth.dao.AuthDAO;;
 
 @Service("authservice")
 public class AuthServiceImpl implements AuthService {
