@@ -42,15 +42,17 @@ public class AuthController {
 			throw new AccessTokenInvalidException();
 		}
 
-		//Login profile generate (userName +userEmail + oauthToken + oauthType)
+		//Login profile generate (userName,userEmail,oauthToken,oauthType)
 		Map<String, Object> profile = authService.reqFacebookProfile(oauthToken);
 		profile.put("oauthToken", oauthToken);
 		profile.put("oauthType", "facebook");
 
 		//Login recently information update or insert.
 		Map<String, Object> userProfile = authService.getUserInfo(profile);
- 
-		session.setAttribute("oauthToken",oauthToken);
+		
+		//Session Information Setting.
+		session.setAttribute("status",true);
+		session.setAttribute("userProfile", userProfile);
 		
 		return userProfile;
 	}
@@ -69,7 +71,7 @@ public class AuthController {
 	public @ResponseBody Object session(HttpServletResponse reponse, HttpSession session) {
 		Map<String,Object> jsonObject = new HashMap<String, Object>();
 		jsonObject.put("status", session.getAttribute("status"));
-	
+		
 		return jsonObject;
 	}
 }

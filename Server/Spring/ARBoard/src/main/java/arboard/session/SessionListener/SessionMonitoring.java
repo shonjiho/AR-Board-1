@@ -8,44 +8,42 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import arboard.common.listener.ARBoardServletContextListener;
+
 public class SessionMonitoring implements HttpSessionListener {
- 
-	public static final String activeKey =  "activeUsers";
-	
+
+
+	@Autowired
+	public ServletContext servletContext;
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		 
-		
+
 		ServletContext context = session.getServletContext();
-		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context.getAttribute(activeKey);	
-		if(activeUsers == null){
-			context.setAttribute(activeKey, new HashMap<String, HttpSession>());
-			activeUsers = (Map<String, HttpSession>)context.getAttribute(activeKey);
-		} 
+		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
+				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
+
+		System.out.print(String.format(" [ %s ] - Created.", session.getId()));
 		activeUsers.put(session.getId(), session);
-		 
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public void sessionDestroyed(HttpSessionEvent event) {
-		
+
 		HttpSession session = event.getSession();
 		ServletContext context = session.getServletContext();
-		
-		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context.getAttribute(activeKey);
-		if(activeUsers == null){
-			context.setAttribute(activeKey, new HashMap<String, HttpSession>());
-			activeUsers = (Map<String, HttpSession>)context.getAttribute(activeKey);
-		} 
-		System.out.print(String.format(" [ %s ] ",session.getId()));
-		System.out.println(session.toString() + " Destroyed.");
-		
+
+		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
+				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
+		System.out.print(String.format(" [ %s ] - Destroyed.", session.getId()));
+
 		activeUsers.remove(session.getId());
-		
-		
+
 	}
 
 }
