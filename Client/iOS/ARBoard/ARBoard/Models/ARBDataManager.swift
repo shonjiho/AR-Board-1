@@ -19,6 +19,7 @@ class ARBDataManager : NSObject {
             return (self.currentUser != nil) ? true : false
         }
     }
+    var friends:Friends?
     
     struct StaticInstance {
         static var instance: ARBDataManager?
