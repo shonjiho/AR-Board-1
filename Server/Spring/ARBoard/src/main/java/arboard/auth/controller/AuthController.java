@@ -51,7 +51,7 @@ public class AuthController {
 		//Login recently information update or insert.
 		Map<String, Object> userProfile = authService.getUserInfo(profile);
  
-		session.setAttribute("status", true);
+		session.setAttribute("oauthToken",oauthToken);
 		
 		return userProfile;
 	}

@@ -31,15 +31,31 @@ public class SessionAspect {
 		 
 		 Object status = null;
 		 
-		 if((status = session.getAttribute("status")).equals(null)){ 
+		 if((status = session.getAttribute("oauthToken")).equals(null)){ 
+			 
 			 throw new SessionUnAuthorizedException();
 		 }else{   
+			 
 			 return joinPoint.proceed();
 		 }
-		 
-		 
 	 }
-	 
+	 @Around("execution(* arboard.session.SessionListener.SessionChecker.getSessionList(..))")
+	 public Object SessionListTest(ProceedingJoinPoint joinPoint) throws Throwable{
+		 HttpSession session = null;
+		 for(Object obj : joinPoint.getArgs()){
+			 if(obj instanceof HttpSession){
+				 session = (HttpSession)obj;
+			 }
+		 } 
+		  
+		 if((session.getAttribute("oauthToken")) == null){ 
+			 
+			 throw new SessionUnAuthorizedException();
+		 }else{   
+			 
+			 return joinPoint.proceed();
+		 }
+	 }
 	 /*
 	  @Around("execution(* arboard..controller.*Controller.*(..)) or execution(* arboard..service.*Impl.*(..)) or execution(* arboard..dao.*DAO.*(..))")
 	  
