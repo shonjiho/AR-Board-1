@@ -49,7 +49,7 @@ public class AuthController {
 
 		//Login recently information update or insert.
 		Map<String, Object> userProfile = authService.getUserInfo(profile);
-		
+
 		//Session Information Setting.
 		session.setAttribute("status",true);
 		session.setAttribute("userProfile", userProfile);
