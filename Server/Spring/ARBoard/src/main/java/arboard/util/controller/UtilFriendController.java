@@ -17,6 +17,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
@@ -32,8 +33,12 @@ public class UtilFriendController {
 	@Resource(name = "utilservice")
 	private UtilService utilService;
 
-	@RequestMapping(value = "/{id}/friendList", method = RequestMethod.GET)
+	// list friend test method.
+	// URI - /friend/list/{id}
+	// f
+	@RequestMapping(value = "/friend/list/{id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
+
 	public @ResponseBody Object getFriendList_test(@PathVariable String id, HttpServletResponse reponse,
 			HttpSession session) {
 
@@ -50,7 +55,7 @@ public class UtilFriendController {
 		jsonObject.put("allFriends", friendList);
 
 		// Active User List
-		List<Map<String, Object>> activeUserList = getActiveUser(session);
+		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
 
 		jsonObject.put("allUsers", activeUserList);
 
@@ -74,16 +79,17 @@ public class UtilFriendController {
 
 		return jsonObject;
 	}
-	
+
+	// with session,list friends
+	// URI - /friend/list
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friendList", method = RequestMethod.GET)
+	@RequestMapping(value = "/friend/list", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object getFriendList(HttpServletResponse reponse,
-			HttpSession session) {
-		 
+	public @ResponseBody Object getFriendList(HttpServletResponse reponse, HttpSession session) {
+
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
 		BigInteger id = (BigInteger) userProfile.get("id");
-		
+
 		Map<String, Object> jsonObject = new HashMap<String, Object>();
 		ArrayList<HashMap<String, Object>> OnFriendArray = new ArrayList<HashMap<String, Object>>();
 		ArrayList<HashMap<String, Object>> OffFriendArray = new ArrayList<HashMap<String, Object>>();
@@ -97,7 +103,7 @@ public class UtilFriendController {
 		jsonObject.put("allFriends", friendList);
 
 		// Active User List
-		List<Map<String, Object>> activeUserList = getActiveUser(session);
+		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
 
 		jsonObject.put("allUsers", activeUserList);
 
@@ -122,35 +128,76 @@ public class UtilFriendController {
 		return jsonObject;
 	}
 	
-	
-	
-	
-	
-	//Get Active User method.
+	// NOT IMPLEMENT.
+	// search friend
+	// URI - /friend/search?email={email}
 	@SuppressWarnings("unchecked")
-	public List<Map<String, Object>> getActiveUser(HttpSession session) {
-		ServletContext sevletContext = session.getServletContext();
+	@RequestMapping(value = "/friend/search", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object searchFriend(@RequestParam(value = "email", required = true) String email,
+			HttpServletResponse reponse, HttpSession session) {
+		// email을 통해 user를 검색
+		// user id userName,userEmail,친구 상태 유무
+		// option : 검색 email과 비슷한 유저들.
 
-		Map<String, HttpSession> map = (Map<String, HttpSession>) sevletContext
-				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
-		List<Map<String, Object>> jsonArray = new ArrayList<Map<String, Object>>();
-
-		for (Map.Entry<String, HttpSession> elem : map.entrySet()) {
-			HttpSession httpSession = elem.getValue();
-			if (httpSession.getAttribute("status") == null) {
-				continue;
-			}
-			Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
-
-			HashMap<String, Object> jsonObject = new HashMap<String, Object>();
-			jsonObject.put("id", userProfile.get("id"));
-			jsonObject.put("userName", userProfile.get("userName"));
-			jsonObject.put("userEmail", userProfile.get("userEmail"));
-			jsonArray.add(jsonObject);
-		}
-		return jsonArray;
+		return new Object();
 	}
 
+	// NOT IMPLEMENT.
+	// request friend
+	// URI - /friend/{id}/request
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.OK)
+	public void requestFriend(@PathVariable String receiver_id, HttpServletResponse reponse, HttpSession session) {
 
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		// friend
+		// select * from relationship where id1=id and id2=receiver_id --> 존재하는지
+		// 존재하지않으면 신청
+		// 존재하면 오류 ! (클라이언트에서 오류 신청 비활성화)
+
+	}
+
+	// NOT IMPLEMENT.
+	// list request
+	// URI - /friend/request/list
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friend/request/list", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object getFriendRequestList(HttpServletResponse reponse, HttpSession session) {
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		// 친구 요청 리스트 검색
+
+		return new Object();
+	}
+
+	// NOT IMPLEMENT.
+	// Accept response about Friend request.
+	// URI - /friend/{id}/response/accept
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friend/{sender_id}/response/accept", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.OK)
+	public void responseFriendRequest_accept(@PathVariable String sender_id, HttpServletResponse reponse,
+			HttpSession session) {
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		// 친구 요청에 대한 응답
+	}
+
+	// NOT IMPLEMENT.
+	// Refuse response about Friend request.
+	// URI - /friend/{id}/response/refuse
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friend/{sender_id}/response/refuse", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.OK)
+	public void responseFriendRequest_refuse(@PathVariable String sender_id, HttpServletResponse reponse,
+			HttpSession session) {
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		// 친구 요청에 대한 응답
+	}
 
 }
