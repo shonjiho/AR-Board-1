@@ -58,10 +58,11 @@ public class UtilServiceImpl implements UtilService {
 
 	
 	@Override
-	public Map<String, Object> getUserProfile(String email) {
+	public Map<String, Object> getUserProfile(String email,String id) {
 		
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("email", email);
+		param.put("id", id);
 		return utilDAO.selectUser(param);
 		 
 	}

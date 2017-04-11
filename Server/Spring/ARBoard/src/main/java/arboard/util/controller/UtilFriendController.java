@@ -125,8 +125,8 @@ public class UtilFriendController {
 
 		return jsonObject;
 	}
+	 
 	
-	// NOT IMPLEMENT.
 	// search friend
 	// URI - /friend/search?email={email}
 	@SuppressWarnings("unchecked")
@@ -139,7 +139,10 @@ public class UtilFriendController {
 			throw new NotFoundParameterException("email");
 		} 
 		
-		Map<String, Object> jsonObject = utilService.getUserProfile(email);
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		
+		Map<String, Object> jsonObject = utilService.getUserProfile(email,id.toString());
 		//친구 인지아닌지 테스트 -> mysql에서 처리.
 		
 		return jsonObject;
@@ -155,6 +158,7 @@ public class UtilFriendController {
 
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
 		BigInteger id = (BigInteger) userProfile.get("id");
+		
 		// friend
 		// select * from relationship where id1=id and id2=receiver_id --> 존재하는지
 		// 존재하지않으면 신청

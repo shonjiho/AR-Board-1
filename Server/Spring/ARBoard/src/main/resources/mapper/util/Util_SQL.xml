@@ -14,8 +14,13 @@
 		resultType="hashmap">
         <![CDATA[ 
         	SELECT id,userName,userEmail,IFNULL(state,'N') as state 
-        	FROM user left JOIN relationship ON id=id2 
+        	FROM user LEFT JOIN (
+        		SELECT id1,id2,state 
+        		FROM relationship 
+        		WHERE id1=#{id}
+        		) as relationship
+        		ON id=id2 
         	WHERE userEmail=#{email};
         ]]>
-	</select>
+	</select>  
 </mapper>
