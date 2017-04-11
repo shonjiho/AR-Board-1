@@ -10,4 +10,12 @@
         	WHERE relationship.id1=#{id} and state='Y';
         ]]>
 	</select>
+	<select id="selectUserToEmail" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[ 
+        	SELECT id,userName,userEmail,IFNULL(state,'N') as state 
+        	FROM user left JOIN relationship ON id=id2 
+        	WHERE userEmail=#{email};
+        ]]>
+	</select>
 </mapper>

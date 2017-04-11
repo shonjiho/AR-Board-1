@@ -56,4 +56,14 @@ public class UtilServiceImpl implements UtilService {
 		return jsonArray;
 	}
 
+	
+	@Override
+	public Map<String, Object> getUserProfile(String email) {
+		
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("email", email);
+		return utilDAO.selectUser(param);
+		 
+	}
+
 }

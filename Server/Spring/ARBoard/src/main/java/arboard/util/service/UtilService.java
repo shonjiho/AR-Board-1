@@ -10,4 +10,6 @@ public interface UtilService {
 	
 	List<Map<String, Object>> getFriendList(String id);
 	List<Map<String, Object>> getActiveUser(HttpSession session);
+	Map<String, Object> getUserProfile(String email);
 }
+

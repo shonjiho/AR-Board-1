@@ -1,14 +1,12 @@
 package arboard.session;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
-import org.aspectj.lang.annotation.Aspect; 
+import org.aspectj.lang.annotation.Aspect;
 
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.common.logger.LoggerAspect;
@@ -30,7 +28,7 @@ public class SessionAspect {
 		 } 
 		  
 		 if(session.getAttribute("status") == null){ 
-			 
+			 //not session
 			 throw new SessionUnAuthorizedException();
  		 }else{   
 			 return joinPoint.proceed();

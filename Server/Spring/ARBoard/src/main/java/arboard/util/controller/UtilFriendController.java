@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
-import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
@@ -21,9 +20,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
-import arboard.common.listener.ARBoardServletContextListener;
+import arboard.util.exception.NotFoundParameterException;
 import arboard.util.service.UtilService;
-import sun.security.x509.FreshestCRLExtension;
 
 @Controller
 public class UtilFriendController {
@@ -134,13 +132,17 @@ public class UtilFriendController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/friend/search", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object searchFriend(@RequestParam(value = "email", required = true) String email,
+	public @ResponseBody Object searchUser(@RequestParam(value = "email", required = false) String email,
 			HttpServletResponse reponse, HttpSession session) {
-		// email을 통해 user를 검색
-		// user id userName,userEmail,친구 상태 유무
-		// option : 검색 email과 비슷한 유저들.
-
-		return new Object();
+		//if email empty
+		if(email == null){
+			throw new NotFoundParameterException("email");
+		} 
+		
+		Map<String, Object> jsonObject = utilService.getUserProfile(email);
+		//친구 인지아닌지 테스트 -> mysql에서 처리.
+		
+		return jsonObject;
 	}
 
 	// NOT IMPLEMENT.
