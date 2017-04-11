@@ -1,5 +1,6 @@
 package arboard.util.controller;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -33,7 +34,7 @@ public class UtilFriendController {
 
 	@RequestMapping(value = "/{id}/friendList", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object getFriendList(@PathVariable String id, HttpServletResponse reponse,
+	public @ResponseBody Object getFriendList_test(@PathVariable String id, HttpServletResponse reponse,
 			HttpSession session) {
 
 		Map<String, Object> jsonObject = new HashMap<String, Object>();
@@ -73,7 +74,59 @@ public class UtilFriendController {
 
 		return jsonObject;
 	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friendList", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object getFriendList(HttpServletResponse reponse,
+			HttpSession session) {
+		 
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id");
+		
+		Map<String, Object> jsonObject = new HashMap<String, Object>();
+		ArrayList<HashMap<String, Object>> OnFriendArray = new ArrayList<HashMap<String, Object>>();
+		ArrayList<HashMap<String, Object>> OffFriendArray = new ArrayList<HashMap<String, Object>>();
 
+		jsonObject.put("onFriends", OnFriendArray);
+		jsonObject.put("offFriends", OffFriendArray);
+
+		// All Friend List
+		List<Map<String, Object>> friendList = utilService.getFriendList(id.toString());
+
+		jsonObject.put("allFriends", friendList);
+
+		// Active User List
+		List<Map<String, Object>> activeUserList = getActiveUser(session);
+
+		jsonObject.put("allUsers", activeUserList);
+
+		for (int i = 0; i < friendList.size(); i++) {
+			Map<String, Object> friendMap = friendList.get(i);
+			boolean flag = false;
+			for (int j = 0; j < activeUserList.size(); j++) {
+				Map<String, Object> activeUserMap = activeUserList.get(j);
+				if (activeUserMap.get("id") == friendMap.get("id")) {
+					friendMap.put("status", "On");// On
+					OnFriendArray.add((HashMap<String, Object>) friendMap);
+					flag = true;
+					break;
+				}
+			}
+			if (!flag) {
+				friendMap.put("status", "Off");// Off
+				OffFriendArray.add((HashMap<String, Object>) friendMap);
+			}
+		}
+
+		return jsonObject;
+	}
+	
+	
+	
+	
+	
+	//Get Active User method.
 	@SuppressWarnings("unchecked")
 	public List<Map<String, Object>> getActiveUser(HttpSession session) {
 		ServletContext sevletContext = session.getServletContext();
@@ -97,4 +150,7 @@ public class UtilFriendController {
 		}
 		return jsonArray;
 	}
+
+
+
 }

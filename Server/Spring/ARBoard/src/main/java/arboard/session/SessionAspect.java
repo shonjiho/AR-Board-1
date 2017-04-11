@@ -20,7 +20,7 @@ public class SessionAspect {
 	
 
 	//session test Aspect advice 
-	 @Around("execution(* arboard.auth.controller.AuthController.sessionTest(..))")
+	 @Around("execution(* arboard.util.controller.UtilFriendController.getFriendList(..))")
 	 public Object Test(ProceedingJoinPoint joinPoint) throws Throwable{
 		 HttpSession session = null;
 		 for(Object obj : joinPoint.getArgs()){
@@ -29,13 +29,10 @@ public class SessionAspect {
 			 }
 		 } 
 		  
-		 if(session.getAttribute("status").equals(null)){ 
+		 if(session.getAttribute("status") == null){ 
 			 
 			 throw new SessionUnAuthorizedException();
-		 }else{   
-			 @SuppressWarnings("unchecked")
-			 Map<String,Object> userProfile =  (Map<String, Object>) session.getAttribute("userProfile");
-			 log.debug("["+userProfile.get("userName")+"("+userProfile.get("userEmail")+")"+"] Access.");
+ 		 }else{   
 			 return joinPoint.proceed();
 		 }
 	 }
