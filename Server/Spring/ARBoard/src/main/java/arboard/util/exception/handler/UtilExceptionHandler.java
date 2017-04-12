@@ -25,7 +25,7 @@ public class UtilExceptionHandler {
 	public Map<String, Object> NotFoundParameterException(NotFoundParameterException e) { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
-		subJSONObject.put("message", "Not Found Parameter(\""+e.parameterName +"\")");
+		subJSONObject.put("message", "Not Found Parameter(\""+e.getParameterName() +"\")");
 		body.put("error", subJSONObject);
 		return body;
 	}

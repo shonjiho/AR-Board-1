@@ -18,7 +18,7 @@ public class SessionAspect {
 	
 
 	//session test Aspect advice 
-	 @Around("execution(* arboard.util.controller.UtilFriendController.getFriendList(..))")
+	 @Around("execution(* arboard.util.controller.UtilFriendController.*(..))")
 	 public Object Test(ProceedingJoinPoint joinPoint) throws Throwable{
 		 HttpSession session = null;
 		 for(Object obj : joinPoint.getArgs()){
@@ -29,7 +29,7 @@ public class SessionAspect {
 		  
 		 if(session.getAttribute("status") == null){ 
 			 //not session
-			 throw new SessionUnAuthorizedException();
+			 throw new SessionUnAuthorizedException(session);
  		 }else{   
 			 return joinPoint.proceed();
 		 }

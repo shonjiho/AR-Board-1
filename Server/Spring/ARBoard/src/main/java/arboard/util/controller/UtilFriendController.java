@@ -144,7 +144,7 @@ public class UtilFriendController {
 		
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
 		if(userProfile == null){
-			throw new SessionUnAuthorizedException();
+			throw new SessionUnAuthorizedException(session);
 		}
 		BigInteger id = (BigInteger) userProfile.get("id");
 		
@@ -163,7 +163,7 @@ public class UtilFriendController {
 
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
 		if(userProfile == null){
-			throw new SessionUnAuthorizedException();
+			throw new SessionUnAuthorizedException(session);
 		}
 		BigInteger id = (BigInteger) userProfile.get("id");
 		
