@@ -9,6 +9,7 @@ import javax.annotation.Resource;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import arboard.common.listener.ARBoardServletContextListener;
@@ -17,6 +18,9 @@ import arboard.util.dao.UtilDAO;
 @Service("utilservice")
 public class UtilServiceImpl implements UtilService {
 
+
+	Logger log = Logger.getLogger(this.getClass());
+	
 	@Resource(name = "utilDAO")
 	private UtilDAO utilDAO;
 
@@ -65,6 +69,30 @@ public class UtilServiceImpl implements UtilService {
 		param.put("id", id);
 		return utilDAO.selectUser(param);
 		 
+	}
+
+	@Override
+	public boolean checkDuplicateRequest(Map<String, Object> param){
+		
+		//duplicate
+		if( utilDAO.selectRequest(param) == null) {
+			return false;
+		}else{
+			return true;
+		}
+	}
+	
+	@Override
+	public void requestFriend(String senderId, String receiverId) {
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("senderId", senderId);
+		param.put("receiverId", receiverId);
+		//if duplicate is true, not insert request
+		if(checkDuplicateRequest(param)){
+			log.debug("Duplicate Request!! already exist senderId : "+senderId+", receiverId"+receiverId);
+			return ;
+		}
+		utilDAO.insertFriendRequest(param);
 	}
 
 }

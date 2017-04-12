@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.util.exception.NotFoundParameterException;
 import arboard.util.service.UtilService;
 
@@ -98,11 +99,13 @@ public class UtilFriendController {
 		// All Friend List
 		List<Map<String, Object>> friendList = utilService.getFriendList(id.toString());
 
+		//for test 
 		jsonObject.put("allFriends", friendList);
 
 		// Active User List
 		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
 
+		//for test
 		jsonObject.put("allUsers", activeUserList);
 
 		for (int i = 0; i < friendList.size(); i++) {
@@ -140,30 +143,31 @@ public class UtilFriendController {
 		} 
 		
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		if(userProfile == null){
+			throw new SessionUnAuthorizedException();
+		}
 		BigInteger id = (BigInteger) userProfile.get("id");
 		
 		Map<String, Object> jsonObject = utilService.getUserProfile(email,id.toString());
-		//친구 인지아닌지 테스트 -> mysql에서 처리.
+		//testing whether user is my friends is checked mysql. 'Y' : friend. 'N' : NOT friend.  
 		
 		return jsonObject;
 	}
-
-	// NOT IMPLEMENT.
+ 
 	// request friend
 	// URI - /friend/{id}/request
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.POST)
+	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public void requestFriend(@PathVariable String receiver_id, HttpServletResponse reponse, HttpSession session) {
 
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		if(userProfile == null){
+			throw new SessionUnAuthorizedException();
+		}
 		BigInteger id = (BigInteger) userProfile.get("id");
 		
-		// friend
-		// select * from relationship where id1=id and id2=receiver_id --> 존재하는지
-		// 존재하지않으면 신청
-		// 존재하면 오류 ! (클라이언트에서 오류 신청 비활성화)
-
+		utilService.requestFriend(id.toString(),receiver_id);
 	}
 
 	// NOT IMPLEMENT.

@@ -24,7 +24,7 @@ public class SessionMonitoring implements HttpSessionListener {
 		HttpSession session = event.getSession();
 		
 		//test
-		session.setMaxInactiveInterval(60);
+		session.setMaxInactiveInterval(120);
 		
 		ServletContext context = session.getServletContext();
 		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
