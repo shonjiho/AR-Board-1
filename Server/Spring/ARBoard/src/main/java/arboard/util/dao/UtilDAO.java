@@ -39,4 +39,21 @@ public class UtilDAO extends AbstractDAO{
 		return selectList("util.selectFriendRequestList", param);
 		
 	}
+
+	public void insertFriendResponse(Map<String, Object> param) {
+
+		insert("util.insertFriendResponse", param);
+		
+		
+	}
+ 
+	public void updateFriendRelationship(Map<String, Object> param) {
+		update("util.updateFriendRelationship",param);
+		
+	}
+
+	public void deleteFriendRequest(Map<String, Object> param) {
+		delete("util.deleteFriendRequest", param);
+		
+	}
 }

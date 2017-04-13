@@ -46,4 +46,22 @@
         	WHERE id2=#{receiverId} and state='N';
         ]]>
 	</select>
+
+	<insert id="insertFriendResponse" parameterType="hashmap">
+	<![CDATA[  
+        INSERT INTO relationship (id1,id2,state) 
+		VALUES (#{receiverId},#{senderId},'Y');
+        ]]>
+	</insert>
+
+	<update id="updateFriendRelationship" parameterType="hashmap">
+		UPDATE
+		relationship SET
+		state='Y' WHERE id1=#{senderId} and id2=#{receiverId};
+	</update>
+
+	<delete id="deleteFriendRequest" parameterType="hashmap">
+		DELETE FROM relationship
+		WHERE id1=#{senderId} and id2= #{receiverId}
+	</delete>
 </mapper>

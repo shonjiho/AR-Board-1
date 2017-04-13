@@ -33,7 +33,7 @@ public class UtilFriendController {
 	private UtilService utilService;
 
 	// list friend test method.
-	// URI - /friend/list/{id}
+	// URI - GET /friend/list/{id}
 	@RequestMapping(value = "/friend/list/{id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 
@@ -79,7 +79,7 @@ public class UtilFriendController {
 	}
 
 	// with session,list friends
-	// URI - /friend/list
+	// URI - GET /friend/list
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/friend/list", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
@@ -129,9 +129,9 @@ public class UtilFriendController {
 	}
 
 	// search friend
-	// URI - /friend/search?email={email}
+	// URI - GET /friend/search?email={email}
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/search", method = RequestMethod.GET)
+	@RequestMapping(value = "/friend/user", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object searchUser(@RequestParam(value = "email", required = false) String email,
 			HttpServletResponse reponse, HttpSession session) {
@@ -154,9 +154,9 @@ public class UtilFriendController {
 	}
 
 	// request friend
-	// URI - /friend/{id}/request
+	// URI - POST /friend/{id}/request
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.GET)
+	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	public void requestFriend(@PathVariable String receiver_id, HttpServletResponse reponse, HttpSession session) {
 
@@ -169,9 +169,8 @@ public class UtilFriendController {
 		utilService.requestFriend(id.toString(), receiver_id);
 	}
  
-	
 	// list request
-	// URI - /friend/request/list
+	// URI - GET /friend/request/list
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/friend/request/list", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
@@ -185,31 +184,32 @@ public class UtilFriendController {
 		jsonObject.put("friendRequests", requestlist);
 		return jsonObject;
 	}
-
-	// NOT IMPLEMENT.
+ 
 	// Accept response about Friend request.
-	// URI - /friend/{id}/response/accept
+	// URI - PUT /friend/{id}/response 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{sender_id}/response/accept", method = RequestMethod.POST)
+	@RequestMapping(value = "/friend/{sender_id}/response", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
 	public void responseFriendRequest_accept(@PathVariable String sender_id, HttpServletResponse reponse,
 			HttpSession session) {
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
 		BigInteger id = (BigInteger) userProfile.get("id");
-		// 친구 요청에 대한 응답
+		
+		utilService.acceptFriendRequest(id.toString(),sender_id);
+		
 	}
-
-	// NOT IMPLEMENT.
+ 
 	// Refuse response about Friend request.
-	// URI - /friend/{id}/response/refuse
+	// URI - DELETE /friend/{id}/request
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{sender_id}/response/refuse", method = RequestMethod.POST)
+	@RequestMapping(value = "/friend/{sender_id}/request", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	public void responseFriendRequest_refuse(@PathVariable String sender_id, HttpServletResponse reponse,
 			HttpSession session) {
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
-		BigInteger id = (BigInteger) userProfile.get("id");
-		// 친구 요청에 대한 응답
+		BigInteger id = (BigInteger) userProfile.get("id"); 
+		
+		utilService.refuseFriendRequest(id.toString(),sender_id);
 	}
 
 }

@@ -72,8 +72,9 @@ public class UtilServiceImpl implements UtilService {
 	}
 
 	@Override
-	public boolean checkDuplicateRequest(Map<String, Object> param){
-		
+	public boolean checkDuplicateRequest(String senderId ,String receiverId){
+
+		Map<String, Object> param = new HashMap<String, Object>();
 		//duplicate
 		if( utilDAO.selectRequest(param) == null) {
 			return false;
@@ -88,7 +89,7 @@ public class UtilServiceImpl implements UtilService {
 		param.put("senderId", senderId);
 		param.put("receiverId", receiverId);
 		//if duplicate is true, not insert request
-		if(checkDuplicateRequest(param)){
+		if(checkDuplicateRequest(senderId,receiverId)){
 			log.debug("Duplicate Request!! already exist senderId : "+senderId+", receiverId"+receiverId);
 			return ;
 		}
@@ -104,6 +105,30 @@ public class UtilServiceImpl implements UtilService {
 		List<Map<String, Object>> requestlist = utilDAO.selectFriendRequestList(param);
  
 		return requestlist;
+	}
+
+	
+	//this method must be transaction SQL.
+	@Override
+	public void acceptFriendRequest(String receiverId, String senderId) {
+
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("senderId", senderId);
+		param.put("receiverId", receiverId); 
+		if(checkDuplicateRequest(receiverId,senderId)){
+			log.debug("Duplicate Response!! already exist senderId : "+senderId+", receiverId"+receiverId);
+			return ;
+		}
+		utilDAO.insertFriendResponse(param);
+		utilDAO.updateFriendRelationship(param);
+	}
+
+	@Override
+	public void refuseFriendRequest(String receiverId, String senderId) { 
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("senderId", senderId);
+		param.put("receiverId", receiverId); 
+		utilDAO.deleteFriendRequest(param);
 	}
 
 }

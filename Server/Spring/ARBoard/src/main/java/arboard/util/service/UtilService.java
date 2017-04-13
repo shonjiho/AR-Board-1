@@ -1,6 +1,5 @@
 package arboard.util.service;
  
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,8 +12,12 @@ public interface UtilService {
 	List<Map<String, Object>> getActiveUser(HttpSession session);
 	Map<String, Object> getUserProfile(String email, String id);
 	void requestFriend(String senderId, String receiverId); 
-	boolean checkDuplicateRequest(Map<String, Object> param);
+	boolean checkDuplicateRequest(String senderId,String receiverId);
 	List<Map<String, Object>> getFriendRequestList(String string);
+	void acceptFriendRequest(String receiverId, String senderId);
+	void refuseFriendRequest(String receiverId, String senderId);
+	
+	
 	
 }
 
