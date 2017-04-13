@@ -62,6 +62,6 @@
 
 	<delete id="deleteFriendRequest" parameterType="hashmap">
 		DELETE FROM relationship
-		WHERE id1=#{senderId} and id2= #{receiverId}
+		WHERE id1=#{senderId} and id2= #{receiverId} and state='N'
 	</delete>
 </mapper>

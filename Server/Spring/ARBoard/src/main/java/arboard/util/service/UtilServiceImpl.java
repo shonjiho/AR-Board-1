@@ -75,6 +75,9 @@ public class UtilServiceImpl implements UtilService {
 	public boolean checkDuplicateRequest(String senderId ,String receiverId){
 
 		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("senderId", senderId);
+		param.put("receiverId", receiverId);
+		
 		//duplicate
 		if( utilDAO.selectRequest(param) == null) {
 			return false;
