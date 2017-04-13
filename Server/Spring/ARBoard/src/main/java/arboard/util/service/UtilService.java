@@ -1,5 +1,6 @@
 package arboard.util.service;
  
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -13,6 +14,8 @@ public interface UtilService {
 	Map<String, Object> getUserProfile(String email, String id);
 	void requestFriend(String senderId, String receiverId); 
 	boolean checkDuplicateRequest(Map<String, Object> param);
+	List<Map<String, Object>> getFriendRequestList(String string);
+	
 }
 
 

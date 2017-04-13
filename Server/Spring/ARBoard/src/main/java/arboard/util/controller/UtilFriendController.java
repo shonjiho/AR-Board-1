@@ -34,7 +34,6 @@ public class UtilFriendController {
 
 	// list friend test method.
 	// URI - /friend/list/{id}
-	// f
 	@RequestMapping(value = "/friend/list/{id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 
@@ -99,13 +98,13 @@ public class UtilFriendController {
 		// All Friend List
 		List<Map<String, Object>> friendList = utilService.getFriendList(id.toString());
 
-		//for test 
+		// for test
 		jsonObject.put("allFriends", friendList);
 
 		// Active User List
 		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
 
-		//for test
+		// for test
 		jsonObject.put("allUsers", activeUserList);
 
 		for (int i = 0; i < friendList.size(); i++) {
@@ -128,8 +127,7 @@ public class UtilFriendController {
 
 		return jsonObject;
 	}
-	 
-	
+
 	// search friend
 	// URI - /friend/search?email={email}
 	@SuppressWarnings("unchecked")
@@ -137,23 +135,24 @@ public class UtilFriendController {
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object searchUser(@RequestParam(value = "email", required = false) String email,
 			HttpServletResponse reponse, HttpSession session) {
-		//if email empty
-		if(email == null){
+		// if email empty
+		if (email == null) {
 			throw new NotFoundParameterException("email");
-		} 
-		
+		}
+
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
-		if(userProfile == null){
+		if (userProfile == null) {
 			throw new SessionUnAuthorizedException(session);
 		}
 		BigInteger id = (BigInteger) userProfile.get("id");
-		
-		Map<String, Object> jsonObject = utilService.getUserProfile(email,id.toString());
-		//testing whether user is my friends is checked mysql. 'Y' : friend. 'N' : NOT friend.  
-		
+
+		Map<String, Object> jsonObject = utilService.getUserProfile(email, id.toString());
+		// testing whether user is my friends is checked mysql. 'Y' : friend.
+		// 'N' : NOT friend.
+
 		return jsonObject;
 	}
- 
+
 	// request friend
 	// URI - /friend/{id}/request
 	@SuppressWarnings("unchecked")
@@ -162,15 +161,15 @@ public class UtilFriendController {
 	public void requestFriend(@PathVariable String receiver_id, HttpServletResponse reponse, HttpSession session) {
 
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
-		if(userProfile == null){
+		if (userProfile == null) {
 			throw new SessionUnAuthorizedException(session);
 		}
 		BigInteger id = (BigInteger) userProfile.get("id");
-		
-		utilService.requestFriend(id.toString(),receiver_id);
-	}
 
-	// NOT IMPLEMENT.
+		utilService.requestFriend(id.toString(), receiver_id);
+	}
+ 
+	
 	// list request
 	// URI - /friend/request/list
 	@SuppressWarnings("unchecked")
@@ -181,7 +180,10 @@ public class UtilFriendController {
 		BigInteger id = (BigInteger) userProfile.get("id");
 		// 친구 요청 리스트 검색
 
-		return new Object();
+		Map<String, Object> jsonObject = new HashMap<String, Object>();
+		List<Map<String, Object>> requestlist = utilService.getFriendRequestList(id.toString());
+		jsonObject.put("friendRequests", requestlist);
+		return jsonObject;
 	}
 
 	// NOT IMPLEMENT.

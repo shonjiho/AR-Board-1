@@ -22,7 +22,7 @@
         		ON id=id2 
         	WHERE userEmail=#{email};
         ]]>
-	</select>  
+	</select>
 	<insert id="insertFriendRequest" parameterType="hashmap">
 	
 		<![CDATA[
@@ -35,6 +35,15 @@
 			SELECT * FROM relationship
 			WHERE id1=#{senderId} and id2=#{receiverId};
 		]]>
-	
+
+	</select>
+	<select id="selectFriendRequestList" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[  
+        
+        	SELECT id,userName,userEmail 
+        	FROM user JOIN relationship ON id1=id 
+        	WHERE id2=#{receiverId} and state='N';
+        ]]>
 	</select>
 </mapper>

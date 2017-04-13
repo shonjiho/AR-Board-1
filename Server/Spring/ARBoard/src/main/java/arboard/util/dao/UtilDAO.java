@@ -31,4 +31,12 @@ public class UtilDAO extends AbstractDAO{
 		
 		return selectOne("util.selectRequest",param);
 	}
+
+ 
+
+	public List<Map<String, Object>> selectFriendRequestList(Map<String, Object> param) {
+		 
+		return selectList("util.selectFriendRequestList", param);
+		
+	}
 }

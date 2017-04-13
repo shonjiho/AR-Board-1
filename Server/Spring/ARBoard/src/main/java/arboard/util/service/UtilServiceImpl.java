@@ -95,4 +95,15 @@ public class UtilServiceImpl implements UtilService {
 		utilDAO.insertFriendRequest(param);
 	}
 
+	@Override
+	public List<Map<String, Object>> getFriendRequestList(String receiverId) {
+
+		Map<String, Object> param = new HashMap<String, Object>();
+		param.put("receiverId", receiverId);
+		
+		List<Map<String, Object>> requestlist = utilDAO.selectFriendRequestList(param);
+ 
+		return requestlist;
+	}
+
 }
