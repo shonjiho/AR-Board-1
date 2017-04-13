@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+import arboard.util.exception.DuplicateIdExcpetion;
 import arboard.util.exception.NotFoundParameterException;
 
 @ControllerAdvice
@@ -25,6 +26,17 @@ public class UtilExceptionHandler {
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "Not Found Parameter(\""+e.getParameterName() +"\")");
+		body.put("error", subJSONObject);
+		return body;
+	}
+	
+	@ExceptionHandler(value = DuplicateIdExcpetion.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	public Map<String, Object> DuplicateIdException() { 
+		Map<String, Object> body = new HashMap<String, Object>();
+		Map<String, String> subJSONObject = new HashMap<String, String>();
+		subJSONObject.put("message", "Not allow to request me to me relationship");
 		body.put("error", subJSONObject);
 		return body;
 	}

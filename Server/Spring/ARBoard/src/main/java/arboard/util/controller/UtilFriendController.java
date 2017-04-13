@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.auth.exception.SessionUnAuthorizedException;
+import arboard.util.exception.DuplicateIdExcpetion;
 import arboard.util.exception.NotFoundParameterException;
 import arboard.util.service.UtilService;
 
@@ -99,13 +100,13 @@ public class UtilFriendController {
 		List<Map<String, Object>> friendList = utilService.getFriendList(id.toString());
 
 		// for test
-		jsonObject.put("allFriends", friendList);
+		//jsonObject.put("allFriends", friendList);
 
 		// Active User List
 		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
 
 		// for test
-		jsonObject.put("allUsers", activeUserList);
+		//jsonObject.put("allUsers", activeUserList);
 
 		for (int i = 0; i < friendList.size(); i++) {
 			Map<String, Object> friendMap = friendList.get(i);
@@ -165,7 +166,11 @@ public class UtilFriendController {
 			throw new SessionUnAuthorizedException(session);
 		}
 		BigInteger id = (BigInteger) userProfile.get("id");
-
+		
+		if(id.toString().equals(receiver_id)){
+			throw new DuplicateIdExcpetion();
+		}
+		
 		utilService.requestFriend(id.toString(), receiver_id);
 	}
  
@@ -176,8 +181,7 @@ public class UtilFriendController {
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object getFriendRequestList(HttpServletResponse reponse, HttpSession session) {
 		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
-		BigInteger id = (BigInteger) userProfile.get("id");
-		// 친구 요청 리스트 검색
+		BigInteger id = (BigInteger) userProfile.get("id"); 
 
 		Map<String, Object> jsonObject = new HashMap<String, Object>();
 		List<Map<String, Object>> requestlist = utilService.getFriendRequestList(id.toString());
