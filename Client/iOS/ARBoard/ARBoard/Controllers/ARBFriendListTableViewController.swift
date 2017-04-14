@@ -34,17 +34,26 @@ class ARBFriendListTableViewController: UITableViewController {
         self.setupFriendListView()
        
     }
-
+    
+    @IBAction func addAction(_ sender: Any) {
+        guard dataManager.isCurrentUser else {
+            return
+        }
+        self.performSegue(withIdentifier: SegueIdentifier.searchFromFriendList, sender: nil)
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.dataManager.getRequest(self) { (isSuccess) in
-            if isSuccess {
-                self.tableView.reloadData()
-            }
-        }
+        self.fetchFriendList()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    private func fetchFriendList(){
+        self.dataManager.getRequest(self, requestType: .friend) { (isSuccess) in
+            if let isSuccess = isSuccess as? Bool, isSuccess {
+                self.tableView.reloadData()
+            }
+        }
     }
     fileprivate func setupFriendListView(){
         self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
@@ -64,6 +73,7 @@ class ARBFriendListTableViewController: UITableViewController {
         self.tableView.addSubview(self.pullUpRefreshControl)
     }
     func pullDownRefresh(){
+        self.fetchFriendList()
         self.pullUpRefreshControl.endRefreshing()
     }
     func showAlertController(identifier:String?){

@@ -21,6 +21,18 @@ enum OAuthDomain {
     }
 }
 
+enum RequestType {
+    case friend
+    case user
+    var description:String {
+        switch self {
+        case .friend:
+            return "friend"
+        case .user:
+            return "user"
+        }
+    }
+}
 
 struct CellIdentifier {
     static let etcBasic: String = "AREtcBasicTableCell"
@@ -33,6 +45,7 @@ struct CellIdentifier {
 struct SegueIdentifier{
     static let mainFromLaunch: String = "ARBMainTabbarControllerFromLaunchViewControllerSegueIdentifier"
     static let signInFromAll: String = "ARBSigninSegueIdentifier"
+    static let searchFromFriendList:String = "ARBSearchViewControllerFromFriendListViewControllerSegueIdentifier"
 }
 
 struct NotificationName{
