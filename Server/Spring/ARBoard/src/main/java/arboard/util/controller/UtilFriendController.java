@@ -98,15 +98,10 @@ public class UtilFriendController {
 
 		// All Friend List
 		List<Map<String, Object>> friendList = utilService.getFriendList(id.toString());
-
-		// for test
-		//jsonObject.put("allFriends", friendList);
-
+ 
 		// Active User List
 		List<Map<String, Object>> activeUserList = utilService.getActiveUser(session);
-
-		// for test
-		//jsonObject.put("allUsers", activeUserList);
+ 
 
 		for (int i = 0; i < friendList.size(); i++) {
 			Map<String, Object> friendMap = friendList.get(i);
@@ -125,6 +120,10 @@ public class UtilFriendController {
 				OffFriendArray.add((HashMap<String, Object>) friendMap);
 			}
 		}
+		
+
+		List<Map<String, Object>> requestlist = utilService.getFriendRequestList(id.toString());
+		jsonObject.put("friendRequests", requestlist);
 
 		return jsonObject;
 	}

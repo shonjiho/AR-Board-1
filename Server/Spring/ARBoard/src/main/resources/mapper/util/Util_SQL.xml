@@ -5,7 +5,7 @@
 	<select id="selectFriendList" parameterType="hashmap"
 		resultType="hashmap">
         <![CDATA[ 
-        	SELECT id, username , userEmail 
+        	SELECT id, userName , userEmail 
         	FROM user JOIN relationship ON user.id=relationship.id2  
         	WHERE relationship.id1=#{id} and state='Y';
         ]]>
