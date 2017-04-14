@@ -65,7 +65,30 @@ class ARBDataManager : NSObject {
             })
         }
     }
-
+    func createRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: ((Any?) -> Void)?){
+        var requestUrl:String = ""
+        switch requestType {
+        case .friend:
+            if let identifier = identifier {
+                requestUrl = "http://125.130.223.88/arboard/friend/\(identifier)/request"
+            }
+            
+        case .user:
+            if let identifier = identifier {
+                requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            }
+        default:
+            return
+        }
+        let requestCloser = Alamofire.request(requestUrl)
+        requestCloser.response { (dataResponse) in
+            guard dataResponse.response?.statusCode == 200 else {
+                dump("ERROR \(dataResponse.response?.statusCode)")
+                return
+            }
+            dump(dataResponse.response?.statusCode)
+        }
+    }
     func getRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
         var requestUrl:String = ""
         switch requestType {

@@ -53,7 +53,10 @@ class ARBSearchViewController: UIViewController {
         self.requestButton.isHidden = true
     }
     @IBAction func requestAction(_ sender: Any) {
-        
+        guard !self.requestButton.isHidden, let text = self.searchBar.text else {
+            return
+        }
+        self.dataManager.createRequest(self, requestType: RequestType.friend, identifier: text, completion: nil)
     }
     @IBAction func cancelAction(_ sender: Any) {
         self.searchBar.endEditing(true)
