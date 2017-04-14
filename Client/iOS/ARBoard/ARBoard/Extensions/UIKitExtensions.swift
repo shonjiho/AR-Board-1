@@ -31,6 +31,16 @@ extension UIAlertController {
         }
         viewController.present(alertController, animated: true, completion: nil)
     }
+    static func errorShowAlerViewController(_ viewController: UIViewController, statusCode:Int, error:NetworkError){
+        switch statusCode {
+        case 200:
+            print(statusCode)
+        default:
+            
+            self.showAlertViewController(viewController, title: error.title, message: error.message, alertActions: [UIAlertAction.signInAlertAction, UIAlertAction.cancel])
+        }
+    
+    }
 }
 
 extension UIBarButtonItem {
@@ -44,6 +54,10 @@ extension UIVisualEffectView {
 extension UIAlertAction {
     static let cancel:UIAlertAction = UIAlertAction.init(title: "취소", style: .cancel, handler: nil)
     static let done:UIAlertAction = UIAlertAction.init(title: "확인", style: .cancel, handler: nil)
+    
+    static let signInAlertAction: UIAlertAction = UIAlertAction.init(title: "로그인", style: .default, handler: { (action) in
+        NotificationCenter.default.post(name: NotificationName.shouldShowSignInViewController, object: nil)
+    })
 }
 
 extension UIApplication {

@@ -9,7 +9,6 @@
 import UIKit
 
 class ARBFriendListTableViewController: UITableViewController {
-//    {onFriends:{[{"userEmail":"93yutaechoi@gmail.com","id":4,"userName":"Dev YT"}]},offFriends:{[]}}
     struct Section {
         static let headerTitles: [String] = ["접속 중인 친구",  "접속 중이 아닌 친구"]
     }
@@ -36,8 +35,15 @@ class ARBFriendListTableViewController: UITableViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.dataManager.getRequest(self) { (isSuccess) in
+            if isSuccess {
+                self.tableView.reloadData()
+            }
+        }
     }
-
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+    }
     fileprivate func setupFriendListView(){
         self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
         self.tableView.tableFooterView = UIView.init(frame: CGRect.zero)
@@ -84,8 +90,6 @@ extension ARBFriendListTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return 5
-        /*
         guard let friends = self.dataManager.friends else {
             return 0
         }
@@ -97,12 +101,11 @@ extension ARBFriendListTableViewController {
         default:
             return 0
         }
-         */
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: CellIdentifier.friendList, for: indexPath) as! ARBFriendTableViewCell
-        /*
+
         guard let friends = self.dataManager.friends else {
             return cell
         }
@@ -116,22 +119,15 @@ extension ARBFriendListTableViewController {
         default:
             print("Error")
         }
-         */
-        // Test
-        cell.topLabel.text = "최유태"
-        cell.bottomLabel.text =  "하하"
         
         cell.selectedBackgroundView = UIVisualEffectView.dark
         return cell
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        /*
         guard indexPath.section == SectionType.on.key ,let friends = self.dataManager.friends, let onFriends = friends.onFriends else {
             return
         }
-         self.showAlertController(identifier: onFriends[indexPath.row].identifier)
-         */
-        self.showAlertController(identifier: "ABC")
+        self.showAlertController(identifier: onFriends[indexPath.row].identifier)
     }
 }

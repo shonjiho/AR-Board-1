@@ -30,7 +30,7 @@ extension ARBSignInViewController: FBSDKLoginButtonDelegate {
         dump(accessTokenString)
         dataManager.authRequest(self, domain: OAuthDomain.facebook, token: accessTokenString) { (isSuccess) in
             if isSuccess {
-                
+                self.dismiss(animated: true, completion: nil)
             }
         }
     }

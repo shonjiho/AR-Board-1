@@ -39,9 +39,9 @@ class ARBDataManager : NSObject {
         }
     }
  
-    func authRequest(_ viewController: UIViewController, domain:OAuthDomain, token:String, completion: @escaping ((Bool) -> Void)){
+    func authRequest(_ viewController: UIViewController? = nil, domain:OAuthDomain, token:String, completion: @escaping ((Bool) -> Void)){
         let requestUrl:String = URL.auth(domain: domain.description, token: token)
-        dump(requestUrl)
+        
         Alamofire.request(requestUrl).responseObject { (dataResponse: DataResponse<User>) in
             guard dataResponse.result.isSuccess else {
                 dump("Error Code \(dataResponse.response?.statusCode)")
@@ -49,6 +49,10 @@ class ARBDataManager : NSObject {
                 return
             }
             self.currentUser = dataResponse.result.value
+            // KeyChain에 OAuth Token 없을 경우 저장
+            if KeychainService.loadOauthToken() == nil {
+                KeychainService.saveOauthToken(token: token)
+            }
             completion(true)
         }
     }
@@ -62,14 +66,19 @@ class ARBDataManager : NSObject {
         }
     }
 
-    func getRequest(_ viewController: UIViewController, domain:OAuthDomain, token:String, completion: @escaping ((Bool) -> Void)){
+    func getRequest(_ viewController: UIViewController, identifier:String?=nil, completion: @escaping ((Bool) -> Void)){
         let requestUrl:String = "http://125.130.223.88/arboard/friend/list"
-        
+        dump(requestUrl)
         let requestCloser = Alamofire.request(requestUrl)
         
         requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
-            guard dataResponse.result.isSuccess else {
+            guard dataResponse.response?.statusCode == 200 else {
                 dump("Error Code \(dataResponse.response?.statusCode)")
+                
+                // Example
+                let error = NetworkError(title: "로그인", message: "로그인 하세요")
+                UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
+                
                 completion(false)
                 return
             }

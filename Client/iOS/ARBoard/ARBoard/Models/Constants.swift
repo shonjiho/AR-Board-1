@@ -21,9 +21,20 @@ enum OAuthDomain {
     }
 }
 
+
 struct CellIdentifier {
     static let etcBasic: String = "AREtcBasicTableCell"
     static let etcDetail: String = "AREtcDetailTableCell"
     static let etcSubtitle: String = "AREtcSubTitleTableCell"
     static let friendList: String = "ARBFriendTableViewCell"
+}
+
+struct SegueIdentifier{
+    static let mainFromLaunch: String = "ARBMainTabbarControllerFromLaunchViewControllerSegueIdentifier"
+    static let signInFromAll: String = "ARBSigninSegueIdentifier"
+}
+
+struct NotificationName{
+    static let shouldShowSignInViewController: NSNotification.Name = NSNotification.Name(rawValue: "showSignInViewContoller")
+    
 }
