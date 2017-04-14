@@ -111,10 +111,12 @@ extension ARBFriendListTableViewController {
         }
         switch indexPath.section {
         case SectionType.on.key:
-            cell.topLabel.text = friends.onFriends?[indexPath.row].userName
+//            cell.topLabel.text = friends.onFriends?[indexPath.row].userName
+            cell.topLabel.text = friends.onFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text =  "TEST"
         case SectionType.off.key:
-            cell.topLabel.text =  friends.offFriends?[indexPath.row].userName
+//            cell.topLabel.text =  friends.offFriends?[indexPath.row].userName
+            cell.topLabel.text =  friends.offFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text = "TEST"
         default:
             print("Error")

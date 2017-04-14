@@ -68,7 +68,6 @@ class ARBDataManager : NSObject {
 
     func getRequest(_ viewController: UIViewController, identifier:String?=nil, completion: @escaping ((Bool) -> Void)){
         let requestUrl:String = "http://125.130.223.88/arboard/friend/list"
-        dump(requestUrl)
         let requestCloser = Alamofire.request(requestUrl)
         
         requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
