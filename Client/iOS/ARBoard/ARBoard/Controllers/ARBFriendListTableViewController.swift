@@ -10,17 +10,19 @@ import UIKit
 
 class ARBFriendListTableViewController: UITableViewController {
     struct Section {
-        static let headerTitles: [String] = ["접속 중인 친구",  "접속 중이 아닌 친구"]
+        static let headerTitles: [String] = ["친구 요청", "접속 중인 친구",  "접속 중이 아닌 친구"]
     }
     
     enum SectionType {
-        case on, off
+        case request, on, off
         var key:Int {
             switch self {
-            case .on:
+            case .request:
                 return 0
-            case .off:
+            case .on:
                 return 1
+            case .off:
+                return 2
             }
         }
     }
@@ -32,17 +34,26 @@ class ARBFriendListTableViewController: UITableViewController {
         self.setupFriendListView()
        
     }
-
+    
+    @IBAction func addAction(_ sender: Any) {
+        guard dataManager.isCurrentUser else {
+            return
+        }
+        self.performSegue(withIdentifier: SegueIdentifier.searchFromFriendList, sender: nil)
+    }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.dataManager.getRequest(self) { (isSuccess) in
-            if isSuccess {
-                self.tableView.reloadData()
-            }
-        }
+        self.fetchFriendList()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+    }
+    private func fetchFriendList(){
+        self.dataManager.getRequest(self, requestType: .friend) { (isSuccess) in
+            if let isSuccess = isSuccess as? Bool, isSuccess {
+                self.tableView.reloadData()
+            }
+        }
     }
     fileprivate func setupFriendListView(){
         self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
@@ -62,6 +73,7 @@ class ARBFriendListTableViewController: UITableViewController {
         self.tableView.addSubview(self.pullUpRefreshControl)
     }
     func pullDownRefresh(){
+        self.fetchFriendList()
         self.pullUpRefreshControl.endRefreshing()
     }
     func showAlertController(identifier:String?){
@@ -94,6 +106,8 @@ extension ARBFriendListTableViewController {
             return 0
         }
         switch section {
+        case SectionType.request.key:
+            return friends.requestFriends?.count ?? 0
         case SectionType.on.key:
             return friends.onFriends?.count ?? 0
         case SectionType.off.key:
@@ -109,12 +123,20 @@ extension ARBFriendListTableViewController {
         guard let friends = self.dataManager.friends else {
             return cell
         }
+
         switch indexPath.section {
+        case SectionType.request.key:
+            cell.selectionStyle = .none
+            cell.topLabel.text = friends.requestFriends?[indexPath.row].userName
+            cell.bottomLabel.text = friends.requestFriends?[indexPath.row].userEmail
+            cell.requestButton.isHidden = false
         case SectionType.on.key:
 //            cell.topLabel.text = friends.onFriends?[indexPath.row].userName
             cell.topLabel.text = friends.onFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text =  "TEST"
+            cell.selectedBackgroundView = UIVisualEffectView.dark
         case SectionType.off.key:
+            cell.selectionStyle = .none
 //            cell.topLabel.text =  friends.offFriends?[indexPath.row].userName
             cell.topLabel.text =  friends.offFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text = "TEST"
@@ -122,7 +144,6 @@ extension ARBFriendListTableViewController {
             print("Error")
         }
         
-        cell.selectedBackgroundView = UIVisualEffectView.dark
         return cell
     }
     

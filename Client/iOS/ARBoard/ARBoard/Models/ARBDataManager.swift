@@ -65,25 +65,73 @@ class ARBDataManager : NSObject {
             })
         }
     }
-
-    func getRequest(_ viewController: UIViewController, identifier:String?=nil, completion: @escaping ((Bool) -> Void)){
-        let requestUrl:String = "http://125.130.223.88/arboard/friend/list"
+    func createRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: ((Any?) -> Void)?){
+        var requestUrl:String = ""
+        switch requestType {
+        case .friend:
+            if let identifier = identifier {
+                requestUrl = "http://125.130.223.88/arboard/friend/\(identifier)/request"
+            }
+            
+        case .user:
+            if let identifier = identifier {
+                requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            }
+        default:
+            return
+        }
         let requestCloser = Alamofire.request(requestUrl)
-        
-        requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
+        requestCloser.response { (dataResponse) in
             guard dataResponse.response?.statusCode == 200 else {
-                dump("Error Code \(dataResponse.response?.statusCode)")
-                
-                // Example
-                let error = NetworkError(title: "로그인", message: "로그인 하세요")
-                UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
-                
-                completion(false)
+                dump("ERROR \(dataResponse.response?.statusCode)")
                 return
             }
-            self.friends = dataResponse.result.value
-            completion(true)
+            dump(dataResponse.response?.statusCode)
         }
     }
-    
+    func getRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
+        var requestUrl:String = ""
+        switch requestType {
+        case .friend:
+            requestUrl = "http://125.130.223.88/arboard/friend/list"
+        case .user:
+            if let identifier = identifier {
+                requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            }
+        default:
+            return
+        }
+        let requestCloser = Alamofire.request(requestUrl)
+        switch requestType {
+        case .friend:
+            requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
+                guard dataResponse.response?.statusCode == 200 else {
+                    dump("Error Code \(dataResponse.response?.statusCode)")
+                    dump(dataResponse.response?.allHeaderFields)
+                    dump(dataResponse.result)
+                    
+                    // Example
+                    let error = NetworkError(title: "로그인", message: "로그인 하세요")
+                    UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
+                    
+                    completion(false)
+                    return
+                }
+                self.friends = dataResponse.result.value
+                completion(true)
+            }
+        case .user:
+            requestCloser.responseObject { (dataResponse: DataResponse<User>) in
+                dump(dataResponse.response?.statusCode)
+                dump(dataResponse.response)
+                
+                dump(dataResponse.result.value)
+                completion(dataResponse.result.value)
+            }
+        default:
+            return
+        }
+        
+    }
+   
 }
