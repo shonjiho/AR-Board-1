@@ -13,4 +13,5 @@ extension URL {
     static func auth(domain:String, token:String)->String {
         return "\(base)/auth/\(domain)/login?access_token=\(token)"
     }
+
 }
