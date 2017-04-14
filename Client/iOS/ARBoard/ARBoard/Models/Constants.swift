@@ -25,4 +25,5 @@ struct CellIdentifier {
     static let etcBasic: String = "AREtcBasicTableCell"
     static let etcDetail: String = "AREtcDetailTableCell"
     static let etcSubtitle: String = "AREtcSubTitleTableCell"
+    static let friendList: String = "ARBFriendTableViewCell"
 }
