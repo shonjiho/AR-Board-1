@@ -28,6 +28,8 @@ public class AuthController {
 	@Resource(name = "authservice")
 	private AuthService authService;
 
+	// valify oauthToken and get User Profile and make user session(attribute add - userProfile , status  ) 
+	// URI GET /auth/facebook/login? access_token ={access_token} 
 	@RequestMapping(value = "/auth/facebook/login", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object FaceBooklogin(@RequestParam(value="access_token",required=false) String accessToken,  HttpSession session) throws Exception {
@@ -49,7 +51,7 @@ public class AuthController {
 
 		//Login recently information update or insert.
 		Map<String, Object> userProfile = authService.getUserInfo(profile);
-		
+
 		//Session Information Setting.
 		session.setAttribute("status",true);
 		session.setAttribute("userProfile", userProfile);

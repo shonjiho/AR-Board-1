@@ -1,7 +1,5 @@
 package arboard.session;
 
-import java.util.Map;
-
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.logging.Log;
@@ -9,7 +7,6 @@ import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.common.logger.LoggerAspect;
@@ -21,7 +18,7 @@ public class SessionAspect {
 	
 
 	//session test Aspect advice 
-	 @Around("execution(* arboard.auth.controller.AuthController.sessionTest(..))")
+	 @Around("execution(* arboard.util.controller.UtilFriendController.*(..))")
 	 public Object Test(ProceedingJoinPoint joinPoint) throws Throwable{
 		 HttpSession session = null;
 		 for(Object obj : joinPoint.getArgs()){
@@ -30,13 +27,10 @@ public class SessionAspect {
 			 }
 		 } 
 		  
-		 if(session.getAttribute("status").equals(null)){ 
-			 
-			 throw new SessionUnAuthorizedException();
-		 }else{   
-			 @SuppressWarnings("unchecked")
-			 Map<String,Object> userProfile =  (Map<String, Object>) session.getAttribute("userProfile");
-			 log.debug("["+userProfile.get("userName")+"("+userProfile.get("userEmail")+")"+"] Access.");
+		 if(session.getAttribute("status") == null){ 
+			 //not session
+			 throw new SessionUnAuthorizedException(session);
+ 		 }else{   
 			 return joinPoint.proceed();
 		 }
 	 }

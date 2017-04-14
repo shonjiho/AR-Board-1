@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="util">
+	<select id="selectFriendList" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[ 
+        	SELECT id, username , userEmail 
+        	FROM user JOIN relationship ON user.id=relationship.id2  
+        	WHERE relationship.id1=#{id} and state='Y';
+        ]]>
+	</select>
+	<select id="selectUserToEmail" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[ 
+        	SELECT id,userName,userEmail,IFNULL(state,'N') as state 
+        	FROM user LEFT JOIN (
+        		SELECT id1,id2,state 
+        		FROM relationship 
+        		WHERE id1=#{id}
+        		) as relationship
+        		ON id=id2 
+        	WHERE userEmail=#{email};
+        ]]>
+	</select>
+	<insert id="insertFriendRequest" parameterType="hashmap">
+	
+		<![CDATA[
+		INSERT INTO relationship (id1,id2,state) 
+			VALUES (#{senderId},#{receiverId},'N');
+		]]>
+	</insert>
+	<select id="selectRequest" parameterType="hashmap" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM relationship
+			WHERE id1=#{senderId} and id2=#{receiverId};
+		]]>
+
+	</select>
+	<select id="selectFriendRequestList" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[  
+        
+        	SELECT id,userName,userEmail 
+        	FROM user JOIN relationship ON id1=id 
+        	WHERE id2=#{receiverId} and state='N';
+        ]]>
+	</select>
+
+	<insert id="insertFriendResponse" parameterType="hashmap">
+	<![CDATA[  
+        INSERT INTO relationship (id1,id2,state) 
+		VALUES (#{receiverId},#{senderId},'Y');
+        ]]>
+	</insert>
+
+	<update id="updateFriendRelationship" parameterType="hashmap">
+		UPDATE
+		relationship SET
+		state='Y' WHERE id1=#{senderId} and id2=#{receiverId};
+	</update>
+
+	<delete id="deleteFriendRequest" parameterType="hashmap">
+		DELETE FROM relationship
+		WHERE id1=#{senderId} and id2= #{receiverId} and state='N'
+	</delete>
+</mapper>

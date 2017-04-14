@@ -45,12 +45,14 @@ public class AuthExceptionHandler {
 	
 	@ExceptionHandler(value = SessionUnAuthorizedException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public Map<String, Object> SessionUnAuthorizedException() { 
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public Map<String, Object> SessionUnAuthorizedException(SessionUnAuthorizedException exception) { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "denial request (Unauthorized)");
 		body.put("error", subJSONObject);
+		//session remove.
+		exception.getSession().invalidate();
 		return body;
 	}
 	
