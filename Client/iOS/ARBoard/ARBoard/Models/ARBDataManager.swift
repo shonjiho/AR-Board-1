@@ -61,4 +61,21 @@ class ARBDataManager : NSObject {
             })
         }
     }
+
+    func getRequest(_ viewController: UIViewController, domain:OAuthDomain, token:String, completion: @escaping ((Bool) -> Void)){
+        let requestUrl:String = "http://125.130.223.88/arboard/friend/list"
+        
+        let requestCloser = Alamofire.request(requestUrl)
+        
+        requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
+            guard dataResponse.result.isSuccess else {
+                dump("Error Code \(dataResponse.response?.statusCode)")
+                completion(false)
+                return
+            }
+            self.friends = dataResponse.result.value
+            completion(true)
+        }
+    }
+    
 }
