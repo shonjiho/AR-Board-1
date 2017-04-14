@@ -73,6 +73,8 @@ class ARBDataManager : NSObject {
         requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
             guard dataResponse.response?.statusCode == 200 else {
                 dump("Error Code \(dataResponse.response?.statusCode)")
+                dump(dataResponse.response?.allHeaderFields)
+                dump(dataResponse.result)
                 
                 // Example
                 let error = NetworkError(title: "로그인", message: "로그인 하세요")

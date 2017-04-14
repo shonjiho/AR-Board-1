@@ -129,8 +129,8 @@
 				96AA9BA91EA0A20A00B526C5 /* ARBMainTabbarViewController.swift */,
 				9642912D1E829001007D1862 /* ARBSignInViewController.swift */,
 				964F30D61E9615A600221986 /* ARBGameJoinViewController.swift */,
-				964F30DA1E9619B000221986 /* ARBEtcTableViewController.swift */,
 				9674E8141E9A8716009B5314 /* ARBFriendListTableViewController.swift */,
+				964F30DA1E9619B000221986 /* ARBEtcTableViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";

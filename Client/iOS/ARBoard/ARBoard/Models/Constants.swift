@@ -27,6 +27,7 @@ struct CellIdentifier {
     static let etcDetail: String = "AREtcDetailTableCell"
     static let etcSubtitle: String = "AREtcSubTitleTableCell"
     static let friendList: String = "ARBFriendTableViewCell"
+    static let requestFriendList: String = "ARBFriendTableViewCell"
 }
 
 struct SegueIdentifier{

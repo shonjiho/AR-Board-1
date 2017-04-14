@@ -10,12 +10,14 @@ import Foundation
 import ObjectMapper
 
 class Friends : Mappable {
+    var requestFriends: [User]?
     var onFriends: [User]?
     var offFriends: [User]?
     required init?(map: Map){
         
     }
     func mapping(map: Map) {
+        self.requestFriends <- map["requestFriends"]
         self.onFriends <- map["onFriends"]
         self.offFriends <- map["offFriends"]
     }
