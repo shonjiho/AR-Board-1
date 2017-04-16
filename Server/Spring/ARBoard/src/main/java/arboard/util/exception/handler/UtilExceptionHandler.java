@@ -21,22 +21,24 @@ public class UtilExceptionHandler {
 	
 	@ExceptionHandler(value = NotFoundParameterException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)//400 Bad Request
 	public Map<String, Object> NotFoundParameterException(NotFoundParameterException e) { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "Not Found Parameter(\""+e.getParameterName() +"\")");
+		subJSONObject.put("title", "NOT_FOUND_PARAMETER");
 		body.put("error", subJSONObject);
 		return body;
 	}
 	
 	@ExceptionHandler(value = DuplicateIdExcpetion.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)//400 Bad Request
 	public Map<String, Object> DuplicateIdException() { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "Not allow to request me to me relationship");
+		subJSONObject.put("title", "ABNORMAL_REQUEST");
 		body.put("error", subJSONObject);
 		return body;
 	}
