@@ -1,4 +1,4 @@
-package arboard.session.SessionListener;
+package arboard.session;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import arboard.common.listener.ARBoardServletContextListener;
 
 @Controller
-public class SessionChecker {
+public class SessionTester {
 
 	Logger log = Logger.getLogger(this.getClass());
 
