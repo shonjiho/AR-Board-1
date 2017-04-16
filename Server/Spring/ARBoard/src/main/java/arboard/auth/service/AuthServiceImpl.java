@@ -21,8 +21,10 @@ public class AuthServiceImpl implements AuthService {
 	public boolean valifyAccessToken(String accessToken) throws Exception {
 		Map<String, Object> result = FBGraph.isValified_AccessToken(accessToken);
 		if (result.get("is_valid").equals(true)) {
+			//valid accessToken.
 			return true;
 		} else {
+			//invalid accessToken.
 			return false;
 		}
 	}

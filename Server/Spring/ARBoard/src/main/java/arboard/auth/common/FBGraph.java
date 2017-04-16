@@ -34,19 +34,19 @@ public class FBGraph {
 				buffer.append(inputLine + "\n");
 			}
 			inputStream.close();
-			return buffer.toString();
+			  
 		} catch (UnsupportedEncodingException e) { 
 			
 			e.printStackTrace();
+			
 		} catch (IOException e) { 
 			
 			e.printStackTrace();
 		}
 		return buffer.toString();
-		
 	}
 
-	// HTTP request to Facebook Graph API for getting AppAccessToken
+	// HTTP Request for getting AppAccessToken.
 	public static String getAppAccessToken() {
 		String graph = null,AppAccessToken = null;
 		String urltext = "https://graph.facebook.com/oauth/access_token?client_id=" + appId + "&client_secret="
@@ -61,25 +61,23 @@ public class FBGraph {
 			switch (urlConnection.getResponseCode()) {
 			
 			case HttpURLConnection.HTTP_OK:
-				
 				graph = convertStreamToString(urlConnection.getInputStream());
 				JSONObject json = new JSONObject(graph);
 				AppAccessToken =  json.get("access_token").toString();
-				
 				break;
+				
 			case HttpURLConnection.HTTP_BAD_REQUEST:
-				System.out.println("AppAccess Request bad request");
-				throw new UnKnownException();
+				System.out.println("AppAccess Request bad request"); 
 			default:
 				throw new UnKnownException();
 			}
-
+		}catch( UnKnownException e) {
+			throw e;
 		} catch (IOException e) { 
 			e.printStackTrace();
-
 			// APP register problem
 			System.out.println("APPLICATION APPID and APPSECRETCODE hava PROBLEMS.!!! -----JIHO---");
-		}
+		} 
 		return AppAccessToken;
 	}
 
@@ -97,30 +95,34 @@ public class FBGraph {
 			urlConnection.connect();
 			
 			switch (urlConnection.getResponseCode()) {
+			//Normal Response.
 			case HttpURLConnection.HTTP_OK:
 				graph = convertStreamToString(urlConnection.getInputStream()); 
 				break;
-			case HttpURLConnection.HTTP_BAD_REQUEST: 
+				
+			// Facebook Graph API response(accessToken is invalid). 
+			case HttpURLConnection.HTTP_BAD_REQUEST:  
+				
 				graph = convertStreamToString(urlConnection.getErrorStream()); 
+				
 				JSONObject json = new JSONObject(graph);
-				if(json.has("error")){
+				
+				if(json.has("error")) 
 					throw new AccessTokenInvalidException();
-				}
-				throw new UnKnownException();
+					//other case is UnkownException.
 			default:
+				//UnkownException!!
 				throw new UnKnownException();
-
 			}
 		}catch (AccessTokenInvalidException e){
 			throw e;
-		} catch(UnKnownException e){
+		}catch(UnKnownException e){
 			throw e;
-		} catch (Exception e) {
-			e.printStackTrace();
-			throw new RuntimeException("ERROR in getting FB graph debugAccessToken " + e);
-		}
+		} 
+		
 		return graph;
 	}
+	
 	//HTTP request to Graph API request Profile
 	public static String req_getFBGraphProfile(String accessToken)  throws Exception{
 		String graph = null;
@@ -130,11 +132,13 @@ public class FBGraph {
 			HttpURLConnection urlConnection = (HttpURLConnection)url.openConnection();
 			
 			switch (urlConnection.getResponseCode()) {
+			//normal response.
 			case HttpURLConnection.HTTP_OK:
 				graph = convertStreamToString(urlConnection.getInputStream()); 
 				break;
-			case HttpURLConnection.HTTP_BAD_REQUEST: 
-				throw new UnKnownException();
+				
+			//abnormal resposne.
+			case HttpURLConnection.HTTP_BAD_REQUEST:  
 			default:
 				throw new UnKnownException();
 			} 
@@ -147,6 +151,7 @@ public class FBGraph {
 		}
 		return graph;
 	}
+	
 	//AccessToken Valify.
 	public static Map<String, Object> isValified_AccessToken(String accessToken) throws Exception{
 		Map<String, Object> resultMap = new HashMap<String, Object>();
@@ -160,11 +165,14 @@ public class FBGraph {
 			// resultMap.put("user_id", data.get("user_id"));
 			// resultMap.put("application", data.get("application"));
 			return resultMap;
-		}
-		return resultMap;
+		} 
+		
+		throw new UnKnownException();
+		
 	}
 
 	public static Map<String, Object> getFBGraphProfile(String accessToken) throws Exception {
+		//call API method 
 		String result = req_getFBGraphProfile(accessToken);
 		Map<String, Object> fbProfile = new HashMap<String, Object>();
 		try {
@@ -175,7 +183,12 @@ public class FBGraph {
 			fbProfile.put("userName", json.get("name"));
 
 			fbProfile.put("userEmail", json.get("email"));
-
+			
+			/*
+			 *  id , name , email
+			 * 
+			 */
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("ERROR in parsing FB graph data. " + e);
