@@ -49,11 +49,12 @@ public class Game extends Thread {
 				m.position ++;
 				break;
 			}
-		}
-		//sleep상태 제거.
-		//interrupt();
+		} 
 		
 	}
+	
+	
+	
 	@Override
 	public void run() {
 		while (true) {
@@ -65,7 +66,7 @@ public class Game extends Thread {
 				for(GameMember m:members){
 					state+=m.userId +":"+m.position;
 					state+="/";
-				}
+				} 
 				broadcast(state);
 				Thread.sleep(1000);
 				
@@ -74,9 +75,10 @@ public class Game extends Thread {
 		 
 			} finally{
 				//finish game
-				if(count == 30){
+				if(count == 60){
 					broadcast("NF");
 					gameSockethandler.gameList.remove(this.gameKey); 
+					
 					break;
 				}
 			}

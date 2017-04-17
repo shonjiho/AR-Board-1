@@ -1,7 +1,6 @@
 package arboard.game.model;
 
 import java.io.IOException;
-import java.util.Map;
 
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
@@ -38,6 +37,10 @@ public class GameMember  {
 		}else{
 			return false;
 		}
+	}
+	
+	public void closeSocket() throws Exception{
+		session.close();
 	}
 	
 	

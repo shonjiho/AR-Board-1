@@ -20,8 +20,7 @@ public class GameSocketHandler extends TextWebSocketHandler{
 	}
 	
 	
-	//multiplexing handler
-    @SuppressWarnings("unchecked")
+	//multiplexing handler 
 	@Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
         String payloadMessage = (String) message.getPayload(); 
@@ -31,7 +30,11 @@ public class GameSocketHandler extends TextWebSocketHandler{
 		 
         Game game = gameList.get(gameKey); 
         if(game!= null) {
+ 
         	game.messagehandle(userId,payloadMessage);
+        }else{
+
+            System.out.println("game is null");
         }
          
     }
@@ -39,15 +42,16 @@ public class GameSocketHandler extends TextWebSocketHandler{
     //after connection
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-    	 String userId = getUserId(session);
-         String userName = getUserName(session);
-         System.out.println("Connect User. [ userId :"+userId+", userName :"+userName+"]");
-         String gameKey = getGameKey(session);
+
         super.afterConnectionEstablished(session);
         
-        
+
+      	 String userId = getUserId(session);
+           String userName = getUserName(session);
+           String gameKey = getGameKey(session);
+           System.out.println("Connect User. [ userId :"+userId+", userName :"+userName+"]");
        
-        /*
+        
         if((gameKey == null) || !getStatus(session)){
         	session.close();
         }
@@ -57,11 +61,12 @@ public class GameSocketHandler extends TextWebSocketHandler{
         	game.addMember(session,userId);
         }else{
         	Game game = new Game(this,gameKey);
+        	game.start(); 
         	gameList.put(gameKey,game);
         	game.addMember(session,userId);
         }
         System.out.println("Attend Game ( key - " + gameKey+" )");
-        */
+        
     }
   
     @Override
@@ -87,20 +92,20 @@ public class GameSocketHandler extends TextWebSocketHandler{
     }
     public String getUserId(WebSocketSession session){
     	Map<String,Object> userProfile = getUserProfile(session);
-		return (String) userProfile.get("id");
+		return   userProfile.get("id").toString();
     }
     public String getUserName(WebSocketSession session){
     	Map<String,Object> userProfile = getUserProfile(session);
-		return (String) userProfile.get("userName");
+		return   userProfile.get("userName").toString();
     } 
     //from WebSocketSession , get gamekey
     public String getGameKey(WebSocketSession session){
     	Map<String, Object> map = session.getAttributes();
-		 return (String) map.get("gameKey");
+		 return (String) map.get("gameKey").toString();
     }
     public boolean getStatus(WebSocketSession session){
     	Map<String, Object> map = session.getAttributes();
-    	return (Boolean) map.get("status");
+    	return   (Boolean) map.get("status");
     }
     
 }

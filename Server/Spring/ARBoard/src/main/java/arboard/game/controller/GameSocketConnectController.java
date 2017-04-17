@@ -12,12 +12,12 @@ import arboard.game.websocket.GameSocketHandler;
 @Controller
 public class GameSocketConnectController {
 
-	//@Autowired
-	//GameSocketHandler websocketHandler;
+	@Autowired
+	GameSocketHandler websocketHandler;
 	
 	@RequestMapping(value="/game",method=RequestMethod.GET)
 	public String connectSocket(HttpSession session){
-		//System.out.println("Running Game COUNT : "+websocketHandler.gameList.size());
+		System.out.println("Running Game COUNT : "+websocketHandler.gameList.size());
 		return "/wsclient";
 	}
 }

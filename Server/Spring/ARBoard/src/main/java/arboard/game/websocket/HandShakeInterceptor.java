@@ -13,8 +13,6 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	
-	
-	
 	 	@Override
 	    public boolean beforeHandshake(ServerHttpRequest request,ServerHttpResponse response, WebSocketHandler wsHandler,
 	         Map<String, Object> attributes) throws Exception {    
@@ -37,12 +35,19 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	        
 	        attributes.put("userProfile", userProfile);//userProfile
 	        
-	        boolean status =  (Boolean) httpSession.getAttribute("status");
+	        System.out.println(userProfile.get("userName"));
 	        
+	        Object status = httpSession.getAttribute("status");
+	        
+	        if(status == null){
+	        	
+		        System.out.println("test");
+	        	return false;
+	        }
 	        attributes.put("status",status);
 	        //test
 	        attributes.put("gameKey", "test");//gameKey
-	        
+	 
 	         
 	        return super.beforeHandshake(request, response, wsHandler, attributes);
 	    }
