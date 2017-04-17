@@ -5,10 +5,13 @@ using UnityEngine;
 public class UIManager : MonoBehaviour {
 
 	[SerializeField] GameObject uiRoot;
+	[SerializeField] UILabel moneyLabel;
+	[SerializeField] UIButton diceButton;
+	[SerializeField] UILabel diceLabel;
 
 	static UIManager instance;
 
-	public UIManager Instance
+	public static UIManager Instance
 	{
 		get
 		{
@@ -29,7 +32,7 @@ public class UIManager : MonoBehaviour {
 
 	public void Init()
 	{
-		Load(gameObject);
+		UIManager.Load(gameObject);
 	}
 
 	void ShowDrawImage()
@@ -78,5 +81,25 @@ public class UIManager : MonoBehaviour {
 		}
 
 		uiSprite.gameObject.SetActive(false);
+	}
+
+
+	//
+	//	게임
+	//
+
+	public void SetUI(List<UserState> userStates, int myNum)
+	{
+		moneyLabel.text = userStates[myNum].Money.ToString();
+	}
+
+	public UIButton GetDiceButton()
+	{
+		return diceButton;
+	}
+
+	public UILabel GetDiceLabel()
+	{
+		return diceLabel;
 	}
 }

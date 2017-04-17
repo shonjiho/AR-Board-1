@@ -11,5 +11,8 @@ public class ScriptManager : MonoBehaviour {
 	{
 		gameManager.Init();
 		uiManager.Init();
+
+		GameManager.Instance.GameStart(1, 0);
+		GameManager.Instance.DiceStart();
 	}
 }
