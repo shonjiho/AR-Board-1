@@ -26,8 +26,8 @@
 	<insert id="insertFriendRequest" parameterType="hashmap">
 	
 		<![CDATA[
-		INSERT INTO relationship (id1,id2,state) 
-			VALUES (#{senderId},#{receiverId},'N');
+		INSERT INTO relationship (id1,id2,state,date) 
+			VALUES (#{senderId},#{receiverId},'N',curdate());
 		]]>
 	</insert>
 	<select id="selectRequest" parameterType="hashmap" resultType="hashmap">
@@ -49,8 +49,8 @@
 
 	<insert id="insertFriendResponse" parameterType="hashmap">
 	<![CDATA[  
-        INSERT INTO relationship (id1,id2,state) 
-		VALUES (#{receiverId},#{senderId},'Y');
+        INSERT INTO relationship (id1,id2,state,date) 
+		VALUES (#{receiverId},#{senderId},'Y',curdate());
         ]]>
 	</insert>
 
