@@ -1,72 +1,106 @@
 package arboard.game.websocket;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
 
-import org.springframework.stereotype.Component;
 import org.springframework.web.socket.CloseStatus;
-import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
+
+import arboard.game.model.Game;
  
 public class GameSocketHandler extends TextWebSocketHandler{
+
+	//game(Thread) list
+	public Map<String,Game> gameList  =  new HashMap<String,Game>(); 
 	
 	public GameSocketHandler(){
 		System.out.println("WebSocket Handler Generated.");
 	}
 	
-	public List<WebSocketSession> sessionList = new ArrayList<WebSocketSession>();
 	
-	public void broadcast(TextMessage msg) throws Exception{
-		for(WebSocketSession s:sessionList){
-			s.sendMessage(msg);
-		}
-	}
-	
-    @Override
+	//multiplexing handler
+    @SuppressWarnings("unchecked")
+	@Override
     public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-        String payloadMessage = (String) message.getPayload();
-        Map<String, Object> map = session.getAttributes();
-        String userId = (String)map.get("id");
-        //session.sendMessage(new TextMessage("ECHO : " + payloadMessage));
-        broadcast(new TextMessage(userId + " : " + payloadMessage));
+        String payloadMessage = (String) message.getPayload(); 
         
-        System.out.println("전송자 JSESSIONID : "+userId);
-        System.out.println("서버에 도착한 메시지:"+payloadMessage);
+        String userId = getUserId(session);
+        String gameKey = getGameKey(session); 
+		 
+        Game game = gameList.get(gameKey); 
+        if(game!= null) {
+        	game.messagehandle(userId,payloadMessage);
+        }
+         
     }
- 
-    // 웹소켓 서버에 클라이언트가 접속하면 호출되는 메소드
+  
+    //after connection
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
-         
+    	 String userId = getUserId(session);
+         String userName = getUserName(session);
+         System.out.println("Connect User. [ userId :"+userId+", userName :"+userName+"]");
+         String gameKey = getGameKey(session);
         super.afterConnectionEstablished(session);
-        //user add
-        sessionList.add(session);
         
-        System.out.println("클라이언트 접속됨");
-        Map<String, Object> map = session.getAttributes();
-        String id = (String)map.get("id");
-        System.out.println("Connect JSESSIONID : "+id);
         
+       
+        /*
+        if((gameKey == null) || !getStatus(session)){
+        	session.close();
+        }
+        
+        if(gameList.containsKey(gameKey)){
+        	Game game = gameList.get(gameKey);
+        	game.addMember(session,userId);
+        }else{
+        	Game game = new Game(this,gameKey);
+        	gameList.put(gameKey,game);
+        	game.addMember(session,userId);
+        }
+        System.out.println("Attend Game ( key - " + gameKey+" )");
+        */
     }
- 
-    // 클라이언트가 접속을 종료하면 호출되는 메소드
+  
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
-
-        sessionList.remove(session);
-        System.out.println("클라이언트 접속해제");
+        
+        System.out.println("DisConnect User. [ userId :"+getUserId(session)+", userName :"+getUserName(session)+"]");
+        
     }
- 
-    // 메시지 전송시나 접속해제시 오류가 발생할 때 호출되는 메소드
+  
     @Override
     public void handleTransportError(WebSocketSession session,
             Throwable exception) throws Exception {
         super.handleTransportError(session, exception);
-        System.out.println("전송오류 발생");
+        System.out.println("websocket error");
     }
   
+    
+    @SuppressWarnings("unchecked")
+	public Map<String,Object> getUserProfile(WebSocketSession session){
+    	Map<String, Object> map = session.getAttributes();
+		 return (Map<String, Object>) map.get("userProfile");
+    }
+    public String getUserId(WebSocketSession session){
+    	Map<String,Object> userProfile = getUserProfile(session);
+		return (String) userProfile.get("id");
+    }
+    public String getUserName(WebSocketSession session){
+    	Map<String,Object> userProfile = getUserProfile(session);
+		return (String) userProfile.get("userName");
+    } 
+    //from WebSocketSession , get gamekey
+    public String getGameKey(WebSocketSession session){
+    	Map<String, Object> map = session.getAttributes();
+		 return (String) map.get("gameKey");
+    }
+    public boolean getStatus(WebSocketSession session){
+    	Map<String, Object> map = session.getAttributes();
+    	return (Boolean) map.get("status");
+    }
+    
 }

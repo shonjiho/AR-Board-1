@@ -3,6 +3,7 @@ package arboard.game.websocket;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
@@ -25,9 +26,23 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	  
 	        HttpServletRequest req =  ssreq.getServletRequest();
 	  
-	        String id = (String)req.getSession().getId(); 
-	        System.out.println("JSESSIONID :"+id);
-	        attributes.put("id", id);
+	        HttpSession httpSession = req.getSession();
+	        
+	        String SessionId = httpSession.getId(); 
+	        System.out.println("Connected JSESSIONID :"+SessionId);
+	        
+	        @SuppressWarnings("unchecked")
+			Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
+	        
+	        
+	        attributes.put("userProfile", userProfile);//userProfile
+	        
+	        boolean status =  (Boolean) httpSession.getAttribute("status");
+	        
+	        attributes.put("status",status);
+	        //test
+	        attributes.put("gameKey", "test");//gameKey
+	        
 	         
 	        return super.beforeHandshake(request, response, wsHandler, attributes);
 	    }
