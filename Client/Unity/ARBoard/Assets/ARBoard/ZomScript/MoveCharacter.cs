@@ -10,7 +10,7 @@ public class MoveCharacter : MonoBehaviour {
 
 	void Update () {
 		float v = Input.GetAxis ("Vertical");
-
+		// Debug.Log(v);
 		ani.SetFloat ("Speed_f", v);
 	}
 }

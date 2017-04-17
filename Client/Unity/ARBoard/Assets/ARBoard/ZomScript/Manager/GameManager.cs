@@ -4,7 +4,12 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour {
 
-	int myNum;
+	int myUserNum;
+	const int scaffoldingsMaxCount = 36;
+	const int price = 500;
+	// const int priceBuilding = 500;
+	// const int priceMotel = 250;
+
 	public List<UserState> userStates;
 	public List<Scaffolding> scaffoldings;
 
@@ -38,9 +43,9 @@ public class GameManager : MonoBehaviour {
 		Load(gameObject);
 	}
 
-	public void GameStart(int userCount, int myNum)
+	public void GameStart(int userCount, int myUserNum)
 	{
-		this.myNum = myNum;
+		this.myUserNum = myUserNum;
 		//맵 초기화
 		scaffoldings = new List<Scaffolding>();
 
@@ -63,7 +68,7 @@ public class GameManager : MonoBehaviour {
 			scaffoldings.Add(scaffolding);
 		}
 
-		if(scaffoldings.Count != 36)
+		if(scaffoldings.Count != scaffoldingsMaxCount)
 		{
 			Debug.LogError("Scaffoldings Count Error");
 			return;
@@ -76,7 +81,7 @@ public class GameManager : MonoBehaviour {
 			userStates.Add(new UserState());
 		}
 
-		UIManager.Instance.SetUI(userStates, myNum);
+		UIManager.Instance.SetUI(userStates[myUserNum]);
 	}
 
 	public void DiceInput()
@@ -140,7 +145,7 @@ public class GameManager : MonoBehaviour {
 
 			yield return new WaitForSeconds(0.2f);
 		}
-
+		diceState = E_DiceState.PLAY;
 		diceButton.transform.localScale = diceButtonBaseScale; 
 
 		diceButton.gameObject.SetActive(false);
@@ -158,9 +163,152 @@ public class GameManager : MonoBehaviour {
 		}
 		yield return new WaitForSeconds(1f);
 
+		diceLabel.transform.localScale = diceLabelBaseScale;
+
 		diceLabel.gameObject.SetActive(false);
+		diceState = E_DiceState.READY;
+
+		UserMove(myUserNum, diceValue);
+
+	}
+
+	void UserMove(int userNum, int moveValue)
+	{
+		if(userNum>=userStates.Count)
+		{
+			Debug.LogError("userNum is over");
+			return;
+		}
+
+		userStates[userNum].Location += moveValue;
+
+		if(scaffoldingsMaxCount <=  userStates[userNum].Location)
+		{
+			userStates[userNum].Location = userStates[userNum].Location - scaffoldingsMaxCount;
+			userStates[userNum].Money += 500;
+		}
+
+		GameObject players = GameObject.FindWithTag("Players");
+		if(players == null)
+		{
+			Debug.LogError("Players not Find");
+			return;
+		}
+		GameObject player = players.transform.GetChild(userNum).gameObject;
+		player.transform.position = scaffoldings[userStates[userNum].Location].transform.position;
 
 
+		if(myUserNum == userNum)
+		{
+			if(scaffoldings[userStates[userNum].Location].isMyScaffolding(myUserNum))
+			{
+				//땅구매 열기
+				UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+			}
+			else
+			{
+				//벌금
+
+			}
+		}
+		
+	}
+
+	// IEnumerator UserMoveCoroutine(int userNum, int moveValue)
+	// {
+
+	// }
+
+	public void BuildLevel3()
+	{
+		BuildLevel3(myUserNum);
+	}
+
+	public void BuildLevel3(int userNum)
+	{
+		if(userNum>=userStates.Count)
+		{
+			Debug.LogError("userNum is over");
+			return;
+		}
+		
+		if(userStates[userNum].Money >= price * 3)
+		{
+			userStates[userNum].Money -= price * 3;
+			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+			scaffoldings[userStates[userNum].Location].BuildLevel = 3;
+		}
+
+		
+
+		if(userNum == myUserNum)
+		{
+			UIManager.Instance.SetUI(userStates[myUserNum]);
+			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+		}
+
+
+	}
+
+	public void BuildLevel2()
+	{
+		BuildLevel2(myUserNum);
+	}
+
+	public void BuildLevel2(int userNum)
+	{
+		if(userNum>=userStates.Count)
+		{
+			Debug.LogError("userNum is over");
+			return;
+		}
+		
+		if(userStates[userNum].Money >= price * 2)
+		{
+			userStates[userNum].Money -= price * 2;
+			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+			scaffoldings[userStates[userNum].Location].BuildLevel = 2;
+		}
+
+		if(userNum == myUserNum)
+		{
+			UIManager.Instance.SetUI(userStates[myUserNum]);
+			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+		}
+	}
+
+	public void BuildLevel1()
+	{
+		BuildLevel1(myUserNum);
+	}
+
+	public void BuildLevel1(int userNum)
+	{
+		if(userNum>=userStates.Count)
+		{
+			Debug.LogError("userNum is over");
+			return;
+		}
+		
+		if(userStates[userNum].Money >= price * 1)
+		{
+			userStates[userNum].Money -= price * 1;
+			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+			scaffoldings[userStates[userNum].Location].BuildLevel = 1;
+		}
+
+		
+
+		if(userNum == myUserNum)
+		{
+			UIManager.Instance.SetUI(userStates[myUserNum]);
+			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+		}
+	}
+
+	public void BuildCancle()
+	{
+		UIManager.Instance.HideBuildMenu();
 	}
 
 }
