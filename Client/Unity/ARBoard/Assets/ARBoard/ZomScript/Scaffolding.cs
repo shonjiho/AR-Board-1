@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Scaffolding {
+public class Scaffolding : MonoBehaviour {
 	int ownerPlayerNum = -1;
 	bool buildHotel = false;
 	bool buildBuilding = false;

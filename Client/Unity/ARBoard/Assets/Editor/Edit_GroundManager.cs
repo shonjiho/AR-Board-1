@@ -184,7 +184,7 @@ public class Edit_GroundManager : Editor {
 
 			xPos = xPosTemp;
 
-			for(int i=1; i<10; i++)
+			for(int i=1; i<9; i++)
 			{
 				scaffolding = (GameObject)GameObject.Instantiate(ScaffoldingPrefab);
 				scaffolding.transform.parent = groundManager.transform.FindChild("Scaffoldings");

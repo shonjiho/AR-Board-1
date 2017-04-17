@@ -5,9 +5,8 @@ using UnityEngine;
 public class GameManager : MonoBehaviour {
 
 	int myNum;
-
-	List<UserState> userStates;
-	List<Scaffolding> scaffoldings;
+	public List<UserState> userStates;
+	public List<Scaffolding> scaffoldings;
 
 
 	static GameManager instance;
@@ -45,9 +44,29 @@ public class GameManager : MonoBehaviour {
 		//맵 초기화
 		scaffoldings = new List<Scaffolding>();
 
-		for(int i=0; i<36; i++)
+		GameObject goScaffoldings = GameObject.FindWithTag("Scaffoldings");
+		if(goScaffoldings == null)
 		{
-			scaffoldings.Add(new Scaffolding());
+			Debug.LogError("goScaffoldings is NULL");
+			return;
+		}
+
+		for(int i=0; i<goScaffoldings.transform.childCount; i++)
+		{
+			Scaffolding scaffolding = goScaffoldings.transform.GetChild(i).GetComponent<Scaffolding>();
+
+			if(scaffolding == null)
+			{
+				continue;
+			}
+
+			scaffoldings.Add(scaffolding);
+		}
+
+		if(scaffoldings.Count != 36)
+		{
+			Debug.LogError("Scaffoldings Count Error");
+			return;
 		}
 
 		userStates = new List<UserState>();
@@ -141,10 +160,6 @@ public class GameManager : MonoBehaviour {
 
 		diceLabel.gameObject.SetActive(false);
 
-		
-
-		
-		
 
 	}
 
