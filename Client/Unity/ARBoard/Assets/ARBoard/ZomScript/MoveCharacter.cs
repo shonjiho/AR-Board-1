@@ -11,6 +11,6 @@ public class MoveCharacter : MonoBehaviour {
 	void Update () {
 		float v = Input.GetAxis ("Vertical");
 
-		ani.SetFloat ("Value", v);
+		ani.SetFloat ("Speed_f", v);
 	}
 }
