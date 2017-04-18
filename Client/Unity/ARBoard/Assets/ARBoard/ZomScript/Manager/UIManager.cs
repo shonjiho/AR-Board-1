@@ -8,6 +8,7 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] UILabel moneyLabel;
 	[SerializeField] UIButton diceButton;
 	[SerializeField] UILabel diceLabel;
+	[SerializeField] GameObject buildMenu;
 
 	static UIManager instance;
 
@@ -88,9 +89,9 @@ public class UIManager : MonoBehaviour {
 	//	게임
 	//
 
-	public void SetUI(List<UserState> userStates, int myNum)
+	public void SetUI(UserState userState)
 	{
-		moneyLabel.text = userStates[myNum].Money.ToString();
+		moneyLabel.text = userState.Money.ToString();
 	}
 
 	public UIButton GetDiceButton()
@@ -101,5 +102,51 @@ public class UIManager : MonoBehaviour {
 	public UILabel GetDiceLabel()
 	{
 		return diceLabel;
+	}
+
+	public void ShowBuildMenu(Scaffolding scaffolding)
+	{
+		if(buildMenu == null)
+		{
+			Debug.LogError("buildMenu is null!!");
+			return;
+		}
+		UIImageButton level3Button = buildMenu.transform.FindChild("Level3Button").GetComponent<UIImageButton>();
+		UIImageButton level2Button = buildMenu.transform.FindChild("Level2Button").GetComponent<UIImageButton>();
+		UIImageButton level1Button = buildMenu.transform.FindChild("Level1Button").GetComponent<UIImageButton>();
+
+		if(scaffolding.BuildLevel < 3)
+		{
+			level3Button.isEnabled = true;
+		}
+		else
+		{
+			level3Button.isEnabled = false;
+		}
+
+		if(scaffolding.BuildLevel < 2)
+		{
+			level2Button.isEnabled = true;
+		}
+		else
+		{
+			level2Button.isEnabled = false;
+		}
+
+		if(scaffolding.BuildLevel < 1)
+		{
+			level1Button.isEnabled = true;
+		}
+		else
+		{
+			level1Button.isEnabled = false;
+		}
+
+		buildMenu.SetActive(true);
+	}
+
+	public void HideBuildMenu()
+	{
+		buildMenu.SetActive(false);
 	}
 }
