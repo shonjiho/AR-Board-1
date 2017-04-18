@@ -22,7 +22,8 @@ public class SessionMonitoring implements HttpSessionListener {
 	@Override
 	public void sessionCreated(HttpSessionEvent event) {
 		HttpSession session = event.getSession();
-		 
+		
+		session.setMaxInactiveInterval(60*2);
 		ServletContext context = session.getServletContext();
 		Map<String, HttpSession> activeUsers = (Map<String, HttpSession>) context
 				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);

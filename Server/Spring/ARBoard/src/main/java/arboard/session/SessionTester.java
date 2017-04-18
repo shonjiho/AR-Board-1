@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.common.listener.ARBoardServletContextListener;
+import arboard.util.exception.NotFoundParameterException;
 
 @Controller
 public class SessionTester {
@@ -71,6 +72,9 @@ public class SessionTester {
 				.getAttribute(ARBoardServletContextListener.ACTIVEUSERS_ATTRIBUTE_NAME);
 
 		HttpSession sessionSelected = map.get(id);
+		if(sessionSelected == null){
+			throw new NotFoundParameterException("id");
+		}
 		sessionSelected.invalidate();
 
 		HashMap<String, Object> jsonObject = new HashMap<String, Object>();

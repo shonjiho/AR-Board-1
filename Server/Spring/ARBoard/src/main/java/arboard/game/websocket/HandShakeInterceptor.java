@@ -31,17 +31,17 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	        
 	        @SuppressWarnings("unchecked")
 			Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
-	        
+	         
+	        if(userProfile == null){
+	        	System.out.println("userProfile null");
+	        	return false;
+	        }
 	        
 	        attributes.put("userProfile", userProfile);//userProfile
 	        
-	        System.out.println(userProfile.get("userName"));
-	        
 	        Object status = httpSession.getAttribute("status");
 	        
-	        if(status == null){
-	        	
-		        System.out.println("test");
+	        if(status == null){  
 	        	return false;
 	        }
 	        attributes.put("status",status);
