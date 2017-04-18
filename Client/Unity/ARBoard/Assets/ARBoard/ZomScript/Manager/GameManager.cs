@@ -7,8 +7,10 @@ public class GameManager : MonoBehaviour {
 	int myUserNum;
 	const int scaffoldingsMaxCount = 36;
 	const int price = 500;
-	// const int priceBuilding = 500;
-	// const int priceMotel = 250;
+	
+	public GameObject gameObjectLevel3;
+	public GameObject gameObjectLevel2;
+	public GameObject gameObjectLevel1;
 
 	public List<UserState> userStates;
 	public List<Scaffolding> scaffoldings;
@@ -108,6 +110,10 @@ public class GameManager : MonoBehaviour {
 
 	public void DiceStart()
 	{
+		if(diceState != E_DiceState.READY)
+		{
+			return;
+		}
 		UIButton diceButton = UIManager.Instance.GetDiceButton();
 		UILabel diceLabel = UIManager.Instance.GetDiceLabel();
 		if(diceButton == null || diceLabel == null)
@@ -166,7 +172,7 @@ public class GameManager : MonoBehaviour {
 		diceLabel.transform.localScale = diceLabelBaseScale;
 
 		diceLabel.gameObject.SetActive(false);
-		diceState = E_DiceState.READY;
+		
 
 		UserMove(myUserNum, diceValue);
 
@@ -180,30 +186,84 @@ public class GameManager : MonoBehaviour {
 			return;
 		}
 
-		userStates[userNum].Location += moveValue;
+		StopCoroutine(UserMoveCoroutine(userNum, moveValue));
+		StartCoroutine(UserMoveCoroutine(userNum, moveValue));
+		
+	}
 
-		if(scaffoldingsMaxCount <=  userStates[userNum].Location)
-		{
-			userStates[userNum].Location = userStates[userNum].Location - scaffoldingsMaxCount;
-			userStates[userNum].Money += 500;
-		}
-
+	IEnumerator UserMoveCoroutine(int userNum, int moveValue)
+	{
+		Debug.Log("coroutine start");
 		GameObject players = GameObject.FindWithTag("Players");
 		if(players == null)
 		{
 			Debug.LogError("Players not Find");
-			return;
+			yield return null;
 		}
 		GameObject player = players.transform.GetChild(userNum).gameObject;
-		player.transform.position = scaffoldings[userStates[userNum].Location].transform.position;
 
+		Transform target = null;
 
+		float speed = 100;
+		Animator animator = player.GetComponent<Animator>();
+		
+
+		while(moveValue != 0)
+		{
+			int moveModuler = userStates[userNum].Location%9;
+			moveModuler = 9 - moveModuler;
+			if(moveValue > moveModuler)
+			{
+				animator.PlayInFixedTime("Run");
+				moveValue = moveValue - moveModuler;
+				userStates[userNum].Location = userStates[userNum].Location + moveModuler;
+				if(userStates[userNum].Location == scaffoldingsMaxCount)
+				{
+					userStates[userNum].Location = 0;
+				}
+				target = scaffoldings[userStates[userNum].Location].transform;
+				while(player.transform.position != target.position)
+				{
+					// Debug.Log("coroutine ing");
+					float step = speed * Time.deltaTime;
+					player.transform.position = Vector3.MoveTowards(player.transform.position, target.position, step);
+					yield return new WaitForSeconds(0.02f);
+				}
+				player.transform.rotation *= Quaternion.Euler(0, 90, 0);
+			}
+			else
+			{
+				animator.PlayInFixedTime("Run");
+				userStates[userNum].Location = userStates[userNum].Location + moveValue;
+				if(userStates[userNum].Location == scaffoldingsMaxCount)
+				{
+					userStates[userNum].Location = 0;
+				}
+				//여기서 조절
+				player.transform.LookAt(scaffoldings[userStates[userNum].Location].transform);
+				target = scaffoldings[userStates[userNum].Location].transform;
+				while(player.transform.position != target.position)
+				{
+					// Debug.Log("coroutine ing");
+					float step = speed * Time.deltaTime;
+					player.transform.position = Vector3.MoveTowards(player.transform.position, target.position, step);
+					yield return new WaitForSeconds(0.02f);
+				}
+				moveValue = 0;
+			}
+		}
+		
 		if(myUserNum == userNum)
 		{
 			if(scaffoldings[userStates[userNum].Location].isMyScaffolding(myUserNum))
 			{
-				//땅구매 열기
+				//모서리지점은 구매할 수 없다.
+				if(userStates[userNum].Location%9 != 0)
+				{
+					//땅구매 열기
 				UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+				}
+				
 			}
 			else
 			{
@@ -211,13 +271,63 @@ public class GameManager : MonoBehaviour {
 
 			}
 		}
+
+		Debug.Log("coroutine done");
+
+		diceState = E_DiceState.READY;
+
+
 		
 	}
 
-	// IEnumerator UserMoveCoroutine(int userNum, int moveValue)
-	// {
+	public void BuildGameObject(int userNum, int level)
+	{
+		GameObject goBuild;
+		if(level == 1)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
+		}
+		else if(level == 2)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
+		}
+		else
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
+		}
 
-	// }
+		if(scaffoldings[userStates[userNum].Location].transform.FindChild("Build") != null)
+		{
+			Destroy(scaffoldings[userStates[userNum].Location].transform.FindChild("Build").gameObject);
+		}
+
+		goBuild.name = "Build";
+		goBuild.transform.parent = scaffoldings[userStates[userNum].Location].transform;
+		if(userStates[userNum].Location > 0 && userStates[userNum].Location < 9)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, -3);
+		}
+		else if(userStates[userNum].Location > 9 && userStates[userNum].Location < 18)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
+		}
+		else if(userStates[userNum].Location > 18 && userStates[userNum].Location < 27)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, 3);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
+		}
+		else
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
+		}
+		
+	}
 
 	public void BuildLevel3()
 	{
@@ -237,6 +347,8 @@ public class GameManager : MonoBehaviour {
 			userStates[userNum].Money -= price * 3;
 			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
 			scaffoldings[userStates[userNum].Location].BuildLevel = 3;
+			BuildGameObject(userNum, 3);
+			
 		}
 
 		
@@ -268,6 +380,7 @@ public class GameManager : MonoBehaviour {
 			userStates[userNum].Money -= price * 2;
 			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
 			scaffoldings[userStates[userNum].Location].BuildLevel = 2;
+			BuildGameObject(userNum, 2);
 		}
 
 		if(userNum == myUserNum)
@@ -295,6 +408,7 @@ public class GameManager : MonoBehaviour {
 			userStates[userNum].Money -= price * 1;
 			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
 			scaffoldings[userStates[userNum].Location].BuildLevel = 1;
+			BuildGameObject(userNum, 1);
 		}
 
 		
