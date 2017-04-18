@@ -40,7 +40,9 @@ public class GameMember  {
 	}
 	
 	public void closeSocket() throws Exception{
-		session.close();
+		if(session.isOpen()){
+			session.close();
+		}
 	}
 	
 	

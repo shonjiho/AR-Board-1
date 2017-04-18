@@ -49,11 +49,22 @@ public class Game extends Thread {
 				m.position ++;
 				break;
 			}
-		} 
+		}
+		interrupt();
 		
 	}
-	
-	
+	public void gameClose()  {
+		broadcast("NF");
+		gameSockethandler.gameList.remove(this.gameKey); 
+		for(GameMember m:members){
+			try {
+				m.closeSocket();
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
+		} 
+	}
+	 
 	
 	@Override
 	public void run() {
@@ -76,9 +87,7 @@ public class Game extends Thread {
 			} finally{
 				//finish game
 				if(count == 60){
-					broadcast("NF");
-					gameSockethandler.gameList.remove(this.gameKey); 
-					
+					gameClose();
 					break;
 				}
 			}
