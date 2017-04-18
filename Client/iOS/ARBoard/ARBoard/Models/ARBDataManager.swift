@@ -8,7 +8,7 @@
 import Alamofire
 import Foundation
 import AlamofireObjectMapper
-//import SVProgressHUD
+import SVProgressHUD
 import CircularSpinner
 
 class ARBDataManager : NSObject {
@@ -29,6 +29,28 @@ class ARBDataManager : NSObject {
             StaticInstance.instance = ARBDataManager()
         }
         return StaticInstance.instance!
+    }
+    
+    // MARK: - Show Activity
+    func showActivityIndicator(_ isUserInteractionEnabled:Bool=false){
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = true
+            SVProgressHUD.setBackgroundColor(UIColor.clear)
+            SVProgressHUD.setDefaultAnimationType(.native)
+            SVProgressHUD.setForegroundColor(UIColor.white)
+            if isUserInteractionEnabled == false {
+                SVProgressHUD.setDefaultMaskType(.clear)
+            }
+            SVProgressHUD.show()
+        }
+    }
+    
+    // MARK: - Show Hide
+    func hideActivityIndicator(){
+        DispatchQueue.main.async {
+            UIApplication.shared.isNetworkActivityIndicatorVisible = false
+            SVProgressHUD.dismiss()
+        }
     }
     
     func showCircularSpinner(){
@@ -89,7 +111,10 @@ class ARBDataManager : NSObject {
             dump(dataResponse.response?.statusCode)
         }
     }
-    func getRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
+    func getRequest(_ viewController: UIViewController, requestType: RequestType, isShowActivityIndicator: Bool = false,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
+        if isShowActivityIndicator {
+            self.showActivityIndicator()
+        }
         var requestUrl:String = ""
         switch requestType {
         case .friend:
@@ -105,11 +130,10 @@ class ARBDataManager : NSObject {
         switch requestType {
         case .friend:
             requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in
+                if isShowActivityIndicator {
+                    self.hideActivityIndicator()
+                }
                 guard dataResponse.response?.statusCode == 200 else {
-                    dump("Error Code \(dataResponse.response?.statusCode)")
-                    dump(dataResponse.response?.allHeaderFields)
-                    dump(dataResponse.result)
-                    
                     // Example
                     let error = NetworkError(title: "로그인", message: "로그인 하세요")
                     UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
@@ -122,10 +146,10 @@ class ARBDataManager : NSObject {
             }
         case .user:
             requestCloser.responseObject { (dataResponse: DataResponse<User>) in
-                dump(dataResponse.response?.statusCode)
-                dump(dataResponse.response)
                 
-                dump(dataResponse.result.value)
+                if isShowActivityIndicator {
+                    self.hideActivityIndicator()
+                }
                 completion(dataResponse.result.value)
             }
         default:

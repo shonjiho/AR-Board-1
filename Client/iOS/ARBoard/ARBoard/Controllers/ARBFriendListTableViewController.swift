@@ -48,8 +48,11 @@ class ARBFriendListTableViewController: UITableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
     }
-    private func fetchFriendList(){
-        self.dataManager.getRequest(self, requestType: .friend) { (isSuccess) in
+    private func fetchFriendList(showActivityIndicator:Bool=false, completion: ((Void) -> Void)? = nil){
+        self.dataManager.getRequest(self, requestType: .friend, isShowActivityIndicator: showActivityIndicator) { (isSuccess) in
+            if let completion = completion {
+                completion()
+            }
             if let isSuccess = isSuccess as? Bool, isSuccess {
                 self.tableView.reloadData()
             }
@@ -73,8 +76,9 @@ class ARBFriendListTableViewController: UITableViewController {
         self.tableView.addSubview(self.pullUpRefreshControl)
     }
     func pullDownRefresh(){
-        self.fetchFriendList()
-        self.pullUpRefreshControl.endRefreshing()
+        self.fetchFriendList(showActivityIndicator: true) {
+            self.pullUpRefreshControl.endRefreshing()
+        }
     }
     func showAlertController(identifier:String?){
         let title:String = "메시지 보내기"
@@ -107,7 +111,7 @@ extension ARBFriendListTableViewController {
         }
         switch section {
         case SectionType.request.key:
-            return friends.requestFriends?.count ?? 0
+            return friends.friendRequests?.count ?? 0
         case SectionType.on.key:
             return friends.onFriends?.count ?? 0
         case SectionType.off.key:
@@ -127,18 +131,18 @@ extension ARBFriendListTableViewController {
         switch indexPath.section {
         case SectionType.request.key:
             cell.selectionStyle = .none
-            cell.topLabel.text = friends.requestFriends?[indexPath.row].userName
-            cell.bottomLabel.text = friends.requestFriends?[indexPath.row].userEmail
+            cell.topLabel.text = friends.friendRequests?[indexPath.row].userName
+            cell.bottomLabel.text = friends.friendRequests?[indexPath.row].userEmail
             cell.requestButton.isHidden = false
         case SectionType.on.key:
-//            cell.topLabel.text = friends.onFriends?[indexPath.row].userName
-            cell.topLabel.text = friends.onFriends?[indexPath.row].userEmail
+            cell.topLabel.text = friends.onFriends?[indexPath.row].userName
+            cell.bottomLabel.text = friends.onFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text =  "TEST"
             cell.selectedBackgroundView = UIVisualEffectView.dark
         case SectionType.off.key:
             cell.selectionStyle = .none
-//            cell.topLabel.text =  friends.offFriends?[indexPath.row].userName
-            cell.topLabel.text =  friends.offFriends?[indexPath.row].userEmail
+            cell.topLabel.text =  friends.offFriends?[indexPath.row].userName
+            cell.bottomLabel.text =  friends.offFriends?[indexPath.row].userEmail
 //            cell.bottomLabel.text = "TEST"
         default:
             print("Error")
