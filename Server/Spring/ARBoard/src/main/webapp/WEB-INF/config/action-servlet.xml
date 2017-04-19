@@ -39,11 +39,16 @@
 	</bean>
 
 	<!-- websocket -->
+	
+	
+	<bean id="websocketHandler" class="arboard.game.websocket.GameSocketHandler"/>
+	
 	<websocket:handlers>
 		<websocket:mapping path="/websocket/echo" handler="websocketHandler"/>
+		<websocket:handshake-interceptors>
+			<bean class="arboard.game.websocket.HandShakeInterceptor"></bean>
+		</websocket:handshake-interceptors>
 	</websocket:handlers>
-	
-	<bean id="websocketHandler" class="arboard.game.controller.TestSocketHandler"/>
 
 
 </beans>

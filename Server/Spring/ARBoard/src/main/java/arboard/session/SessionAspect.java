@@ -7,12 +7,10 @@ import org.apache.commons.logging.LogFactory;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
-import org.springframework.stereotype.Component;
 
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.common.logger.LoggerAspect;
 
-@Component
 @Aspect
 public class SessionAspect {
 
@@ -20,7 +18,7 @@ public class SessionAspect {
 	
 
 	//session test Aspect advice 
-	 @Around("execution(* arboard.auth.controller.AuthController.sessionTest(..))")
+	 @Around("execution(* arboard.util.controller.UtilFriendController.*(..))")
 	 public Object Test(ProceedingJoinPoint joinPoint) throws Throwable{
 		 HttpSession session = null;
 		 for(Object obj : joinPoint.getArgs()){
@@ -28,17 +26,35 @@ public class SessionAspect {
 				 session = (HttpSession)obj;
 			 }
 		 } 
-		 
-		 Object status = null;
-		 
-		 if((status = session.getAttribute("status")).equals(null)){ 
-			 throw new SessionUnAuthorizedException();
-		 }else{   
+		  
+		 if(session.getAttribute("status") == null){ 
+			 //not session
+			 throw new SessionUnAuthorizedException(session);
+ 		 }else{   
 			 return joinPoint.proceed();
 		 }
-		 
-		 
 	 }
+
+	 /*
+	//list authication.
+	 @Around("execution(* arboard.session.SessionListener.SessionChecker.getSessionList(..))")
+	 public Object SessionListTest(ProceedingJoinPoint joinPoint) throws Throwable{
+		 HttpSession session = null;
+		 for(Object obj : joinPoint.getArgs()){
+			 if(obj instanceof HttpSession){
+				 session = (HttpSession)obj;
+			 }
+		 } 
+		  
+		 if((session.getAttribute("oauthToken")) == null){ 
+			 
+			 throw new SessionUnAuthorizedException();
+		 }else{   
+			 
+			 return joinPoint.proceed();
+		 }
+	 }
+	 */
 	 
 	 /*
 	  @Around("execution(* arboard..controller.*Controller.*(..)) or execution(* arboard..service.*Impl.*(..)) or execution(* arboard..dao.*DAO.*(..))")

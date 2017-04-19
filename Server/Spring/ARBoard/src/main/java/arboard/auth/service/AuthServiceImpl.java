@@ -8,7 +8,7 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import arboard.auth.common.FBGraph;
-import arboard.auth.dao.AuthDAO;
+import arboard.auth.dao.AuthDAO;;
 
 @Service("authservice")
 public class AuthServiceImpl implements AuthService {
@@ -21,8 +21,10 @@ public class AuthServiceImpl implements AuthService {
 	public boolean valifyAccessToken(String accessToken) throws Exception {
 		Map<String, Object> result = FBGraph.isValified_AccessToken(accessToken);
 		if (result.get("is_valid").equals(true)) {
+			//valid accessToken.
 			return true;
 		} else {
+			//invalid accessToken.
 			return false;
 		}
 	}

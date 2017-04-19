@@ -15,7 +15,16 @@
 	<listener>
 		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
 	</listener>
-
+	<!-- HttpSessionListener -->
+	<listener>
+		<listener-class>arboard.session.SessionListener.SessionMonitoring</listener-class>
+	</listener>
+	
+	<!-- ServletContextListener -->
+	<listener>
+		<listener-class>arboard.common.listener.ARBoardServletContextListener</listener-class>
+	</listener>
+	
 	<!-- Processes application requests -->
 	<servlet>
         <servlet-name>action</servlet-name>

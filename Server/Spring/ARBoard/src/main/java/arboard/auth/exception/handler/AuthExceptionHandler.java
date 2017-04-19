@@ -22,22 +22,25 @@ public class AuthExceptionHandler {
 	
 	@ExceptionHandler(value = AccessTokenInvalidException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
-	public Map<String, Object> AccessTokenInvalidException() { 
+	@ResponseStatus(HttpStatus.BAD_REQUEST)//400 Bad Request
+	public Map<String, Object> AccessTokenInvalidException(AccessTokenInvalidException e) { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "access token is invalid");
+		subJSONObject.put("title", "OAUTH_INVALID");
 		body.put("error", subJSONObject);
+		e.getSession().invalidate();
 		return body;
 	}
 
 	@ExceptionHandler(value = AccessTokenNotFoundException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)//400 Bad Request
 	public Map<String, Object> AccessTokenNotFoundException() { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "access token Not Found");
+		subJSONObject.put("title", "NOT_FOUND_TOKEN");
 		body.put("error", subJSONObject);
 		return body;
 		
@@ -45,12 +48,15 @@ public class AuthExceptionHandler {
 	
 	@ExceptionHandler(value = SessionUnAuthorizedException.class)
 	@ResponseBody
-	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	public Map<String, Object> SessionUnAuthorizedException() { 
+	@ResponseStatus(HttpStatus.FORBIDDEN)
+	public Map<String, Object> SessionUnAuthorizedException(SessionUnAuthorizedException exception) { 
 		Map<String, Object> body = new HashMap<String, Object>();
 		Map<String, String> subJSONObject = new HashMap<String, String>();
 		subJSONObject.put("message", "denial request (Unauthorized)");
+		subJSONObject.put("title", "UNAUTHORIZED");
 		body.put("error", subJSONObject);
+		//session remove.
+		exception.getSession().invalidate();
 		return body;
 	}
 	
@@ -62,6 +68,7 @@ public class AuthExceptionHandler {
 		Map<String,Object> body = new HashMap<String,Object>();
 		Map<String,String> subJSONObject = new HashMap<String,String>();
 		subJSONObject.put("message", "Server Internal Error");
+		subJSONObject.put("title", "SERVER_PROBLEM");
 		body.put("error", subJSONObject);
 		return body;
 	}
