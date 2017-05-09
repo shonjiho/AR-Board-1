@@ -12,9 +12,15 @@ import arboard.game.model.Game;
  
 public class GameSocketHandler extends TextWebSocketHandler{
 
-	//game(Thread) list
+	//Game List
 	public Map<String,Game> gameList  =  new HashMap<String,Game>(); 
+	//Ready Game List
+	public Map<String,Game> readyGameList = new HashMap<String,Game>();
+	//Running Game List
+	public Map<String,Game> runningGameList = new HashMap<String,Game>();
 	
+	
+	//Initialization
 	public GameSocketHandler(){
 		System.out.println("WebSocket Handler Generated.");
 	}
@@ -30,16 +36,15 @@ public class GameSocketHandler extends TextWebSocketHandler{
 		 
         Game game = gameList.get(gameKey); 
         if(game!= null) {
- 
         	game.messagehandle(userId,payloadMessage);
-        }else{
-
+        }else{ 
             System.out.println("game is null");
         }
          
     }
   
     //after connection
+	//game Generation
     @Override
     public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
@@ -69,6 +74,8 @@ public class GameSocketHandler extends TextWebSocketHandler{
         
     }
   
+    
+    //afterConnectClose
     @Override
     public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
         super.afterConnectionClosed(session, status);
@@ -84,6 +91,11 @@ public class GameSocketHandler extends TextWebSocketHandler{
         System.out.println("websocket error");
     }
   
+    /*
+     * Getter Method
+     * 
+     */
+    
     
     @SuppressWarnings("unchecked")
 	public Map<String,Object> getUserProfile(WebSocketSession session){

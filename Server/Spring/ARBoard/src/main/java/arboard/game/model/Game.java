@@ -10,87 +10,109 @@ import arboard.game.websocket.GameSocketHandler;
 
 public class Game extends Thread {
 
-	int count = 0;
-	private List<GameMember> members;
+	public final static int GAME_STATE_READY = 0;
+	public final static int GAME_STATE_RUNNING = 1;
+	public final static int GAME_STATE_FINISH = 2;
+
+	// hander
 	private GameSocketHandler gameSockethandler;
+
+	// test var
+	int count = 0;
+
+	// Game Info var
 	public String gameKey;
-	public Game(GameSocketHandler handler,String gameKey) {
-		members = new ArrayList<GameMember>();
+	private List<GameMember> gameMembers;
+	public int gameState;
+
+	public Game(GameSocketHandler handler, String gameKey) {
+		gameMembers = new ArrayList<GameMember>();
 		gameSockethandler = handler;
+		this.gameState = GAME_STATE_READY;
 		this.gameKey = gameKey;
 	}
- 
 
 	@Override
 	public synchronized void start() {
 		super.start();
 	}
 
-	public void addMember(WebSocketSession session, String userId ) {
+	public void addMember(WebSocketSession session, String userId) {
 
-		members.add(new GameMember(session,userId));
+		gameMembers.add(new GameMember(session, userId));
 	}
-	
+
 	public void broadcast(String msg) {
-		for(GameMember m:members){
+		for (GameMember m : gameMembers) {
 			try {
 				m.MessageSend(msg);
-			} catch (IOException e) { 
+			} catch (IOException e) {
 				e.printStackTrace();
 				continue;
 			}
 		}
 	}
 
-	public void messagehandle(String userId,String msg){
-		
-		for(GameMember m:members){
-			if(m.getUserId().equals(userId)){
-				m.position ++;
+	public void messagehandle(String userId, String msg) {
+
+		for (GameMember m : gameMembers) {
+			if (m.getUserId().equals(userId)) {
+				m.position++;
 				break;
 			}
 		}
 		interrupt();
-		
+
 	}
-	public void gameClose()  {
+
+	public void gameClose() {
 		broadcast("NF");
-		gameSockethandler.gameList.remove(this.gameKey); 
-		for(GameMember m:members){
+		gameSockethandler.gameList.remove(this.gameKey);
+		for (GameMember m : gameMembers) {
 			try {
 				m.closeSocket();
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} 
+		}
+
 	}
-	 
-	
+
+	static long drainTime = 1000;
+
 	@Override
 	public void run() {
+		long beforeTime = System.currentTimeMillis();  
 		while (true) {
-			try {  
-				count++;
-				String state = "";
-				//logic 
-				state += "C:"+members.size()+"/T:"+count+"/";
-				for(GameMember m:members){
-					state+=m.userId +":"+m.position;
-					state+="/";
-				} 
-				broadcast(state);
-				Thread.sleep(1000);
-				
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-		 
-			} finally{
-				//finish game
-				if(count == 60){
-					gameClose();
-					break;
-				}
+			long currentTime = System.currentTimeMillis();
+			if ((currentTime - beforeTime) < 1000) {
+				continue;
+			} 
+			
+			beforeTime = currentTime; 
+			count++;
+			String state = "";
+			// logic
+			state += "C:" + gameMembers.size() + "/T:" + count + "/";
+			for (GameMember m : gameMembers) {
+				state += m.userId + ":" + m.position;
+				state += "/";
 			}
+			broadcast(state);
+
+			// finish game
+			if (count == 60) {
+				gameState = GAME_STATE_FINISH;
+				gameClose();
+				break;
+			}
+			//
+			if(gameMembers.size() == 0){
+				gameState = GAME_STATE_FINISH;
+				gameClose();
+				break;
+			}
+
 		}
 	}
 

@@ -1,4 +1,4 @@
-package arboard.game.controller;
+package arboard.game.websocket;
  
 import java.nio.ByteBuffer;
 import java.util.HashSet;
@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.CloseStatus;
+import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler; 
@@ -29,9 +30,8 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 		for(WebSocketSession session:this.sessionSet){
 			if(session.isOpen()){
 				try{
-					//session.sendMessage(new TextMessage(message));
-					String test = "test";
-					session.sendMessage(new BinaryMessage(test.getBytes()));
+					session.sendMessage(new TextMessage(message)); 
+					//session.sendMessage(new BinaryMessage(message.getBytes()));
 				}catch ( Exception ignored){
 					this.logger.debug("fail to send message",ignored);
 				}

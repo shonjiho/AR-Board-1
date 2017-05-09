@@ -37,10 +37,8 @@
 		p:order="1" p:viewClass="org.springframework.web.servlet.view.JstlView"
 		p:prefix="/WEB-INF/jsp/" p:suffix=".jsp">
 	</bean>
-
-	<!-- websocket -->
-	
-	
+ 
+	<!-- webSocket --><!-- 
 	<bean id="websocketHandler" class="arboard.game.websocket.GameSocketHandler"/>
 	
 	<websocket:handlers>
@@ -48,6 +46,13 @@
 		<websocket:handshake-interceptors>
 			<bean class="arboard.game.websocket.HandShakeInterceptor"></bean>
 		</websocket:handshake-interceptors>
+	</websocket:handlers>  -->
+	
+	<!-- webSocket Test -->
+	<bean id="testsocketHandler" class ="arboard.game.websocket.TestSocketHandler" />
+	
+	<websocket:handlers>
+		<websocket:mapping path="/websocket/test" handler="testsocketHandler"/> 
 	</websocket:handlers>
 
 

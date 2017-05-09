@@ -13,6 +13,9 @@ import org.springframework.web.socket.server.support.HttpSessionHandshakeInterce
 
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	
+	
+		//before Handshake
+		//copy Session attribute ( HttpSession`s attribute ----> WebSocketSession`s attribute)
 	 	@Override
 	    public boolean beforeHandshake(ServerHttpRequest request,ServerHttpResponse response, WebSocketHandler wsHandler,
 	         Map<String, Object> attributes) throws Exception {    
