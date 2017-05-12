@@ -30,8 +30,9 @@ class ARBLaunchViewController: UIViewController {
     }
     fileprivate func autoUserSignIn(){
         // Session 없을때 테스트용.
-//        self.performSegue(withIdentifier: SegueIdentifier.mainFromLaunch, sender: nil)
+        // self.performSegue(withIdentifier: SegueIdentifier.mainFromLaunch, sender: nil)
         
+         
         // facebook Login 되어있을때
         if let accessToken = FBSDKAccessToken.current() {
             guard let accessTokenString = accessToken.tokenString else {
@@ -53,7 +54,6 @@ class ARBLaunchViewController: UIViewController {
                 self.performSegue(withIdentifier: SegueIdentifier.mainFromLaunch, sender: nil)
             })
         }
- 
     }
 
 
