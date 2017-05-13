@@ -50,8 +50,7 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	        attributes.put("status",status);
 	        //test
 	        attributes.put("gameKey", "test");//gameKey
-	 
-	         
+	  
 	        return super.beforeHandshake(request, response, wsHandler, attributes);
 	    }
 	  

@@ -47,8 +47,7 @@ public class Game extends Thread {
 			try {
 				m.MessageSend(msg);
 			} catch (IOException e) {
-				e.printStackTrace();
-				continue;
+				e.printStackTrace(); 
 			}
 		}
 	}
@@ -61,7 +60,8 @@ public class Game extends Thread {
 				break;
 			}
 		}
-		interrupt();
+
+		broadcast(msg); 
 
 	}
 
@@ -74,8 +74,7 @@ public class Game extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
-
+		} 
 	}
 
 	static long drainTime = 1000;
@@ -85,7 +84,7 @@ public class Game extends Thread {
 		long beforeTime = System.currentTimeMillis();  
 		while (true) {
 			long currentTime = System.currentTimeMillis();
-			if ((currentTime - beforeTime) < 1000) {
+			if ((currentTime - beforeTime) < drainTime) {
 				continue;
 			} 
 			
@@ -105,8 +104,7 @@ public class Game extends Thread {
 				gameState = GAME_STATE_FINISH;
 				gameClose();
 				break;
-			}
-			//
+			}  
 			if(gameMembers.size() == 0){
 				gameState = GAME_STATE_FINISH;
 				gameClose();

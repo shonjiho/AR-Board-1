@@ -76,12 +76,14 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
 		super.handleMessage(session, message);
-
-		ByteBuffer buf = (ByteBuffer) message.getPayload();
 		
-		String msg = new String(buf.array());
+		logger.debug(message.getPayload().toString());
 		
-		this.logger.debug("receive message:"+msg);
+//		ByteBuffer buf = (ByteBuffer) message.getPayload();
+//		
+//		String msg = new String(buf.array());
+//		
+//		this.logger.debug("receive message:"+msg);
 	}
 	@Override
 	public void handleTransportError(WebSocketSession session, Throwable exception) throws Exception {
