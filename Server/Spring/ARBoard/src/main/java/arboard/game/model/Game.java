@@ -22,6 +22,10 @@ public class Game extends Thread {
 
 	// Game Info var
 	public String gameKey;
+	public String getGameKey() {
+		return gameKey;
+	}
+
 	private List<GameMember> gameMembers;
 	public int gameState;
 

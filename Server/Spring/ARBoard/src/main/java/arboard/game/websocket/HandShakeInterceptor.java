@@ -44,12 +44,16 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	        
 	        Object status = httpSession.getAttribute("status");
 	        
-	        if(status == null){  
-	        	return false;
-	        }
+//	        if(status == null){  
+//	        	return false;
+//	        }
 	        attributes.put("status",status);
-	        //test
-	        attributes.put("gameKey", "test");//gameKey
+	        
+	        Object gameKey = httpSession.getAttribute("gameKey");
+//	        if(gameKey ==  null){
+//	        	return false;
+//	        }
+	        attributes.put("gameKey", gameKey);//gameKey
 	  
 	        return super.beforeHandshake(request, response, wsHandler, attributes);
 	    }
