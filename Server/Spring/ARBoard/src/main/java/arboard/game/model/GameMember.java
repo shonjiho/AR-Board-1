@@ -21,7 +21,7 @@ public class GameMember  {
 		this.userId = userId;
 		this.session = session; 
 		this.position = 0;
- 
+		
 	}
 	
 	public void MessageSend(String str) throws IOException{

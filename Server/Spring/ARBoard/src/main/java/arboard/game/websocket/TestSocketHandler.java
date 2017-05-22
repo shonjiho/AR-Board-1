@@ -36,8 +36,7 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 	public void sendMessage(String message){
 		for(WebSocketSession session:this.sessionSet){
 			if(session.isOpen()){
-				try{
-					
+				try{ 
 					//session.sendMessage(new TextMessage(message)); 
 					session.sendMessage(new BinaryMessage(message.getBytes()));
 					

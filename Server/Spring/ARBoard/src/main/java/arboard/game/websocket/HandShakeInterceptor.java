@@ -1,5 +1,6 @@
 package arboard.game.websocket;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +11,8 @@ import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
+import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
-
-import arboard.common.logger.LoggerInterceptor;
 
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 
@@ -21,6 +21,7 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	// before Handshake
 	// copy Session attribute 
 	//( HttpSession`s attribute ----> WebSocketSession`s attribute)
+	//  Game interconnection TEST 
 	@Override
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
@@ -37,17 +38,37 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
+		
+		//TEST
+		if(userProfile == null){
+			userProfile = new HashMap<String,Object>(); 
+			String ip = request.getLocalAddress().toString();
+			userProfile.put("id", ip);
+			userProfile.put("userName", "who");
+			
+		}
+		
 		attributes.put("userProfile", userProfile);
 
 		Object status = httpSession.getAttribute("status");
+		//TEST
+		if(status == null){
+			status = new Boolean(true);
+		} 
+		
 		attributes.put("status", status);
 
 		Object gameKey = httpSession.getAttribute("gameKey"); 
+		
+		//TEST
+		if(gameKey ==  null){
+			gameKey = new String("everybodyRoom");
+		}
+		
 		attributes.put("gameKey", gameKey); 
-
 		return super.beforeHandshake(request, response, wsHandler, attributes);
 	}
-
+ 
 	@Override
 	public void afterHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Exception ex) {

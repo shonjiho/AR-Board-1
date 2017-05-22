@@ -17,9 +17,6 @@ public class Game extends Thread {
 	// hander
 	private GameSocketHandler gameSockethandler;
 
-	// test var
-	int count = 0;
-
 	// Game Info var
 	public String gameKey;
 	public String getGameKey() {
@@ -41,9 +38,15 @@ public class Game extends Thread {
 		super.start();
 	}
 
-	public void addMember(WebSocketSession session, String userId) {
-
-		gameMembers.add(new GameMember(session, userId));
+	public void addMember(GameMember member) { 
+		gameMembers.add(member); 
+		try {
+			member.MessageSend( "Welcome ARBOARD!!");
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void broadcast(String msg) {
@@ -82,38 +85,61 @@ public class Game extends Thread {
 	}
 
 	static long drainTime = 1000;
-
+	//test 
+	int count = 0; 
+	int turn = 0;
 	@Override
 	public void run() {
 		long beforeTime = System.currentTimeMillis();  
+		
 		while (true) {
 			long currentTime = System.currentTimeMillis();
 			if ((currentTime - beforeTime) < drainTime) {
 				continue;
+			}  
+			beforeTime = currentTime;
+			
+			if(gameState==GAME_STATE_READY && gameMembers.size() == 1 ){
+				broadcast("After 5 seconds Game Start!");   
+				gameState = GAME_STATE_RUNNING;
+				count = 5;
+				continue;
+			}
+			
+			if(gameState==GAME_STATE_RUNNING && count>0 ){ 
+				broadcast(count+"seconds.");
+				count--;
+				continue;
 			} 
 			
-			beforeTime = currentTime; 
-			count++;
-			String state = "";
-			// logic
-			state += "C:" + gameMembers.size() + "/T:" + count + "/";
-			for (GameMember m : gameMembers) {
-				state += m.userId + ":" + m.position;
-				state += "/";
-			}
-			broadcast(state);
-
-			// finish game
-			if (count == 60) {
-				gameState = GAME_STATE_FINISH;
-				gameClose();
-				break;
-			}  
-			if(gameMembers.size() == 0){
+			broadcast("Running~"+turn++); 
+			
+			if(gameMembers.size() == 0 || count == 60){
 				gameState = GAME_STATE_FINISH;
 				gameClose();
 				break;
 			}
+			
+//			String state = "";
+//			// logic
+//			state += "C:" + gameMembers.size() + "/T:" + count + "/";
+//			for (GameMember m : gameMembers) {
+//				state += m.userId + ":" + m.position;
+//				state += "/";
+//			}
+//			broadcast(state);
+//
+//			// finish game
+//			if (count == 60) {
+//				gameState = GAME_STATE_FINISH;
+//				gameClose();
+//				break;
+//			}  
+//			if(gameMembers.size() == 0){
+//				gameState = GAME_STATE_FINISH;
+//				gameClose();
+//				break;
+//			}
 
 		}
 	}
