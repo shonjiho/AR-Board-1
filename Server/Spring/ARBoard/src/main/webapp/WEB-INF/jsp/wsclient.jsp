@@ -10,7 +10,7 @@
   src="https://code.jquery.com/jquery-2.1.4.min.js"  integrity="sha256-8WqyJLuWKRBVhxXIL1jBDD7SDxU936oZkCnxQbWwJVw=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 $(function () { 
-    var ws = new WebSocket("ws://125.130.223.88/arboard/websocket/echo");
+    var ws = new WebSocket("ws:/localhost/arboard/websocket/game");
     ws.onopen = function () {
         $('#chatStatus').text('Info: connection opened.');
  

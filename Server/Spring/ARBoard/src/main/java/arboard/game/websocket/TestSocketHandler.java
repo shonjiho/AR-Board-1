@@ -26,12 +26,21 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 		this.logger.debug("Create SocketHandler instance");
 	}
 	
+	
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		// TODO Auto-generated method stub
+		return super.clone();
+	}
+	
 	public void sendMessage(String message){
 		for(WebSocketSession session:this.sessionSet){
 			if(session.isOpen()){
 				try{
-					session.sendMessage(new TextMessage(message)); 
-					//session.sendMessage(new BinaryMessage(message.getBytes()));
+					
+					//session.sendMessage(new TextMessage(message)); 
+					session.sendMessage(new BinaryMessage(message.getBytes()));
+					
 				}catch ( Exception ignored){
 					this.logger.debug("fail to send message",ignored);
 				}
@@ -72,6 +81,7 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 		super.afterConnectionEstablished(session);
 		sessionSet.add(session);
 		this.logger.info("add session!");
+		System.out.println("Connection established.");
 	}
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {

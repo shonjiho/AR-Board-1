@@ -1,8 +1,10 @@
 package arboard.game.websocket;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -13,37 +15,43 @@ import arboard.game.model.Game;
 
 public class GameSocketHandler extends TextWebSocketHandler {
 
+	protected Logger log = Logger.getLogger(this.getClass());
+	
 	// Game List
-	public Map<String, Game> gameList = new HashMap<String, Game>();
-	// Ready Game List
-	// public Map<String,Game> readyGameList = new HashMap<String,Game>();
-	// Running Game List
-	// public Map<String,Game> runningGameList = new HashMap<String,Game>();
-
-	// Initialization
+	public Map<String, Game> gameList = new HashMap<String, Game>(); 
+	
 	public GameSocketHandler() {
-		System.out.println("WebSocket Handler Generated.");
+		log.debug("WebSocket Handler Generated."); 
 	}
 
-	// multiplexing handler
+	//send Message method.
+	public void sendString(WebSocketSession webSocketSession,String msg){
+		try {
+			webSocketSession.sendMessage(new TextMessage(msg.getBytes()));
+		} catch (IOException e) {  
+			log.debug("SendMessage method is problem.");
+			e.printStackTrace();
+		}
+	}
+	
+	// Message handler
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		String payloadMessage = (String) message.getPayload();
-
+		
+		String payloadMessage = (String) message.getPayload(); 
 		String userId = getUserId(session);
-		String gameKey = getGameKey(session);
-
+		String gameKey = getGameKey(session); 
 		Game game = gameList.get(gameKey);
 		if (game != null) {
 			game.messagehandle(userId, payloadMessage);
 		} else {
-			System.out.println("game is null");
-		}
-
+			log.debug("["+gameKey+"]"+"empty."); 
+			sendString(session,"["+gameKey+"]"+"empty.");
+			session.close();
+		} 
 	}
 
-	// after connection
-	// game Generation
+	// After connection 
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
@@ -52,10 +60,10 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		String userId = getUserId(session);
 		String userName = getUserName(session);
 		String gameKey = getGameKey(session);
-		System.out.println("Connect User. [ userId :" + userId + ", userName :" + userName + "]");
-
-		if (gameKey == null || !hasStatus(session)) {
-			session.sendMessage(new TextMessage("invalid connection"));
+		
+		log.debug("Connect User. [ userId :" + userId + ", userName :" + userName + "]");  
+		if (gameKey == null || !hasStatus(session)) { 
+			sendString(session,"Invalid connection");
 			session.close();
 		}
 
@@ -75,7 +83,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 
 	}
 
-	// afterConnectClose
+	// After Connect Close
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		super.afterConnectionClosed(session, status);
