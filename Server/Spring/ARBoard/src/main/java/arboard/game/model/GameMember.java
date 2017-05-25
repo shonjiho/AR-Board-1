@@ -2,6 +2,7 @@ package arboard.game.model;
 
 import java.io.IOException;
 
+import org.springframework.web.socket.BinaryMessage;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketSession;
 
@@ -27,7 +28,9 @@ public class GameMember  {
 	public void MessageSend(String str) throws IOException{
 		
 		if(isInvalidSession()){
-			session.sendMessage(new TextMessage(str));
+			//session.sendMessage(new TextMessage(str));
+			session.sendMessage(new BinaryMessage(str.getBytes()));
+			
 		} 
 	}
 	

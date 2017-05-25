@@ -81,7 +81,8 @@ public class Game extends Thread {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		} 
+		}
+		gameMembers.clear();
 	}
 
 	static long drainTime = 1000;
@@ -114,7 +115,7 @@ public class Game extends Thread {
 			
 			broadcast("Running~"+turn++); 
 			
-			if(gameMembers.size() == 0 || count == 60){
+			if(gameMembers.size() == 0 && turn > 60){
 				gameState = GAME_STATE_FINISH;
 				gameClose();
 				break;
