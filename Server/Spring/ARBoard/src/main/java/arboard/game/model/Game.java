@@ -9,7 +9,7 @@ import org.springframework.web.socket.WebSocketSession;
 import arboard.game.websocket.GameSocketHandler;
 
 public class Game extends Thread {
-
+	
 	public final static int GAME_STATE_READY = 0;
 	public final static int GAME_STATE_RUNNING = 1;
 	public final static int GAME_STATE_FINISH = 2;
@@ -19,11 +19,12 @@ public class Game extends Thread {
 
 	// Game Info var
 	public String gameKey;
+
 	public String getGameKey() {
 		return gameKey;
 	}
 
-	private List<GameMember> gameMembers;
+	public List<GameMember> gameMembers;
 	public int gameState;
 
 	public Game(GameSocketHandler handler, String gameKey) {
@@ -33,20 +34,16 @@ public class Game extends Thread {
 		this.gameKey = gameKey;
 	}
 
-	@Override
-	public synchronized void start() {
-		super.start();
-	}
-
-	public void addMember(GameMember member) { 
-		gameMembers.add(member); 
-		try {
-			member.MessageSend( "Welcome ARBOARD!!");
+	public void addMember(GameMember member) {
+		gameMembers.add(member);
+		
+		String memberState = Game_startInfo(member); 
+		try { 
+			member.MessageSend(memberState);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
 	}
 
 	public void broadcast(String msg) {
@@ -54,27 +51,25 @@ public class Game extends Thread {
 			try {
 				m.MessageSend(msg);
 			} catch (IOException e) {
-				e.printStackTrace(); 
+				e.printStackTrace();
 			}
 		}
 	}
 
 	public void messagehandle(String userId, String msg) {
 
-		for (GameMember m : gameMembers) {
-			if (m.getUserId().equals(userId)) {
-				m.position++;
-				break;
-			}
+		if (msg.equals("exit")) {
+			this.gameClose();
+			return;
 		}
-
-		broadcast(msg); 
+		broadcast(msg);
 
 	}
 
 	public void gameClose() {
 		broadcast("NF");
 		gameSockethandler.gameList.remove(this.gameKey);
+
 		for (GameMember m : gameMembers) {
 			try {
 				m.closeSocket();
@@ -83,65 +78,65 @@ public class Game extends Thread {
 			}
 		}
 		gameMembers.clear();
+		System.out.println("[END_GAME]"+gameKey);
+		
+	}
+
+	/*GameMethod showMemberState
+	 * MEMBER/[index]:[userID],
+	 */
+	private String Game_startInfo(GameMember member) { 
+		//ex)GameStart,0,김민찬|손지호|최유태|홍길동
+		//GameStart,[MYNUMBER],[USER1],[USER2],[USER3],[USER4]
+		String result = "GameStart"; 
+		int n = gameMembers.indexOf(member);
+		result +=","+n;
+		for (int i = 0; i < gameMembers.size(); i++) { 
+			result+=","; 
+			result += gameMembers.get(i).getUserId();
+		} 
+		return result;
 	}
 
 	static long drainTime = 1000;
-	//test 
-	int count = 0; 
+	// test
+	int count = 0;
 	int turn = 0;
+
 	@Override
 	public void run() {
-		long beforeTime = System.currentTimeMillis();  
-		
+		long beforeTime = System.currentTimeMillis();
+
 		while (true) {
 			long currentTime = System.currentTimeMillis();
 			if ((currentTime - beforeTime) < drainTime) {
 				continue;
-			}  
+			}
 			beforeTime = currentTime;
-			
-			if(gameState==GAME_STATE_READY && gameMembers.size() == 1 ){
-				broadcast("After 5 seconds Game Start!");   
+
+			if (gameState == GAME_STATE_READY && gameMembers.size() >= 1) {
+				broadcast("After 5 seconds Game Start!");
 				gameState = GAME_STATE_RUNNING;
 				count = 5;
 				continue;
 			}
-			
-			if(gameState==GAME_STATE_RUNNING && count>0 ){ 
-				broadcast(count+"seconds.");
+
+			if (gameState == GAME_STATE_RUNNING && count > 0) {
+				broadcast(count + "seconds.");
 				count--;
 				continue;
-			} 
-			
-			broadcast("Running~"+turn++); 
-			
-			if(gameMembers.size() == 0 && turn > 60){
+			}
+
+			broadcast("[" + turn + "]Game State - MemberCount : " + gameMembers.size());
+			turn++;
+
+			if (gameMembers.size() == 0){
 				gameState = GAME_STATE_FINISH;
 				gameClose();
 				break;
 			}
+			 
 			
-//			String state = "";
-//			// logic
-//			state += "C:" + gameMembers.size() + "/T:" + count + "/";
-//			for (GameMember m : gameMembers) {
-//				state += m.userId + ":" + m.position;
-//				state += "/";
-//			}
-//			broadcast(state);
-//
-//			// finish game
-//			if (count == 60) {
-//				gameState = GAME_STATE_FINISH;
-//				gameClose();
-//				break;
-//			}  
-//			if(gameMembers.size() == 0){
-//				gameState = GAME_STATE_FINISH;
-//				gameClose();
-//				break;
-//			}
-
 		}
 	}
 

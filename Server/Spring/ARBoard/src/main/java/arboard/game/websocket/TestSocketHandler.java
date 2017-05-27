@@ -56,7 +56,9 @@ public class TestSocketHandler extends TextWebSocketHandler implements Initializ
 			public void run(){
 				while(true){
 					try{
-						sendMessage("send message index"+ i++);
+						//sendMessage("send message index"+ i++);
+				
+						//sendMessage();
 						Thread.sleep(1000);
 					}catch(InterruptedException e){
 						e.printStackTrace();

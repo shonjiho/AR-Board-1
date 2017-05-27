@@ -42,10 +42,11 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 		//TEST
 		if(userProfile == null){
 			userProfile = new HashMap<String,Object>(); 
-			String ip = request.getLocalAddress().toString();
-			userProfile.put("id", ip);
-			userProfile.put("userName", "who");
+			String ip = request.getLocalAddress().getHostName().toString(); 
 			
+			//FOR TEST id - > currentTime
+			userProfile.put("id", String.valueOf((System.currentTimeMillis()/1000)%60));
+			userProfile.put("userName", "who"); 
 		}
 		
 		attributes.put("userProfile", userProfile);

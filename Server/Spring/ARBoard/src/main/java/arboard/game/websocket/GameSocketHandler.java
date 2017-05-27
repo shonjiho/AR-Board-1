@@ -1,6 +1,7 @@
 package arboard.game.websocket;
 
 import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -36,11 +37,22 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
+	public String convertByteBuffertoString(ByteBuffer b){
+		return new String(b.array());
+	}
 	// Message handler
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-
-		String payloadMessage = (String) message.getPayload();
+ 
+//		System.out.println("[DEBUG]TEST Message Welcome!!");
+//		System.out.print("[DEBUG]message - ");
+//		System.out.println(message); 
+//		System.out.print("[DEBUG]message payload  - ");
+//		System.out.println(message.getPayload());  
+//		System.out.print("[DEBUG]"); 
+		
+		ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();  
+		String payloadMessage = new String (byteBuffer.array()); 
 		String userId = getUserId(session);
 		String gameKey = getGameKey(session);
 		Game game = gameList.get(gameKey);
@@ -57,9 +69,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-		super.afterConnectionEstablished(session);
-
-		System.out.println("HELLO");
+		super.afterConnectionEstablished(session); 
 
 		String userId = getUserId(session);
 		String userName = getUserName(session);
@@ -82,8 +92,11 @@ public class GameSocketHandler extends TextWebSocketHandler {
 			gameList.put(gameKey, game);
 			game.gameState = Game.GAME_STATE_READY;
 			game.start();
-			member = new GameMember(session, userId);
-			game.addMember(member);
+			
+			member = new GameMember(session, userId,game);
+			System.out.println("[DEBUG]SESSION FORMAT : "+session.getId());
+			game.addMember(member); 
+			
 		} 
 		gameUsers.put(session, member);
 		
@@ -96,8 +109,16 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		super.afterConnectionClosed(session, status);
 		 
-			
 		
+		if(gameUsers.containsKey(session)){
+			GameMember member = gameUsers.get(session);
+			Game game = member.myGame;
+			synchronized (game.gameMembers) { 
+				if(game != null){
+					game.gameMembers.remove(member);
+				}
+			}
+		} 
 		System.out.println(
 				"DisConnect User. [ userId :" + getUserId(session) + ", userName :" + getUserName(session) + "]");
 
