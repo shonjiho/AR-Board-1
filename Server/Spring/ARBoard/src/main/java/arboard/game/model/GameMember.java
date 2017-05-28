@@ -7,7 +7,6 @@ import org.springframework.web.socket.WebSocketSession;
 
 public class GameMember  {
  
-	public int position ;
 	
 	public String userId; 
 	
@@ -21,23 +20,27 @@ public class GameMember  {
  
 	public GameMember(WebSocketSession session, String userId,Game game){
 		this.userId = userId;
-		this.session = session; 
-		this.position = 0;
+		this.session = session;  
 		this.myGame = game;
 		
 	}
 	public GameMember(WebSocketSession session, String userId){
 		this.userId = userId;
-		this.session = session; 
-		this.position = 0;
+		this.session = session;  
 		
 	}
 	
-	public void MessageSend(String str) throws IOException{
+	public void MessageSend(String str) {
 		
 		if(isInvalidSession()){
-			//session.sendMessage(new TextMessage(str));
-			session.sendMessage(new BinaryMessage(str.getBytes()));
+			
+			try {
+				//session.sendMessage(new TextMessage(str));
+				session.sendMessage(new BinaryMessage(str.getBytes()));
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		} 
 	}

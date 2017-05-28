@@ -1,5 +1,7 @@
 package arboard.game.websocket;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
+
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -20,7 +22,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	protected Logger log = Logger.getLogger(this.getClass());
 
 	// Game List
-	public Map<String, Game> gameList = new HashMap<String, Game>();
+	public Map<String, Game> gameList = new HashMap<String, Game>(); // < GameKey , Game >
 	public Map<WebSocketSession, GameMember> gameUsers = new HashMap<WebSocketSession, GameMember>();
 
 	public GameSocketHandler() {
@@ -43,21 +45,28 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	// Message handler
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
- 
-//		System.out.println("[DEBUG]TEST Message Welcome!!");
-//		System.out.print("[DEBUG]message - ");
-//		System.out.println(message); 
-//		System.out.print("[DEBUG]message payload  - ");
-//		System.out.println(message.getPayload());  
-//		System.out.print("[DEBUG]"); 
+  
 		
-		ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();  
-		String payloadMessage = new String (byteBuffer.array()); 
-		String userId = getUserId(session);
+		//System.out.print("[DEBUG] Message Type : "+message.getClass());  
+		String payloadMessage;
+		
+		if( message instanceof TextMessage){
+			payloadMessage = message.getPayload().toString();
+		}else{
+			//Binary Type
+			ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();  
+			payloadMessage = new String (byteBuffer.array()); 
+		}
+		
+		
+		
+		//String userId = getUserId(session);
 		String gameKey = getGameKey(session);
+		GameMember gameMember = gameUsers.get(session);
+		
 		Game game = gameList.get(gameKey);
 		if (game != null) {
-			game.messagehandle(userId, payloadMessage);
+			game.messagehandle(gameMember, payloadMessage);
 		} else {
 			log.debug("[" + gameKey + "]" + "empty.");
 			sendString(session, "[" + gameKey + "]" + "empty.");
@@ -89,8 +98,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 			game.addMember(member);
 		} else {
 			game = new Game(this, gameKey);
-			gameList.put(gameKey, game);
-			game.gameState = Game.GAME_STATE_READY;
+			gameList.put(gameKey, game); 
 			game.start();
 			
 			member = new GameMember(session, userId,game);
@@ -107,18 +115,16 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	// After Connect Close
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		super.afterConnectionClosed(session, status);
-		 
-		
-		if(gameUsers.containsKey(session)){
-			GameMember member = gameUsers.get(session);
-			Game game = member.myGame;
-			synchronized (game.gameMembers) { 
-				if(game != null){
-					game.gameMembers.remove(member);
-				}
-			}
-		} 
+		super.afterConnectionClosed(session, status); 
+//		if(gameUsers.containsKey(session)){
+//			GameMember member = gameUsers.get(session);
+//			Game game = member.myGame;
+//			synchronized (member.myGame) { 
+//				if(game != null){
+//					game.gameMembers.remove(member);
+//				}
+//			}
+//		} 
 		System.out.println(
 				"DisConnect User. [ userId :" + getUserId(session) + ", userName :" + getUserName(session) + "]");
 
