@@ -31,9 +31,9 @@ public class Scaffolding : MonoBehaviour {
 		}
 	}
 
-	public bool isMyScaffolding(int myUserNum)
+	public bool isMyScaffolding()
 	{
-		if(ownerPlayerNum == -1 || ownerPlayerNum == myUserNum)
+		if(ownerPlayerNum == -1 || ownerPlayerNum == StateManager.Instance.GetMyPlayerNumber())
 		{
 			return true;
 		}

@@ -1,19 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
 public class GameManager : MonoBehaviour {
 
-	int myUserNum;
-	const int scaffoldingsMaxCount = 36;
-	const int price = 500;
+	WebSocket w;
 	
 	public GameObject gameObjectLevel3;
 	public GameObject gameObjectLevel2;
 	public GameObject gameObjectLevel1;
 
-	public List<UserState> userStates;
-	public List<Scaffolding> scaffoldings;
+	StateManager stateManager = null;
+	UIManager uiManager = null;
+	
 
 
 	static GameManager instance;
@@ -43,47 +44,58 @@ public class GameManager : MonoBehaviour {
 	public void Init()
 	{
 		Load(gameObject);
+		stateManager = StateManager.Instance;
+		uiManager = UIManager.Instance;
 	}
 
-	public void GameStart(int userCount, int myUserNum)
+	public void GameSetting()
 	{
-		this.myUserNum = myUserNum;
-		//맵 초기화
-		scaffoldings = new List<Scaffolding>();
+		w = new WebSocket(new Uri(SettingManager.SERVER_ADDRESS));
+		StartCoroutine(ServerConnect());
 
-		GameObject goScaffoldings = GameObject.FindWithTag("Scaffoldings");
-		if(goScaffoldings == null)
+	}
+
+	IEnumerator ServerConnect () {
+		Debug.Log("server connect start");
+		yield return StartCoroutine(w.Connect());
+		SetNewGame(new string[5]);
+		while (true)
 		{
-			Debug.LogError("goScaffoldings is NULL");
-			return;
-		}
-
-		for(int i=0; i<goScaffoldings.transform.childCount; i++)
-		{
-			Scaffolding scaffolding = goScaffoldings.transform.GetChild(i).GetComponent<Scaffolding>();
-
-			if(scaffolding == null)
+			string reply = w.RecvString();
+			if (reply != null)
 			{
-				continue;
+				ReplyProcess(reply);
 			}
-
-			scaffoldings.Add(scaffolding);
+			if (w.error != null)
+			{
+				Debug.LogError("Error: "+w.error);
+				break;
+			}
+			yield return 0;
 		}
+		Debug.Log("Server Close");
+		w.Close();
+	}
 
-		if(scaffoldings.Count != scaffoldingsMaxCount)
+	public void ReplyProcess(string reply)
+	{
+		Debug.Log("Receive: "  + reply);
+		string[] replySplitArr = reply.Split(',');
+		switch(replySplitArr[0])
 		{
-			Debug.LogError("Scaffoldings Count Error");
-			return;
+			// case "Welcome ARBOARD!!" : 
+			// case SettingManager.SM_GAME_START :
+			// 	Debug.Log("SM_GAME_START");
+			// 	SetNewGame(replySplitArr);
+			// 	break;
+			// case SettingManager.SM_END_GAME_START_WAIT_TIME :
+			// 	StartGame();
+			// 	break;
+			case SettingManager.SM_GET_DICE_RESULT :
+				
+				MovePlayer(replySplitArr);
+				break;
 		}
-
-		userStates = new List<UserState>();
-
-		for(int i=0; i<userCount; i++)
-		{
-			userStates.Add(new UserState());
-		}
-
-		UIManager.Instance.SetUI(userStates[myUserNum]);
 	}
 
 	public void DiceInput()
@@ -108,26 +120,27 @@ public class GameManager : MonoBehaviour {
 		}
 	}
 
-	public void DiceStart()
+	void SetNewGame(string[] replySplitArr)
 	{
-		if(diceState != E_DiceState.READY)
-		{
-			return;
-		}
-		UIButton diceButton = UIManager.Instance.GetDiceButton();
-		UILabel diceLabel = UIManager.Instance.GetDiceLabel();
-		if(diceButton == null || diceLabel == null)
-		{
-			//diceButton 없을시 리턴
-			Debug.LogError("diceButton or diceLabel is Null!!");
-			return;
-		}
-
-		StartCoroutine(DiceProcess(diceButton, diceLabel));
+		// stateManager.SetNewGameState(replySplitArr);
+		stateManager.SetNewGameStateTEST();
+		uiManager.RefreshUI();
+		StartGame();
 	}
 
-	IEnumerator DiceProcess(UIButton diceButton, UILabel diceLabel)
+	void StartGame()
 	{
+		//0번째 턴인 사람이 먼저 시작한다.
+		if(stateManager.GetMyPlayerNumber() != 0)
+			return;
+
+		StartCoroutine(DiceProcess());
+	}
+
+
+	IEnumerator DiceProcess()
+	{
+		UIButton diceButton = uiManager.GetDiceButton();
 		diceButton.gameObject.SetActive(true);
 
 		Vector3 diceButtonBaseScale = diceButton.transform.localScale;
@@ -156,8 +169,35 @@ public class GameManager : MonoBehaviour {
 
 		diceButton.gameObject.SetActive(false);
 
-		int diceValue = (int)Random.Range(1, 12);
-		diceLabel.text = diceValue.ToString();
+		int diceValue = (int)UnityEngine.Random.Range(1, 12);
+
+		string request = "DiceResult," + stateManager.GetMyPlayerNumber() + "," + diceValue;
+		Debug.LogError(request);
+
+		w.SendString(request);
+
+		diceState = E_DiceState.INPUT_WAIT;
+
+		
+	}
+
+	void MovePlayer(string[] replySplitArr)
+	{
+		int playerNum = int.Parse(replySplitArr[1]);
+		int moveValue = int.Parse(replySplitArr[2]);
+
+		StartCoroutine(MoveProcess(playerNum, moveValue));
+	}
+
+	IEnumerator MoveProcess(int playerNum, int moveValue)
+	{
+
+		UILabel diceLabel = uiManager.GetDiceLabel();
+		PlayerState playerState = stateManager.playerStates[playerNum];
+
+		Debug.Log("MoveProcess " + playerState.name);
+
+		diceLabel.text = moveValue.ToString();
 		Vector3 diceLabelBaseScale = diceLabel.transform.localScale;
 		diceLabel.gameObject.SetActive(true);
 
@@ -174,94 +214,62 @@ public class GameManager : MonoBehaviour {
 		diceLabel.gameObject.SetActive(false);
 		
 
-		UserMove(myUserNum, diceValue);
 
-	}
-
-	void UserMove(int userNum, int moveValue)
-	{
-		if(userNum>=userStates.Count)
-		{
-			Debug.LogError("userNum is over");
-			return;
-		}
-
-		StopCoroutine(UserMoveCoroutine(userNum, moveValue));
-		StartCoroutine(UserMoveCoroutine(userNum, moveValue));
-		
-	}
-
-	IEnumerator UserMoveCoroutine(int userNum, int moveValue)
-	{
-		Debug.Log("coroutine start");
-		GameObject players = GameObject.FindWithTag("Players");
-		if(players == null)
-		{
-			Debug.LogError("Players not Find");
-			yield return null;
-		}
-		GameObject player = players.transform.GetChild(userNum).gameObject;
-
-		Transform target = null;
+		//도착지점
+		Vector3 targetPosition;
 
 		float speed = 100;
-		Animator animator = player.GetComponent<Animator>();
+		Animator animator = playerState.GetComponent<Animator>();
 		
 
 		while(moveValue != 0)
 		{
-			int moveModuler = userStates[userNum].Location%9;
+			int moveModuler = playerState.Location%9;
 			moveModuler = 9 - moveModuler;
-			if(moveValue > moveModuler)
+			if(moveValue > moveModuler)	// 이 모서리 넘어서 이동할 경우
 			{
-				animator.PlayInFixedTime("Run");
-				moveValue = moveValue - moveModuler;
-				userStates[userNum].Location = userStates[userNum].Location + moveModuler;
-				if(userStates[userNum].Location == scaffoldingsMaxCount)
-				{
-					userStates[userNum].Location = 0;
-				}
-				target = scaffoldings[userStates[userNum].Location].transform;
-				while(player.transform.position != target.position)
-				{
-					// Debug.Log("coroutine ing");
-					float step = speed * Time.deltaTime;
-					player.transform.position = Vector3.MoveTowards(player.transform.position, target.position, step);
-					yield return new WaitForSeconds(0.02f);
-				}
-				player.transform.rotation *= Quaternion.Euler(0, 90, 0);
+				// animator.PlayInFixedTime("Run");
+				moveValue -= moveModuler;
+				
+				// playerState.transform.rotation *= Quaternion.Euler(0, 90, 0);
+				playerState.Location += moveModuler;
 			}
 			else
 			{
-				animator.PlayInFixedTime("Run");
-				userStates[userNum].Location = userStates[userNum].Location + moveValue;
-				if(userStates[userNum].Location == scaffoldingsMaxCount)
-				{
-					userStates[userNum].Location = 0;
-				}
-				//여기서 조절
-				player.transform.LookAt(scaffoldings[userStates[userNum].Location].transform);
-				target = scaffoldings[userStates[userNum].Location].transform;
-				while(player.transform.position != target.position)
-				{
-					// Debug.Log("coroutine ing");
-					float step = speed * Time.deltaTime;
-					player.transform.position = Vector3.MoveTowards(player.transform.position, target.position, step);
-					yield return new WaitForSeconds(0.02f);
-				}
+				playerState.Location += moveValue;
 				moveValue = 0;
+			}
+
+			
+			if(playerState.Location == SettingManager.SCAFFOLDINGS_COUNT)
+			{
+				playerState.Location = 0;
+			}
+
+			targetPosition = stateManager.GetPlayerScaffoldingLocatePosition(playerState);
+			playerState.transform.LookAt(targetPosition);
+
+			while(playerState.transform.position != targetPosition)
+			{
+				float step = speed * Time.deltaTime;
+				playerState.transform.position = Vector3.MoveTowards(playerState.transform.position, targetPosition, step);
+				yield return new WaitForSeconds(0.02f);
 			}
 		}
 		
-		if(myUserNum == userNum)
+		if(playerNum == stateManager.GetMyPlayerNumber())
 		{
-			if(scaffoldings[userStates[userNum].Location].isMyScaffolding(myUserNum))
+			if(stateManager.GetScaffolding(playerState.Location).isMyScaffolding())
 			{
 				//모서리지점은 구매할 수 없다.
-				if(userStates[userNum].Location%9 != 0)
+				if(playerState.Location%9 != 0)
 				{
 					//땅구매 열기
-				UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+					UIManager.Instance.ShowBuildMenu(stateManager.GetScaffolding(playerState.Location));
+				}
+				else
+				{
+
 				}
 				
 			}
@@ -271,158 +279,161 @@ public class GameManager : MonoBehaviour {
 
 			}
 		}
-
-		Debug.Log("coroutine done");
-
-		diceState = E_DiceState.READY;
-
-
-		
 	}
 
-	public void BuildGameObject(int userNum, int level)
-	{
-		GameObject goBuild;
-		if(level == 1)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
-		}
-		else if(level == 2)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
-		}
-		else
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
-		}
 
-		if(scaffoldings[userStates[userNum].Location].transform.FindChild("Build") != null)
-		{
-			Destroy(scaffoldings[userStates[userNum].Location].transform.FindChild("Build").gameObject);
-		}
 
-		goBuild.name = "Build";
-		goBuild.transform.parent = scaffoldings[userStates[userNum].Location].transform;
-		if(userStates[userNum].Location > 0 && userStates[userNum].Location < 9)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, -3);
-		}
-		else if(userStates[userNum].Location > 9 && userStates[userNum].Location < 18)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
-		}
-		else if(userStates[userNum].Location > 18 && userStates[userNum].Location < 27)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, 3);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
-		}
-		else
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
-		}
+
+
+
+
+
+
+
+
+	// public void BuildGameObject(int userNum, int level)
+	// {
+	// 	GameObject goBuild;
+	// 	if(level == 1)
+	// 	{
+	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
+	// 	}
+	// 	else if(level == 2)
+	// 	{
+	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
+	// 	}
+	// 	else
+	// 	{
+	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
+	// 	}
+
+	// 	if(scaffoldings[userStates[userNum].Location].transform.FindChild("Build") != null)
+	// 	{
+	// 		Destroy(scaffoldings[userStates[userNum].Location].transform.FindChild("Build").gameObject);
+	// 	}
+
+	// 	goBuild.name = "Build";
+	// 	goBuild.transform.parent = scaffoldings[userStates[userNum].Location].transform;
+	// 	if(userStates[userNum].Location > 0 && userStates[userNum].Location < 9)
+	// 	{
+	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+	// 		goBuild.transform.localPosition = new Vector3(0, 0, -3);
+	// 	}
+	// 	else if(userStates[userNum].Location > 9 && userStates[userNum].Location < 18)
+	// 	{
+	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+	// 		goBuild.transform.localPosition = new Vector3(-3, 0, 0);
+	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
+	// 	}
+	// 	else if(userStates[userNum].Location > 18 && userStates[userNum].Location < 27)
+	// 	{
+	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+	// 		goBuild.transform.localPosition = new Vector3(0, 0, 3);
+	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
+	// 	}
+	// 	else
+	// 	{
+	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+	// 		goBuild.transform.localPosition = new Vector3(3, 0, 0);
+	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
+	// 	}
 		
-	}
+	// }
 
-	public void BuildLevel3()
-	{
-		BuildLevel3(myUserNum);
-	}
+	// public void BuildLevel3()
+	// {
+	// 	BuildLevel3(myUserNum);
+	// }
 
-	public void BuildLevel3(int userNum)
-	{
-		if(userNum>=userStates.Count)
-		{
-			Debug.LogError("userNum is over");
-			return;
-		}
+	// public void BuildLevel3(int userNum)
+	// {
+	// 	if(userNum>=userStates.Count)
+	// 	{
+	// 		Debug.LogError("userNum is over");
+	// 		return;
+	// 	}
 		
-		if(userStates[userNum].Money >= price * 3)
-		{
-			userStates[userNum].Money -= price * 3;
-			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
-			scaffoldings[userStates[userNum].Location].BuildLevel = 3;
-			BuildGameObject(userNum, 3);
+	// 	if(userStates[userNum].Money >= price * 3)
+	// 	{
+	// 		userStates[userNum].Money -= price * 3;
+	// 		scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+	// 		scaffoldings[userStates[userNum].Location].BuildLevel = 3;
+	// 		BuildGameObject(userNum, 3);
 			
-		}
+	// 	}
 
 		
 
-		if(userNum == myUserNum)
-		{
-			UIManager.Instance.SetUI(userStates[myUserNum]);
-			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
-		}
+	// 	if(userNum == myUserNum)
+	// 	{
+	// 		UIManager.Instance.SetUI(userStates[myUserNum]);
+	// 		UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+	// 	}
 
 
-	}
+	// }
 
-	public void BuildLevel2()
-	{
-		BuildLevel2(myUserNum);
-	}
+	// public void BuildLevel2()
+	// {
+	// 	BuildLevel2(myUserNum);
+	// }
 
-	public void BuildLevel2(int userNum)
-	{
-		if(userNum>=userStates.Count)
-		{
-			Debug.LogError("userNum is over");
-			return;
-		}
+	// public void BuildLevel2(int userNum)
+	// {
+	// 	if(userNum>=userStates.Count)
+	// 	{
+	// 		Debug.LogError("userNum is over");
+	// 		return;
+	// 	}
 		
-		if(userStates[userNum].Money >= price * 2)
-		{
-			userStates[userNum].Money -= price * 2;
-			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
-			scaffoldings[userStates[userNum].Location].BuildLevel = 2;
-			BuildGameObject(userNum, 2);
-		}
+	// 	if(userStates[userNum].Money >= price * 2)
+	// 	{
+	// 		userStates[userNum].Money -= price * 2;
+	// 		scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+	// 		scaffoldings[userStates[userNum].Location].BuildLevel = 2;
+	// 		BuildGameObject(userNum, 2);
+	// 	}
 
-		if(userNum == myUserNum)
-		{
-			UIManager.Instance.SetUI(userStates[myUserNum]);
-			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
-		}
-	}
+	// 	if(userNum == myUserNum)
+	// 	{
+	// 		UIManager.Instance.SetUI(userStates[myUserNum]);
+	// 		UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+	// 	}
+	// }
 
-	public void BuildLevel1()
-	{
-		BuildLevel1(myUserNum);
-	}
+	// public void BuildLevel1()
+	// {
+	// 	BuildLevel1(myUserNum);
+	// }
 
-	public void BuildLevel1(int userNum)
-	{
-		if(userNum>=userStates.Count)
-		{
-			Debug.LogError("userNum is over");
-			return;
-		}
+	// public void BuildLevel1(int userNum)
+	// {
+	// 	if(userNum>=userStates.Count)
+	// 	{
+	// 		Debug.LogError("userNum is over");
+	// 		return;
+	// 	}
 		
-		if(userStates[userNum].Money >= price * 1)
-		{
-			userStates[userNum].Money -= price * 1;
-			scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
-			scaffoldings[userStates[userNum].Location].BuildLevel = 1;
-			BuildGameObject(userNum, 1);
-		}
+	// 	if(userStates[userNum].Money >= price * 1)
+	// 	{
+	// 		userStates[userNum].Money -= price * 1;
+	// 		scaffoldings[userStates[userNum].Location].OwnerPlayerNum = userNum;
+	// 		scaffoldings[userStates[userNum].Location].BuildLevel = 1;
+	// 		BuildGameObject(userNum, 1);
+	// 	}
 
 		
 
-		if(userNum == myUserNum)
-		{
-			UIManager.Instance.SetUI(userStates[myUserNum]);
-			UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
-		}
-	}
+	// 	if(userNum == myUserNum)
+	// 	{
+	// 		UIManager.Instance.SetUI(userStates[myUserNum]);
+	// 		UIManager.Instance.ShowBuildMenu(scaffoldings[userStates[userNum].Location]);
+	// 	}
+	// }
 
-	public void BuildCancle()
-	{
-		UIManager.Instance.HideBuildMenu();
-	}
+	// public void BuildCancle()
+	// {
+	// 	UIManager.Instance.HideBuildMenu();
+	// }
 
 }

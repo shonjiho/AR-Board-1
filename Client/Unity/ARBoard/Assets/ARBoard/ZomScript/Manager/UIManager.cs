@@ -5,12 +5,18 @@ using UnityEngine;
 public class UIManager : MonoBehaviour {
 
 	[SerializeField] GameObject uiRoot;
-	[SerializeField] UILabel moneyLabel;
+	// [SerializeField] UILabel moneyLabel;
 	[SerializeField] UIButton diceButton;
+	[SerializeField] List<GameObject> playerStateWindows;
 	[SerializeField] UILabel diceLabel;
 	[SerializeField] GameObject buildMenu;
 
 	static UIManager instance;
+	const string STRING_NAME_LABEL = "NameLabel";
+	const string STRING_MONEY_LABEL = "MoneyLabel";
+	const string STRING_HOTEL = "Hotel";
+	const string STRING_BUILDING = "Building";
+	const string STRING_MOTEL = "Motel";
 
 	public static UIManager Instance
 	{
@@ -89,9 +95,20 @@ public class UIManager : MonoBehaviour {
 	//	게임
 	//
 
-	public void SetUI(UserState userState)
+	public void RefreshUI()
 	{
-		moneyLabel.text = userState.Money.ToString();
+		List<PlayerState> playerStates = StateManager.Instance.playerStates;
+
+		for(int i=0; i<playerStateWindows.Count; i++)
+		{
+			UILabel nameLabel = playerStateWindows[i].transform.FindChild(STRING_NAME_LABEL).GetComponent<UILabel>();
+			// Debug.LogError(playerStates[i].PlayerName);
+			nameLabel.text = playerStates[i].PlayerName;
+			UILabel moneyLabel = playerStateWindows[i].transform.FindChild(STRING_MONEY_LABEL).GetComponent<UILabel>();
+			// Debug.LogError(playerStates[i].Money);
+			moneyLabel.text = "" + playerStates[i].Money;
+		}
+
 	}
 
 	public UIButton GetDiceButton()
@@ -111,35 +128,35 @@ public class UIManager : MonoBehaviour {
 			Debug.LogError("buildMenu is null!!");
 			return;
 		}
-		UIImageButton level3Button = buildMenu.transform.FindChild("Level3Button").GetComponent<UIImageButton>();
-		UIImageButton level2Button = buildMenu.transform.FindChild("Level2Button").GetComponent<UIImageButton>();
-		UIImageButton level1Button = buildMenu.transform.FindChild("Level1Button").GetComponent<UIImageButton>();
+		GameObject hotelButton = buildMenu.transform.FindChild(STRING_HOTEL).gameObject;
+		GameObject buildingButton = buildMenu.transform.FindChild(STRING_BUILDING).gameObject;
+		GameObject motelButton = buildMenu.transform.FindChild(STRING_MOTEL).gameObject;
 
 		if(scaffolding.BuildLevel < 3)
 		{
-			level3Button.isEnabled = true;
+			hotelButton.gameObject.SetActive(true);
 		}
 		else
 		{
-			level3Button.isEnabled = false;
+			hotelButton.gameObject.SetActive(false);
 		}
 
 		if(scaffolding.BuildLevel < 2)
 		{
-			level2Button.isEnabled = true;
+			buildingButton.gameObject.SetActive(true);
 		}
 		else
 		{
-			level2Button.isEnabled = false;
+			buildingButton.gameObject.SetActive(false);
 		}
 
 		if(scaffolding.BuildLevel < 1)
 		{
-			level1Button.isEnabled = true;
+			motelButton.gameObject.SetActive(true);
 		}
 		else
 		{
-			level1Button.isEnabled = false;
+			motelButton.gameObject.SetActive(false);
 		}
 
 		buildMenu.SetActive(true);

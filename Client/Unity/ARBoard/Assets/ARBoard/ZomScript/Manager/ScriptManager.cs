@@ -6,13 +6,16 @@ public class ScriptManager : MonoBehaviour {
 
 	[SerializeField] GameManager gameManager;
 	[SerializeField] UIManager uiManager;
+	[SerializeField] StateManager stateManager;
 
 	public void Init()
 	{
-		gameManager.Init();
+		
 		uiManager.Init();
+		stateManager.Init();
+		gameManager.Init();
 
-		GameManager.Instance.GameStart(1, 0);
+		GameManager.Instance.GameSetting();
 		// GameManager.Instance.DiceStart();
 	}
 }
