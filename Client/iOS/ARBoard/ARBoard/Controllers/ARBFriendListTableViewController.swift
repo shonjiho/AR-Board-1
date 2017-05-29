@@ -49,7 +49,7 @@ class ARBFriendListTableViewController: UITableViewController {
         super.viewDidAppear(animated)
     }
     private func fetchFriendList(showActivityIndicator:Bool=false, completion: ((Void) -> Void)? = nil){
-        self.dataManager.getRequest(self, requestType: .friend, isShowActivityIndicator: showActivityIndicator) { (isSuccess) in
+        self.dataManager.fetchRequest(self, requestType: .friend, isShowActivityIndicator: showActivityIndicator) { (isSuccess) in
             if let completion = completion {
                 completion()
             }

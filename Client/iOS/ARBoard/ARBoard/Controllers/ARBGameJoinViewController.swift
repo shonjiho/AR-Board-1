@@ -32,27 +32,28 @@ class ARBGameJoinViewController: UIViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
+        self.startPulse()
     }
     
+    fileprivate func startPulse(){
+        self.joinView.startPulse(with: UIColor.redTintColor, scaleFrom: 1.0, to: 1.6, frequency: 1.5, opacity: 0.8, animation: .radarPulsing)
+    }
     internal func setupGameList(){
         self.joinView.layer.cornerRadius = (self.joinView.frame.height / 2)
         self.joinView.backgroundColor = UIColor.redTintColor
         let tabGestureRecognizer : UITapGestureRecognizer = UITapGestureRecognizer.init(target: self, action: #selector(self.joinViewTouch(_:)))
         self.joinView.addGestureRecognizer(tabGestureRecognizer)
         
-        self.currentStateLabel.text = JoinState.ready.description
+//        self.currentStateLabel.text = JoinState.ready.description
     }
     func joinViewTouch(_ gestureRecognizer:UITapGestureRecognizer){
-        self.joinView.startPulse(with: UIColor.redTintColor, scaleFrom: 1.0, to: 1.6, frequency: 1.5, opacity: 0.8, animation: .radarPulsing)
-        self.currentStateLabel.text = JoinState.search.description
+        self.joinView.stopPulse()
+//        self.currentStateLabel.text = JoinState.search.description
         dataManager.gameJoinRequest(self) { (isSuccess) in
-            self.joinView.stopPulse()
-            self.currentStateLabel.text = JoinState.ready.description
+            
+//            self.currentStateLabel.text = JoinState.ready.description
         }
     }
-    @IBAction func addAction(_ sender: Any) {
-        
-    }
+    
 }
 

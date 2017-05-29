@@ -1,11 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="11762" systemVersion="15G31" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="3Ys-RY-eE4">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="12120" systemVersion="16F73" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="3Ys-RY-eE4">
     <device id="retina4_7" orientation="portrait">
         <adaptation id="fullscreen"/>
     </device>
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="11757"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12088"/>
         <capability name="Aspect ratio constraints" minToolsVersion="5.1"/>
         <capability name="Constraints with non-1.0 multipliers" minToolsVersion="5.1"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
@@ -27,7 +27,10 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Ri-uL-mGh" customClass="FBSDKLoginButton">
-                                <rect key="frame" x="38" y="587" width="300" height="30"/>
+                                <rect key="frame" x="0.0" y="573" width="375" height="44"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="44" id="SVZ-y9-HM3"/>
+                                </constraints>
                                 <state key="normal" title="Button"/>
                             </button>
                         </subviews>
@@ -39,7 +42,8 @@
                             <constraint firstItem="1PG-v1-dZr" firstAttribute="top" secondItem="ZbS-fm-OnM" secondAttribute="top" id="S2y-bC-x6H"/>
                             <constraint firstItem="deJ-gV-QsK" firstAttribute="top" secondItem="1PG-v1-dZr" secondAttribute="bottom" id="T7i-WQ-kpE"/>
                             <constraint firstAttribute="trailing" secondItem="1PG-v1-dZr" secondAttribute="trailing" id="Udf-I6-XKk"/>
-                            <constraint firstItem="8Ri-uL-mGh" firstAttribute="width" secondItem="1PG-v1-dZr" secondAttribute="width" multiplier="0.8" id="Xpb-s1-eIe"/>
+                            <constraint firstItem="8Ri-uL-mGh" firstAttribute="leading" secondItem="ZbS-fm-OnM" secondAttribute="leading" id="f8O-jn-vDR"/>
+                            <constraint firstAttribute="trailing" secondItem="8Ri-uL-mGh" secondAttribute="trailing" id="gcZ-dg-gFH"/>
                         </constraints>
                     </view>
                     <connections>
@@ -48,7 +52,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BeK-Rw-j3g" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="54" y="2166"/>
+            <point key="canvasLocation" x="54" y="2269"/>
         </scene>
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
@@ -81,8 +85,8 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="w60-zU-tLP">
-                                <rect key="frame" x="163" y="421" width="49" height="24"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text=" " textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumFontSize="10" translatesAutoresizingMaskIntoConstraints="NO" id="w60-zU-tLP">
+                                <rect key="frame" x="185" y="421" width="5.5" height="24"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="20"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -94,23 +98,25 @@
                                     <constraint firstAttribute="width" secondItem="D2u-eT-haL" secondAttribute="height" multiplier="1:1" id="410-lf-h9t"/>
                                 </constraints>
                             </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="게임 시작" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gYD-Ap-qNU">
+                                <rect key="frame" x="156" y="323" width="63.5" height="21"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.1450980392" green="0.1450980392" blue="0.1450980392" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                         <constraints>
+                            <constraint firstItem="gYD-Ap-qNU" firstAttribute="centerX" secondItem="VtF-Zs-2Vm" secondAttribute="centerX" id="PwG-ZQ-vxy"/>
                             <constraint firstItem="w60-zU-tLP" firstAttribute="top" secondItem="D2u-eT-haL" secondAttribute="bottom" constant="20" id="Sy7-Iv-8k7"/>
                             <constraint firstItem="D2u-eT-haL" firstAttribute="centerY" secondItem="VtF-Zs-2Vm" secondAttribute="centerY" id="biR-kp-iDn"/>
                             <constraint firstItem="D2u-eT-haL" firstAttribute="height" secondItem="VtF-Zs-2Vm" secondAttribute="height" multiplier="0.2" id="f7p-Ep-IFc"/>
                             <constraint firstItem="w60-zU-tLP" firstAttribute="centerX" secondItem="VtF-Zs-2Vm" secondAttribute="centerX" id="h3L-B0-uUV"/>
+                            <constraint firstItem="gYD-Ap-qNU" firstAttribute="centerY" secondItem="VtF-Zs-2Vm" secondAttribute="centerY" id="iuV-pJ-qLL"/>
                             <constraint firstItem="D2u-eT-haL" firstAttribute="centerX" secondItem="VtF-Zs-2Vm" secondAttribute="centerX" id="lHd-uH-3F9"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="AR 부루마블" id="iZ2-r3-Y54">
-                        <barButtonItem key="rightBarButtonItem" systemItem="add" id="nXL-BM-f5H">
-                            <connections>
-                                <action selector="addAction:" destination="gzp-2w-Wh6" id="AoA-eo-vYd"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="AR 부루마블" id="iZ2-r3-Y54"/>
                     <connections>
                         <outlet property="currentStateLabel" destination="w60-zU-tLP" id="aKI-pj-PIk"/>
                         <outlet property="joinView" destination="D2u-eT-haL" id="W4d-sp-y1O"/>
@@ -125,7 +131,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="CO5-qy-qHt" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="glL-S5-ExP">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="glL-S5-ExP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -280,7 +286,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rPg-MQ-z1z" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="2959.1999999999998" y="2114.3928035982012"/>
+            <point key="canvasLocation" x="2015" y="2270"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="H0U-Pz-21V">
@@ -288,7 +294,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="50R-xD-Oq3" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="favorites" id="3PI-gM-xaA"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ePm-Xc-mfF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ePm-Xc-mfF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -307,7 +313,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rac-GT-8M1" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="more" id="DFC-Be-kgM"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Z2j-jB-xPU">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z2j-jB-xPU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -318,7 +324,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="saG-YS-ZxM" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1080.8" y="2114.3928035982012"/>
+            <point key="canvasLocation" x="1076" y="2270"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="7Il-oo-AfT">
@@ -337,7 +343,7 @@
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="KcO-jK-s37" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1081" y="1451"/>
+            <point key="canvasLocation" x="1076" y="1519"/>
         </scene>
         <!--친구 목록-->
         <scene sceneID="DUQ-dG-ylg">
@@ -453,7 +459,7 @@
                     </state>
                 </button>
             </objects>
-            <point key="canvasLocation" x="2015" y="1451"/>
+            <point key="canvasLocation" x="2015" y="1519"/>
         </scene>
         <!--친구 추가-->
         <scene sceneID="e47-8T-YRF">
@@ -587,7 +593,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2VK-RW-jCc" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="6XH-2i-2ps">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="6XH-2i-2ps">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>

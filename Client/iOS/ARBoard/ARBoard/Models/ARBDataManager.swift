@@ -87,46 +87,61 @@ class ARBDataManager : NSObject {
             })
         }
     }
-    func createRequest(_ viewController: UIViewController, requestType: RequestType,identifier:String?=nil, completion: ((Any?) -> Void)?){
+    func createRequest(_ viewController: UIViewController, requestType: RequestType, identifier:String?, completion: ((Any?) -> Void)?){
+        
+        guard let identifier = identifier else {
+            return
+        }
+        
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-            if let identifier = identifier {
-                requestUrl = "http://125.130.223.88/arboard/friend/\(identifier)/request"
-            }
-            
+//            "http://125.130.223.88/arboard/friend/\(identifier)/request"
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathComponent(path: identifier)
+                                 .appendingPathComponent(path: URL.request)
         case .user:
-            if let identifier = identifier {
-                requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            }
-        default:
-            return
+//            "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
+                                 .appendingPathComponent(path: requestType.description)
+                                 .appendingPathQuery(key: URL.email, value: identifier)
         }
+        dump("Request URL : \(requestUrl)")
+        
         let requestCloser = Alamofire.request(requestUrl)
         requestCloser.response { (dataResponse) in
             guard dataResponse.response?.statusCode == 200 else {
-                dump("ERROR \(dataResponse.response?.statusCode)")
+                dump("Error Status Code : \(dataResponse.response?.statusCode)")
                 return
             }
             dump(dataResponse.response?.statusCode)
         }
+        
     }
-    func getRequest(_ viewController: UIViewController, requestType: RequestType, isShowActivityIndicator: Bool = false,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
+    func fetchRequest(_ viewController: UIViewController, requestType: RequestType, isShowActivityIndicator: Bool = false,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
         if isShowActivityIndicator {
             self.showActivityIndicator()
         }
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-            requestUrl = "http://125.130.223.88/arboard/friend/list"
+//            requestUrl = "http://125.130.223.88/arboard/friend/list"
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathComponent(path: URL.list)
         case .user:
-            if let identifier = identifier {
-                requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            guard let identifier = identifier else {
+                return
             }
+//            requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
+            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
+                                 .appendingPathComponent(path: requestType.description)
+                                 .appendingPathQuery(key: URL.email, value: identifier)
         default:
             return
         }
+        
         let requestCloser = Alamofire.request(requestUrl)
+        
         switch requestType {
         case .friend:
             requestCloser.responseObject { (dataResponse: DataResponse<Friends>) in

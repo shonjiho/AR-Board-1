@@ -68,7 +68,7 @@ extension ARBSearchViewController:UISearchBarDelegate {
     func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
         self.searchBar.endEditing(true)
         dump(searchBar.text)
-        self.dataManager.getRequest(self, requestType: .user, identifier: searchBar.text) { (user) in
+        self.dataManager.fetchRequest(self, requestType: .user, identifier: searchBar.text) { (user) in
             dump(user)
             if let user = user as? User {
                 self.configureUI(user)
