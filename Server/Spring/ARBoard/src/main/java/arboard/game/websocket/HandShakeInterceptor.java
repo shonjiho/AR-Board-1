@@ -26,11 +26,10 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
 
-		log.debug("Before Handshake"); 
-
+		log.debug("Before Handshake");  
 		ServletServerHttpRequest ssreq = (ServletServerHttpRequest) request;
 		log.debug("URI:" + request.getURI());  
-
+		
 		HttpServletRequest req = ssreq.getServletRequest(); 
 		HttpSession httpSession = req.getSession(); 
 		String SessionId = httpSession.getId(); 
@@ -52,11 +51,11 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 		attributes.put("userProfile", userProfile);
 
 		Object status = httpSession.getAttribute("status");
+		
 		//TEST
 		if(status == null){
 			status = new Boolean(true);
-		} 
-		
+		}  
 		attributes.put("status", status);
 
 		Object gameKey = httpSession.getAttribute("gameKey"); 

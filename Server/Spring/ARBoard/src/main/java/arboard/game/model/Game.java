@@ -23,16 +23,32 @@ public class Game extends Thread {
 
 	public List<GameMember> gameMembers;
 	public int gameState;
-
-	public Game(GameSocketHandler handler, String gameKey) {
-		gameMembers = new ArrayList<GameMember>();
-		gameSockethandler = handler;
-		this.gameState = GAME_STATE_ROOM;
-		this.gameKey = gameKey;
+	public int gameCount=5;
+	
+//	public Game(GameSocketHandler handler, String gameKey) {
+//		gameMembers = new ArrayList<GameMember>();
+//		gameSockethandler = handler;
+//		this.gameState = GAME_STATE_ROOM;
+//		this.gameKey = gameKey;
+//	}
+	
+	public static Game init(){
+		Game game = new Game();
+		game.gameMembers =  new ArrayList<GameMember>();
+		game.gameState = GAME_STATE_ROOM;
+		return game;
+	} 
+	public Game setGameSocketHandler(GameSocketHandler handler){
+		this.gameSockethandler = handler;
+		return this;
 	}
-
-	public void addMember(GameMember member) {
+	public Game setKey(String gameKey){ 
+		this.gameKey = gameKey;
+		return this;
+	}
+	public Game addMember(GameMember member) {
 		gameMembers.add(member);
+		return this;
 	}
 
 	public void broadcast(String msg) {
@@ -73,19 +89,19 @@ public class Game extends Thread {
 
 		// parsing
 		String first = parsedMsg[0];
-		if (first.equals("1") && gameState == GAME_STATE_ROOM) {
-			System.out.println("GAME START SIGNAL!!! - " + first);
+		if (first.equals("StartTurn") && gameState == GAME_STATE_ROOM) {
+			//System.out.println("GAME START SIGNAL!!! - " + first);
 			gameState = GAME_STATE_READY;
+			
 		}
 
-		// ... not yet implement.
+		broadcast(msg); 
 
 	}
 
 	@Override
 	public void run() {
-		long drainTime = 100; // message term
-		int count = 0;
+		long drainTime = 1000; // message term 
 		int turn = 0;
 		long beforeTime = System.currentTimeMillis();
 		while (true) {
@@ -101,27 +117,38 @@ public class Game extends Thread {
 				broadcast(Game_readyInfo());// Game state broadcast.
 				break;
 
-			case GAME_STATE_READY:
+			case GAME_STATE_READY: 
+				
+				if(gameCount > 0){ 
+					gameCount--;
+					broadcast(gameCount+".");
+					break;
+				}
 				broadcast("Wait....(Setting Order)");
 				// Game_makeRandomOrder();
 				Game_sendOrderToEachMember();
 				gameState = GAME_STATE_RUNNING;
+				
 				break;
 
 			case GAME_STATE_RUNNING:
+				if(turn == 0){
+					broadcast("GAME START");
+				}
 				turn++;
 				if (turn == 60) {
 					gameState = GAME_STATE_FINISH;
 				}
+
+				broadcast("[" + turn + "]Game State - " + gameState);
 				break;
 
 			case GAME_STATE_FINISH:
-				// game exit
-
+				// game exit 
+				broadcast("[" + turn + "]Game State - " + gameState);
 				break;
 			}
 
-			broadcast("[" + turn + "]Game State - " + gameState);
 
 			if (gameState == GAME_STATE_FINISH) {
 				gameClose();

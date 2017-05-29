@@ -1,7 +1,5 @@
 package arboard.game.websocket;
 
-import static org.hamcrest.CoreMatchers.instanceOf;
-
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.HashMap;
@@ -93,17 +91,23 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		Game game;
 		GameMember member;
 		if (gameList.containsKey(gameKey)) {
-			game = gameList.get(gameKey);
+			game = gameList.get(gameKey); 
 			member = new GameMember(session, userId);
 			game.addMember(member);
 		} else {
-			game = new Game(this, gameKey);
+
+			member = new GameMember(session, userId);
+			//game generate.
+			game = Game.init()
+					.setGameSocketHandler(this)
+					.setKey(gameKey)
+					.addMember(member); 
+			//game list put
 			gameList.put(gameKey, game); 
+			// game thread start.
 			game.start();
 			
-			member = new GameMember(session, userId,game);
-			System.out.println("[DEBUG]SESSION FORMAT : "+session.getId());
-			game.addMember(member); 
+			System.out.println("[DEBUG]SESSION FORMAT : "+session.getId()); 
 			
 		} 
 		gameUsers.put(session, member);
