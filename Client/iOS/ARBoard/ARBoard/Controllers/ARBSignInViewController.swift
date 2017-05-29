@@ -15,6 +15,7 @@ class ARBSignInViewController: UIViewController {
         super.viewDidLoad()
         self.facebookLoginButton.delegate = self
         self.facebookLoginButton.readPermissions = ["public_profile", "email"]
+        
         // Do any additional setup after loading the view.
     }
 }

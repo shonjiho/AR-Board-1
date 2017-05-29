@@ -10,6 +10,7 @@ import Foundation
 import AlamofireObjectMapper
 import SVProgressHUD
 import CircularSpinner
+import FBSDKLoginKit
 
 class ARBDataManager : NSObject {
 //    static let shared = ARBDataManager()
@@ -21,7 +22,7 @@ class ARBDataManager : NSObject {
     }
     var friends:Friends?
     
-    struct StaticInstance {
+    private struct StaticInstance {
         static var instance: ARBDataManager?
     }
     static func getInstance() -> ARBDataManager {
@@ -53,6 +54,28 @@ class ARBDataManager : NSObject {
         }
     }
     
+    // MARK: - Show Success Indicator
+    func showSuccessIndicator(_ status: String? = nil){
+        DispatchQueue.main.async {
+            SVProgressHUD.setMaximumDismissTimeInterval(TimeInterval.init(0.5))
+            SVProgressHUD.setForegroundColor(UIColor.greenTintColor)
+            SVProgressHUD.setSuccessImage(UIImage.init(named: "Done"))
+            SVProgressHUD.setBackgroundColor(UIColor.black.withAlphaComponent(0.3))
+            SVProgressHUD.showSuccess(withStatus: status)
+        }
+    }
+    
+    // MARK: - Show Error Indicator
+    func showFailIndicator(_ status: String? = nil){
+        DispatchQueue.main.async {
+            SVProgressHUD.setMaximumDismissTimeInterval(TimeInterval.init(0.5))
+            SVProgressHUD.setForegroundColor(UIColor.redTintColor)
+            SVProgressHUD.setErrorImage(UIImage.init(named: "Cancel"))
+            SVProgressHUD.setBackgroundColor(UIColor.black.withAlphaComponent(0.3))
+            SVProgressHUD.showError(withStatus: status)
+        }
+    }
+    
     func showCircularSpinner(){
         DispatchQueue.main.async {
             CircularSpinner.trackBgColor = UIColor.black
@@ -75,6 +98,7 @@ class ARBDataManager : NSObject {
             if KeychainService.loadOauthToken() == nil {
                 KeychainService.saveOauthToken(token: token)
             }
+            NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
             completion(true)
         }
     }
@@ -105,6 +129,8 @@ class ARBDataManager : NSObject {
             requestUrl = URL.base.appendingPathComponent(path: URL.friend)
                                  .appendingPathComponent(path: requestType.description)
                                  .appendingPathQuery(key: URL.email, value: identifier)
+        default:
+            return
         }
         dump("Request URL : \(requestUrl)")
         
@@ -116,8 +142,8 @@ class ARBDataManager : NSObject {
             }
             dump(dataResponse.response?.statusCode)
         }
-        
     }
+    
     func fetchRequest(_ viewController: UIViewController, requestType: RequestType, isShowActivityIndicator: Bool = false,identifier:String?=nil, completion: @escaping ((Any?) -> Void)){
         if isShowActivityIndicator {
             self.showActivityIndicator()
@@ -171,6 +197,51 @@ class ARBDataManager : NSObject {
             return
         }
         
+    }
+    
+    func deleteRequest(_ viewController: UIViewController, requestType: RequestType, identifier: String? = nil, completion: ((Any?) -> Void)?){
+        guard self.isCurrentUser else {
+            
+            return
+        }
+        self.showActivityIndicator()
+        var requestUrl:String = ""
+        switch requestType {
+        case .friend:
+            //            requestUrl = "http://125.130.223.88/arboard/friend/list"
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                .appendingPathComponent(path: URL.list)
+        case .user, .logout:
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+        default:
+            return
+        }
+        
+//        let requestCloser = Alamofire.request(requestUrl, method: .delete)
+        
+        Alamofire.request(requestUrl, method: .delete).response(completionHandler: { (dataResponse) in
+            self.hideActivityIndicator()
+            guard dataResponse.response?.statusCode == 200 else {
+                self.showFailIndicator()
+                return
+            }
+            self.showSuccessIndicator()
+            switch requestType {
+            case .user:
+                self.currentUser = nil
+                self.friends = nil
+                KeychainService.authenticatedUserReset()
+                FBSDKLoginManager().logOut()
+                NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
+            case .logout:
+                self.currentUser = nil
+                self.friends = nil
+                FBSDKLoginManager().logOut()
+                NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
+            default:
+                return
+            }
+        })
     }
    
 }

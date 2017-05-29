@@ -24,7 +24,8 @@
 		964F30E61E96324700221986 /* README.md in Sources */ = {isa = PBXBuildFile; fileRef = 964F30E01E96324700221986 /* README.md */; };
 		964F30E71E96324700221986 /* UIView+YGPulseView.m in Sources */ = {isa = PBXBuildFile; fileRef = 964F30E31E96324700221986 /* UIView+YGPulseView.m */; };
 		964F30EA1E96611A00221986 /* GodoB.otf in Resources */ = {isa = PBXBuildFile; fileRef = 964F30E91E96611A00221986 /* GodoB.otf */; };
-		9674E8131E9A867B009B5314 /* ARBFriendTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9674E8121E9A867B009B5314 /* ARBFriendTableViewCell.swift */; };
+		965C78591EDC44A400962444 /* ARBFriendRTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 965C78581EDC44A400962444 /* ARBFriendRTableViewCell.swift */; };
+		9674E8131E9A867B009B5314 /* ARBFriendRequestTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9674E8121E9A867B009B5314 /* ARBFriendRequestTableViewCell.swift */; };
 		9674E8151E9A8716009B5314 /* ARBFriendListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9674E8141E9A8716009B5314 /* ARBFriendListTableViewController.swift */; };
 		9674E8171E9A8983009B5314 /* Friends.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9674E8161E9A8983009B5314 /* Friends.swift */; };
 		96AA9BA61EA09E1A00B526C5 /* KeychainService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 96AA9BA51EA09E1A00B526C5 /* KeychainService.swift */; };
@@ -57,7 +58,8 @@
 		964F30E21E96324700221986 /* UIView+YGPulseView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+YGPulseView.h"; sourceTree = "<group>"; };
 		964F30E31E96324700221986 /* UIView+YGPulseView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+YGPulseView.m"; sourceTree = "<group>"; };
 		964F30E91E96611A00221986 /* GodoB.otf */ = {isa = PBXFileReference; lastKnownFileType = file; path = GodoB.otf; sourceTree = "<group>"; };
-		9674E8121E9A867B009B5314 /* ARBFriendTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBFriendTableViewCell.swift; sourceTree = "<group>"; };
+		965C78581EDC44A400962444 /* ARBFriendRTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBFriendRTableViewCell.swift; sourceTree = "<group>"; };
+		9674E8121E9A867B009B5314 /* ARBFriendRequestTableViewCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBFriendRequestTableViewCell.swift; sourceTree = "<group>"; };
 		9674E8141E9A8716009B5314 /* ARBFriendListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ARBFriendListTableViewController.swift; sourceTree = "<group>"; };
 		9674E8161E9A8983009B5314 /* Friends.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Friends.swift; sourceTree = "<group>"; };
 		96AA9BA51EA09E1A00B526C5 /* KeychainService.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = KeychainService.swift; sourceTree = "<group>"; };
@@ -183,7 +185,8 @@
 			children = (
 				961BA3061E7D1A5E0011126F /* LaunchScreen.storyboard */,
 				961BA3081E7D1A5E0011126F /* Main.storyboard */,
-				9674E8121E9A867B009B5314 /* ARBFriendTableViewCell.swift */,
+				9674E8121E9A867B009B5314 /* ARBFriendRequestTableViewCell.swift */,
+				965C78581EDC44A400962444 /* ARBFriendRTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -371,8 +374,9 @@
 				9642912E1E829001007D1862 /* ARBSignInViewController.swift in Sources */,
 				964291321E82934C007D1862 /* User.swift in Sources */,
 				961BA2ED1E7D19C70011126F /* AppDelegate.swift in Sources */,
+				965C78591EDC44A400962444 /* ARBFriendRTableViewCell.swift in Sources */,
 				964F30E61E96324700221986 /* README.md in Sources */,
-				9674E8131E9A867B009B5314 /* ARBFriendTableViewCell.swift in Sources */,
+				9674E8131E9A867B009B5314 /* ARBFriendRequestTableViewCell.swift in Sources */,
 				96AA9BA81EA0A07000B526C5 /* ARBLaunchViewController.swift in Sources */,
 				9674E8151E9A8716009B5314 /* ARBFriendListTableViewController.swift in Sources */,
 				964F30DB1E9619B000221986 /* ARBEtcTableViewController.swift in Sources */,

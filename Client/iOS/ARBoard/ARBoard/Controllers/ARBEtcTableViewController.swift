@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import MessageUI
 
 class ARBEtcTableViewController: UITableViewController {
     let dataManager:ARBDataManager = ARBDataManager.getInstance()
     enum SectionType:Int {
-        case userInformation = 0, support, pushService, appInformation, signature
+//        case userInformation = 0, support, pushService, appInformation, signature
+        case userInformation = 0, support, appInformation, signature
     }
     
     enum Signature:Int {
@@ -23,8 +25,10 @@ class ARBEtcTableViewController: UITableViewController {
     }
     
     struct Section {
-        static let headerTitles: [String] = ["개인정보", "지원", "알림 설정", "정보", " "]
-        static let rowTitles: [[String]] = [["닉네임 변경", "이메일 변경", "비밀번호 변경"], ["앱에 대해 의견 보내기"], ["알림 설정 하기"], ["이용약관 및 개인정보 취급 방침", "공식 홈페이지"], ["로그인", "로그아웃", "회원 탈퇴"]]
+//        static let headerTitles: [String] = ["개인정보", "지원", "알림 설정", "정보", " "]
+//        static let rowTitles: [[String]] = [["닉네임 변경"], ["앱에 대해 의견 보내기"], ["알림 설정 하기"], ["이용약관 및 개인정보 취급 방침", "공식 홈페이지"], ["로그인", "로그아웃", "회원 탈퇴"]]
+        static let headerTitles: [String] = ["개인정보", "지원", "정보", " "]
+        static let rowTitles: [[String]] = [["닉네임 변경"], ["앱에 대해 의견 보내기"], ["이용약관 및 개인정보 취급 방침", "공식 홈페이지"], ["로그인", "로그아웃", "회원 탈퇴"]]
         static func numberOfRows(of section: Int) -> Int {
             return rowTitles[section].count
         }
@@ -52,39 +56,80 @@ class ARBEtcTableViewController: UITableViewController {
             switch section {
             case SectionType.userInformation.rawValue:
                 identifier = CellIdentifier.etcDetail
-            case SectionType.pushService.rawValue:
-                identifier = CellIdentifier.etcSubtitle
+//            case SectionType.pushService.rawValue:
+//                identifier = CellIdentifier.etcSubtitle
             case SectionType.support.rawValue, SectionType.appInformation.rawValue, SectionType.signature.rawValue:
                 identifier = CellIdentifier.etcBasic
             default:
                 dump("Section Range Error!")
-                return ""
+                fatalError()
             }
             return identifier
         }
     }
     
+    
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        self.setupEtcTableView()
+    }
+    
+   
+    fileprivate func setupEtcTableView(){
+        self.tableView.separatorInset.left = 30
+        self.tableView.separatorInset.right = 30
+        self.tableView.separatorColor = UIColor.lineColor
+        self.tableView.tableFooterView = UIView.init(frame: CGRect.zero)
+        
+        self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
+        
+        // User State Notification
+        NotificationCenter.default.addObserver(self, selector: #selector(self.reloadUserInformationSignatureSections(notification:)), name: NotificationName.userStateChange, object: nil)
+    }
+
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
+    
+    @objc fileprivate func reloadUserInformationSignatureSections(notification: NSNotification) {
+        self.tableView.beginUpdates()
+        self.tableView.reloadSections(IndexSet([SectionType.userInformation.rawValue, SectionType.signature.rawValue]), with: UITableViewRowAnimation.automatic)
+        self.tableView.endUpdates()
+    }
+    
+    
+}
+
+extension ARBEtcTableViewController {
+    // MARK: - Table view data source
+    override func numberOfSections(in tableView: UITableView) -> Int {
+        return Section.headerTitles.count
+    }
+    
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let tableCell:UITableViewCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: indexPath.section), for: indexPath)
-        tableCell.textLabel?.text = Section.rowTitles[indexPath.section][indexPath.row]
+        let section:Int = indexPath.section
+        let tableCell:UITableViewCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath)
+        tableCell.textLabel?.text = Section.rowTitles[section][indexPath.row]
         // Selected Dark 효과
         tableCell.selectedBackgroundView = UIVisualEffectView.dark
-        switch indexPath.section {
+        switch section {
         case SectionType.userInformation.rawValue:
             if let currentUser = dataManager.currentUser {
                 switch indexPath.row {
                 case 0:
                     tableCell.detailTextLabel?.text = currentUser.userName
-                case 1:
-                    tableCell.detailTextLabel?.text = currentUser.userEmail
+                    //                case 1:
+                //                    tableCell.detailTextLabel?.text = currentUser.userEmail
                 default:
                     tableCell.detailTextLabel?.text = " "
                 }
             }
-        case SectionType.pushService.rawValue:
-            tableCell.detailTextLabel?.text = "게임 초대 알림을 설정"
+            //        case SectionType.pushService.rawValue:
+        //            tableCell.detailTextLabel?.text = "게임 초대 알림을 설정"
         case SectionType.signature.rawValue:
-            if indexPath.section == SectionType.signature.rawValue, indexPath.row == 2 {
+            if section == SectionType.signature.rawValue, indexPath.row == 2 {
                 tableCell.textLabel?.textColor = UIColor.redTintColor
             } else {
                 tableCell.textLabel?.textColor = UIColor.white
@@ -95,25 +140,47 @@ class ARBEtcTableViewController: UITableViewController {
         return tableCell
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        setupEtcTableView()
-    }
-    
-    fileprivate func setupEtcTableView(){
-        self.tableView.separatorInset.left = 30
-        self.tableView.separatorInset.right = 30
-        self.tableView.separatorColor = UIColor.lineColor
-        self.tableView.tableFooterView = UIView.init(frame: CGRect.zero)
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let section:Int = indexPath.section
+        switch section {
+        case SectionType.userInformation.rawValue:
+            dump("userInformation")
+        case SectionType.support.rawValue:
+            self.supportMailService()
+        case SectionType.appInformation.rawValue:
+            dump("appInformation")
+        case SectionType.signature.rawValue:
+            switch indexPath.row {
+            case Signature.logIn.rawValue:
+                NotificationCenter.default.post(name: NotificationName.shouldShowSignInViewController, object: nil)
+            case Signature.logOut.rawValue:
+                let alertActionTitle:String = "로그아웃"
+                
+                let logoutAlertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
+                    self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
+                })
+                
+                let alertControllerTitle:String = "정말 로그아웃 하시겠습니까?"
+                
+                UIAlertController.showAlertViewController(self, title: alertControllerTitle, message: "", alertActions: [logoutAlertAction, UIAlertAction.cancel])
+            case Signature.delete.rawValue:
+                let alertActionTitle:String = "탈퇴"
+                
+                let logoutAlertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
+                    self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
+                })
+                
+                let alertControllerTitle:String = "정말 회원 탈퇴 하시겠습니까?"
+                let alertControllerMessage:String = "회원 탈퇴시 모든 정보가 삭제됩니다."
+                UIAlertController.showAlertViewController(self, title: alertControllerTitle, message: alertControllerMessage, alertActions: [logoutAlertAction, UIAlertAction.cancel])
+            default:
+                return
+            }
+        default:
+            return
+        }
         
-        self.navigationItem.backBarButtonItem = UIBarButtonItem.empty
     }
-
-    // MARK: - Table view data source
-    override func numberOfSections(in tableView: UITableView) -> Int {
-        return Section.headerTitles.count
-    }
-    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         // #warning Incomplete implementation, return the number of rows
         return Section.numberOfRows(of: section)
@@ -128,5 +195,29 @@ class ARBEtcTableViewController: UITableViewController {
         if let headerView = view as? UITableViewHeaderFooterView {
             headerView.textLabel?.textColor = UIColor.lightGray
         }
+    }
+}
+// MARK: - MFMailComposeViewControllerDelegate
+extension ARBEtcTableViewController:MFMailComposeViewControllerDelegate {
+    
+    // MARK: - MFMailComposeViewController
+    fileprivate func supportMailService(){
+        if MFMailComposeViewController.canSendMail() {
+            let mailComposeViewController:MFMailComposeViewController = MFMailComposeViewController()
+            mailComposeViewController.navigationBar.tintColor = UIColor.white
+            mailComposeViewController.mailComposeDelegate = self
+            mailComposeViewController.setToRecipients(["93yutaechoi@gmail.com"])
+            mailComposeViewController.setSubject("[AR 부루마블] ")
+            mailComposeViewController.setMessageBody(" ", isHTML: false)
+            self.present(mailComposeViewController, animated: true, completion: nil)
+        } else {
+            let title:String = "Mail을 활성화 해주세요."
+            let message:String = "소중한 의견 감사히 듣겠습니다. 메일을 활성화하고 다시 이용 해주세요."
+            UIAlertController.showAlertViewController(self, title: title, message: message, alertActions: [UIAlertAction.cancel])
+        }
+    }
+    
+    func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+        controller.dismiss(animated: true, completion: nil)
     }
 }
