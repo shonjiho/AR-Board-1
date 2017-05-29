@@ -57,4 +57,9 @@ public class AuthServiceImpl implements AuthService {
 
 	}
 
+	@Override
+	public void userDelete(Map<String, Object> profile) {
+		authDAO.deleteUser(profile); 
+	}
+
 }

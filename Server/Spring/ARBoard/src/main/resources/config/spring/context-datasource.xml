@@ -10,13 +10,13 @@
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
 
 		<!-- Internal Network TEST -->
-	    <!-- <property name="url" value="jdbc:mysql://192.168.1.2:3306/arboard"/>  -->
+	     <!-- <property name="url" value="jdbc:mysql://192.168.1.2:3306/arboard"/> --> 
 		  
 		<!-- External Network TEST -->
  		  <!-- <property name="url" value="jdbc:mysql://125.130.223.88:3306/arboard" /> -->  
 
 		<!-- DEPLOY TEST --> 
-		 <property name="url" value="jdbc:mysql://localhost/arboard"/>    
+		 <property name="url" value="jdbc:mysql://localhost/arboard"/> 
 
 		<property name="username" value="spring" />
 		<property name="password" value="Ths3rla1*" />

@@ -56,4 +56,9 @@ public class UtilDAO extends AbstractDAO{
 		delete("util.deleteFriendRequest", param);
 		
 	}
+
+	public void deleteFriend(Map<String, Object> param) {
+		delete("util.deleteFriend",param);
+		
+	}
 }

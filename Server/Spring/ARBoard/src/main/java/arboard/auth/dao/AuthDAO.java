@@ -30,5 +30,12 @@ public class AuthDAO extends AbstractDAO {
 		
 		update("auth.updateToken",map);
 	}
+
+
+	public void deleteUser(Map<String, Object> map) {
+		// TODO Auto-generated method stub
+		delete("auth.deleteUser",map);
+		
+	}
 	 
 }

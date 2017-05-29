@@ -134,4 +134,12 @@ public class UtilServiceImpl implements UtilService {
 		utilDAO.deleteFriendRequest(param);
 	}
 
+	@Override
+	public void removeFriend(String receiverId, String senderId){
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("senderId", senderId);
+		param.put("receiverId", receiverId);  
+		utilDAO.deleteFriend(param);
+	}
+
 }

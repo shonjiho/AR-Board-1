@@ -156,7 +156,7 @@ public class UtilFriendController {
 	// request friend
 	// URI - POST /friend/{id}/request
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{receiver_id}/request", method = RequestMethod.POST)
+	@RequestMapping(value = "/friend/request/{receiver_id}", method = RequestMethod.POST)
 	@ResponseStatus(HttpStatus.OK)
 	public void requestFriend(@PathVariable String receiver_id, HttpServletResponse reponse, HttpSession session) {
 
@@ -191,7 +191,7 @@ public class UtilFriendController {
 	// Accept response about Friend request.
 	// URI - PUT /friend/{id}/response 
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{sender_id}/response", method = RequestMethod.PUT)
+	@RequestMapping(value = "/friend/response/{sender_id}", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
 	public void responseFriendRequest_accept(@PathVariable String sender_id, HttpServletResponse reponse,
 			HttpSession session) {
@@ -205,7 +205,7 @@ public class UtilFriendController {
 	// Refuse response about Friend request.
 	// URI - DELETE /friend/{id}/request
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/friend/{sender_id}/request", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/friend/request/{sender_id}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
 	public void responseFriendRequest_refuse(@PathVariable String sender_id, HttpServletResponse reponse,
 			HttpSession session) {
@@ -214,5 +214,14 @@ public class UtilFriendController {
 		
 		utilService.refuseFriendRequest(id.toString(),sender_id);
 	}
-
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/friend/{friend_id}", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.OK)
+	public void removeFriend(@PathVariable String friend_id,HttpSession session){
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+		BigInteger id = (BigInteger) userProfile.get("id"); 
+		utilService.removeFriend(id.toString(),friend_id);
+	}
+	
 }

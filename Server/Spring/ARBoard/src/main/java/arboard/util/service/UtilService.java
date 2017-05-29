@@ -16,6 +16,8 @@ public interface UtilService {
 	List<Map<String, Object>> getFriendRequestList(String string);
 	void acceptFriendRequest(String receiverId, String senderId);
 	void refuseFriendRequest(String receiverId, String senderId);
+	void removeFriend(String receiverId, String senderId);
+	
 	
 	
 	

@@ -64,4 +64,9 @@
 		DELETE FROM relationship
 		WHERE id1=#{senderId} and id2= #{receiverId} and state='N'
 	</delete>
+	
+	<delete id="deleteFriend" parameterType="hashmap">
+		DELETE FROM relationship
+		WHERE (id1=#{senderId} and id2= #{receiverId}) or (id1=#{receiverId} and id2= #{senderId})  
+	</delete>
 </mapper>

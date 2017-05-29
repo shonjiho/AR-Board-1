@@ -56,4 +56,9 @@
             WHERE userEmail=#{userEmail}
         ]]>
 	</update>
+	<delete id="deleteUser" parameterType="hashmap">
+		DELETE FROM user
+		WHERE userEmail=#{userEmail}
+	</delete>
+	
 </mapper>

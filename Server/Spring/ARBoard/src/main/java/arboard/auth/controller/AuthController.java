@@ -1,5 +1,6 @@
 package arboard.auth.controller;
 
+import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -16,6 +17,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
+import arboard.auth.exception.SessionExpireExcpetion;
+import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.auth.service.AuthService; 
  
 
@@ -61,6 +64,45 @@ public class AuthController {
 		
 		return userProfile;
 	}
+	// DELETE /user 
+	//Description : delete user. 
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/user", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object userDelete(HttpSession session) throws Exception {
+		Map<String,Object> result = new HashMap<String, Object>();
+		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
+		authService.userDelete(profile);
+		result.put("delete", profile.get("userEmail"));
+		return result;
+	}
+	// DELETE /logout
+	//Description : logout current session.
+	@RequestMapping(value = "/logout", method = RequestMethod.DELETE)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object logOut(HttpSession session)  {
+		
+		Map<String,Object> result = new HashMap<String, Object>();
+		session.removeAttribute("userProfile");
+		session.removeAttribute("status");
+		result.put("logout", "Success"); 
+		return result;
+	}
 	
+	// GET /profile
+	// Description : get user profile.
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/profile", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object profile(HttpSession session) throws Exception {
+		
+		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
+		if(profile == null){ 
+			throw new SessionUnAuthorizedException(session);
+		}
+		Map<String, Object> userProfile = authService.getUserInfo(profile);
+		
+		return userProfile;
+	}
 	
 }
