@@ -1,8 +1,11 @@
 package arboard.game.websocket;
 
+import java.io.IOException;
+import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.log4j.Logger;
 import org.springframework.web.socket.CloseStatus;
 import org.springframework.web.socket.TextMessage;
 import org.springframework.web.socket.WebSocketMessage;
@@ -10,76 +13,122 @@ import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import arboard.game.model.Game;
+import arboard.game.model.GameMember;
 
 public class GameSocketHandler extends TextWebSocketHandler {
 
-	// Game List
-	public Map<String, Game> gameList = new HashMap<String, Game>();
-	// Ready Game List
-	// public Map<String,Game> readyGameList = new HashMap<String,Game>();
-	// Running Game List
-	// public Map<String,Game> runningGameList = new HashMap<String,Game>();
+	protected Logger log = Logger.getLogger(this.getClass());
 
-	// Initialization
+	// Game List
+	public Map<String, Game> gameList = new HashMap<String, Game>(); // < GameKey , Game >
+	public Map<WebSocketSession, GameMember> gameUsers = new HashMap<WebSocketSession, GameMember>();
+
 	public GameSocketHandler() {
-		System.out.println("WebSocket Handler Generated.");
+		log.debug("WebSocket Handler Generated.");
 	}
 
-	// multiplexing handler
+	// send Message method.
+	public void sendString(WebSocketSession webSocketSession, String msg) {
+		try {
+			webSocketSession.sendMessage(new TextMessage(msg.getBytes()));
+		} catch (IOException e) {
+			log.debug("SendMessage method is problem.");
+			e.printStackTrace();
+		}
+	}
+
+	public String convertByteBuffertoString(ByteBuffer b){
+		return new String(b.array());
+	}
+	// Message handler
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-		String payloadMessage = (String) message.getPayload();
-
-		String userId = getUserId(session);
+  
+		
+		//System.out.print("[DEBUG] Message Type : "+message.getClass());  
+		String payloadMessage;
+		
+		if( message instanceof TextMessage){
+			payloadMessage = message.getPayload().toString();
+		}else{
+			//Binary Type
+			ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();  
+			payloadMessage = new String (byteBuffer.array()); 
+		}
+		
+		
+		
+		//String userId = getUserId(session);
 		String gameKey = getGameKey(session);
-
+		GameMember gameMember = gameUsers.get(session);
+		
 		Game game = gameList.get(gameKey);
 		if (game != null) {
-			game.messagehandle(userId, payloadMessage);
+			game.messagehandle(gameMember, payloadMessage);
 		} else {
-			System.out.println("game is null");
+			log.debug("[" + gameKey + "]" + "empty.");
+			sendString(session, "[" + gameKey + "]" + "empty.");
+			session.close();
 		}
-
 	}
 
-	// after connection
-	// game Generation
+	// After connection
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-		super.afterConnectionEstablished(session);
+		super.afterConnectionEstablished(session); 
 
 		String userId = getUserId(session);
 		String userName = getUserName(session);
 		String gameKey = getGameKey(session);
-		System.out.println("Connect User. [ userId :" + userId + ", userName :" + userName + "]");
 
+		log.debug("Connect User. [ userId :" + userId + ", userName :" + userName + "]");
 		if (gameKey == null || !hasStatus(session)) {
-			session.sendMessage(new TextMessage("invalid connection"));
+			sendString(session, "Invalid connection");
 			session.close();
 		}
 
 		Game game;
+		GameMember member;
 		if (gameList.containsKey(gameKey)) {
-			  game = gameList.get(gameKey);
-			game.addMember(session, userId);
-			
+			game = gameList.get(gameKey); 
+			member = new GameMember(session, userId);
+			game.addMember(member);
 		} else {
-			 game = new Game(this,gameKey);
-			 gameList.put(gameKey, game); 
-			 game.gameState = Game.GAME_STATE_RUNNING;
-			 game.start();
-			 game.addMember(session, userId);
-		}
-		System.out.println("Attend Game ( key - " + gameKey + " )");
+
+			member = new GameMember(session, userId);
+			//game generate.
+			game = Game.init()
+					.setGameSocketHandler(this)
+					.setKey(gameKey)
+					.addMember(member); 
+			//game list put
+			gameList.put(gameKey, game); 
+			// game thread start.
+			game.start();
+			
+			System.out.println("[DEBUG]SESSION FORMAT : "+session.getId()); 
+			
+		} 
+		gameUsers.put(session, member);
+		
+		log.debug("Attend Game ( key - " + gameKey + " )");
 
 	}
 
-	// afterConnectClose
+	// After Connect Close
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
-		super.afterConnectionClosed(session, status);
-
+		super.afterConnectionClosed(session, status); 
+//		if(gameUsers.containsKey(session)){
+//			GameMember member = gameUsers.get(session);
+//			Game game = member.myGame;
+//			synchronized (member.myGame) { 
+//				if(game != null){
+//					game.gameMembers.remove(member);
+//				}
+//			}
+//		} 
 		System.out.println(
 				"DisConnect User. [ userId :" + getUserId(session) + ", userName :" + getUserName(session) + "]");
 
@@ -91,12 +140,11 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		System.out.println("websocket error");
 	}
 
-	//game put
-	public void insertGame(String key,Game game){
+	// game put
+	public void insertGame(String key, Game game) {
 		gameList.put(key, game);
 	}
-	
-	
+
 	/*
 	 * Getter Method
 	 * 
