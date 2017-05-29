@@ -27,9 +27,9 @@
                                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                             </imageView>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="8Ri-uL-mGh" customClass="FBSDKLoginButton">
-                                <rect key="frame" x="0.0" y="573" width="375" height="44"/>
+                                <rect key="frame" x="0.0" y="587" width="375" height="30"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="44" id="SVZ-y9-HM3"/>
+                                    <constraint firstAttribute="height" constant="30" id="SVZ-y9-HM3"/>
                                 </constraints>
                                 <state key="normal" title="Button"/>
                             </button>
@@ -354,7 +354,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" red="0.14901960780000001" green="0.14901960780000001" blue="0.14901960780000001" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ARBFriendTableViewCell" rowHeight="80" id="Xm7-hL-GUM" customClass="ARBFriendTableViewCell" customModule="ARBoard" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ARBFriendRequestTableViewCell" rowHeight="80" id="Xm7-hL-GUM" customClass="ARBFriendRequestTableViewCell" customModule="ARBoard" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="55.5" width="375" height="80"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Xm7-hL-GUM" id="hlg-IH-Psz">
@@ -425,9 +425,69 @@
                                 <color key="backgroundColor" red="0.14901960780000001" green="0.14901960780000001" blue="0.14901960780000001" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                                 <connections>
                                     <outlet property="bottomLabel" destination="nEZ-xb-jDU" id="0EO-mw-RwM"/>
-                                    <outlet property="forSpacingView" destination="X0A-XZ-k4G" id="cR8-P0-giv"/>
+                                    <outlet property="forSpacingView" destination="X0A-XZ-k4G" id="n9t-8d-fC5"/>
                                     <outlet property="requestButton" destination="Kn4-rg-6gJ" id="JOC-e3-u8p"/>
                                     <outlet property="topLabel" destination="WF6-d0-UDV" id="T33-89-QvI"/>
+                                </connections>
+                            </tableViewCell>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="ARBFriendTableViewCell" rowHeight="80" id="z8a-1j-D2A" customClass="ARBFriendTableViewCell" customModule="ARBoard" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="135.5" width="375" height="80"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="z8a-1j-D2A" id="sog-Bv-5bg">
+                                    <rect key="frame" x="0.0" y="0.0" width="375" height="80"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="szN-wm-SWz">
+                                            <rect key="frame" x="10" y="5" width="355" height="70"/>
+                                            <subviews>
+                                                <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="bmI-vR-tm3">
+                                                    <rect key="frame" x="20" y="5" width="315" height="60"/>
+                                                    <subviews>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="asc-VX-Tkb">
+                                                            <rect key="frame" x="0.0" y="0.0" width="315" height="29"/>
+                                                            <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                        <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u1p-F8-6CS">
+                                                            <rect key="frame" x="0.0" y="36" width="315" height="1"/>
+                                                            <color key="backgroundColor" white="1" alpha="0.10000000000000001" colorSpace="calibratedWhite"/>
+                                                            <constraints>
+                                                                <constraint firstAttribute="height" constant="1" id="9aN-ac-XhK"/>
+                                                            </constraints>
+                                                        </view>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lIb-hS-Vld">
+                                                            <rect key="frame" x="0.0" y="44" width="315" height="16"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="13"/>
+                                                            <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            <nil key="highlightedColor"/>
+                                                        </label>
+                                                    </subviews>
+                                                    <constraints>
+                                                        <constraint firstItem="u1p-F8-6CS" firstAttribute="width" secondItem="bmI-vR-tm3" secondAttribute="width" id="KfV-AD-lTg"/>
+                                                    </constraints>
+                                                </stackView>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstAttribute="trailing" secondItem="bmI-vR-tm3" secondAttribute="trailing" constant="20" id="Oz1-HK-16e"/>
+                                                <constraint firstAttribute="bottom" secondItem="bmI-vR-tm3" secondAttribute="bottom" constant="5" id="RkA-Hq-tiU"/>
+                                                <constraint firstItem="bmI-vR-tm3" firstAttribute="top" secondItem="szN-wm-SWz" secondAttribute="top" constant="5" id="g6N-lT-q2m"/>
+                                                <constraint firstItem="bmI-vR-tm3" firstAttribute="leading" secondItem="szN-wm-SWz" secondAttribute="leading" constant="20" id="tKy-r0-5kC"/>
+                                            </constraints>
+                                        </view>
+                                    </subviews>
+                                    <constraints>
+                                        <constraint firstItem="szN-wm-SWz" firstAttribute="top" secondItem="sog-Bv-5bg" secondAttribute="top" constant="5" id="Hw6-8t-w5H"/>
+                                        <constraint firstAttribute="trailing" secondItem="szN-wm-SWz" secondAttribute="trailing" constant="10" id="Iky-gH-7jT"/>
+                                        <constraint firstAttribute="bottom" secondItem="szN-wm-SWz" secondAttribute="bottom" constant="5" id="OMb-SB-wfB"/>
+                                        <constraint firstItem="szN-wm-SWz" firstAttribute="leading" secondItem="sog-Bv-5bg" secondAttribute="leading" constant="10" id="ulY-39-vZG"/>
+                                    </constraints>
+                                </tableViewCellContentView>
+                                <color key="backgroundColor" red="0.14901960780000001" green="0.14901960780000001" blue="0.14901960780000001" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                <connections>
+                                    <outlet property="bottomLabel" destination="lIb-hS-Vld" id="3VN-q8-xmT"/>
+                                    <outlet property="forSpacingView" destination="szN-wm-SWz" id="uC0-E3-vqa"/>
+                                    <outlet property="topLabel" destination="asc-VX-Tkb" id="7lG-eY-nvc"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>

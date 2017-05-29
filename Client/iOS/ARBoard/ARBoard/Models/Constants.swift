@@ -24,14 +24,19 @@ enum OAuthDomain {
 enum RequestType {
     case friend
     case user
+    case logout
+    
     var description:String {
         switch self {
         case .friend:
             return "friend"
         case .user:
             return "user"
+        case .logout:
+            return "logout"
         }
     }
+
 }
 
 struct CellIdentifier {
@@ -39,7 +44,8 @@ struct CellIdentifier {
     static let etcDetail: String = "AREtcDetailTableCell"
     static let etcSubtitle: String = "AREtcSubTitleTableCell"
     static let friendList: String = "ARBFriendTableViewCell"
-    static let requestFriendList: String = "ARBFriendTableViewCell"
+    static let requestFriendList: String = "ARBFriendRequestTableViewCell"
+    
 }
 
 struct SegueIdentifier{
@@ -51,4 +57,8 @@ struct SegueIdentifier{
 struct NotificationName{
     static let shouldShowSignInViewController: NSNotification.Name = NSNotification.Name(rawValue: "showSignInViewContoller")
     
+    static let reloadSectionsEtcTableViewController: NSNotification.Name = NSNotification.Name(rawValue: "loginSuccessWillReloadSectionsEtcTableViewController")
+    
+    static let userStateChange:NSNotification.Name = NSNotification.Name(rawValue: "userStateChange")
 }
+
