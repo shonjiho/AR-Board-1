@@ -78,10 +78,16 @@ public class AuthController {
 	}
 	// DELETE /logout
 	//Description : logout current session.
+
+	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/logout", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object logOut(HttpSession session)  {
-		
+	public @ResponseBody Object logout(HttpSession session)  {
+
+		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
+		if(profile == null){ 
+			throw new SessionUnAuthorizedException(session);
+		}
 		Map<String,Object> result = new HashMap<String, Object>();
 		session.removeAttribute("userProfile");
 		session.removeAttribute("status");
