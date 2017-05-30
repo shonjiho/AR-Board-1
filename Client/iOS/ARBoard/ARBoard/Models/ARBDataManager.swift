@@ -93,6 +93,9 @@ class ARBDataManager : NSObject {
                 completion(false)
                 return
             }
+            dump("--------UESR---------")
+            dump(dataResponse.result.value)
+            dump("---------------------")
             self.currentUser = dataResponse.result.value
             // KeyChain에 OAuth Token 없을 경우 저장
             if KeychainService.loadOauthToken() == nil {

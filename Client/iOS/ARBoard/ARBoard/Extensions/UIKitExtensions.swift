@@ -24,7 +24,7 @@ extension UIColor {
 
 // AlertViewController 쉽게 Show & UIAlertController 계속 생성하지 않고 alertController 하나만 계속 재사용
 extension UIAlertController {
-    static func showAlertViewController(_ viewController:UIViewController, title: String, message: String, alertActions: [UIAlertAction], preferredStyle:UIAlertControllerStyle = UIAlertControllerStyle.alert){
+    static func showAlertViewController(_ viewController:UIViewController, title: String?, message: String?, alertActions: [UIAlertAction], preferredStyle:UIAlertControllerStyle = UIAlertControllerStyle.alert){
         let alertController:UIAlertController = UIAlertController.init(title: title, message: message, preferredStyle: preferredStyle)
         for alertAction in alertActions{
             alertController.addAction(alertAction)
