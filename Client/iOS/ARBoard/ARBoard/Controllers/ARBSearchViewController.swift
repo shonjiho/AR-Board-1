@@ -15,6 +15,8 @@ class ARBSearchViewController: UIViewController {
     @IBOutlet weak var userEmailLabel: UILabel!
     @IBOutlet weak var userStateMessageLabel: UILabel!
     @IBOutlet weak var requestButton: UIButton!
+    @IBOutlet weak var userImageView: UIImageView!
+    
     let dataManager:ARBDataManager = ARBDataManager.getInstance()
     override func viewDidLoad() {
         super.viewDidLoad()

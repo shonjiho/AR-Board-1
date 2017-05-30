@@ -244,7 +244,7 @@
                                             <rect key="frame" x="316" y="12" width="44" height="20.5"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" red="0.1529411765" green="0.1529411765" blue="0.1529411765" alpha="0.10000000000000001" colorSpace="custom" customColorSpace="adobeRGB1998"/>
+                                            <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                     </subviews>
@@ -566,8 +566,24 @@
                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="g0V-rP-qaM">
                                 <rect key="frame" x="0.0" y="106" width="375" height="561"/>
                                 <subviews>
-                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="1cI-gp-zH5">
+                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ca5-Y1-Mda">
                                         <rect key="frame" x="0.0" y="0.0" width="375" height="187"/>
+                                        <subviews>
+                                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="VeN-v7-HJu">
+                                                <rect key="frame" x="112.5" y="18.5" width="150" height="150"/>
+                                                <constraints>
+                                                    <constraint firstAttribute="width" secondItem="VeN-v7-HJu" secondAttribute="height" multiplier="1:1" id="dDq-Op-gSG"/>
+                                                </constraints>
+                                            </imageView>
+                                        </subviews>
+                                        <constraints>
+                                            <constraint firstItem="VeN-v7-HJu" firstAttribute="width" secondItem="ca5-Y1-Mda" secondAttribute="width" multiplier="0.4" id="CiE-H0-9mF"/>
+                                            <constraint firstItem="VeN-v7-HJu" firstAttribute="centerY" secondItem="ca5-Y1-Mda" secondAttribute="centerY" id="Xco-l1-zhc"/>
+                                            <constraint firstItem="VeN-v7-HJu" firstAttribute="centerX" secondItem="ca5-Y1-Mda" secondAttribute="centerX" id="rR4-kT-MCz"/>
+                                        </constraints>
+                                    </view>
+                                    <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" distribution="fillEqually" translatesAutoresizingMaskIntoConstraints="NO" id="1cI-gp-zH5">
+                                        <rect key="frame" x="0.0" y="187" width="375" height="187"/>
                                         <subviews>
                                             <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" translatesAutoresizingMaskIntoConstraints="NO" id="0ye-IA-xkV">
                                                 <rect key="frame" x="0.0" y="0.0" width="375" height="93.5"/>
@@ -621,9 +637,6 @@
                                             </stackView>
                                         </subviews>
                                     </stackView>
-                                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="ca5-Y1-Mda">
-                                        <rect key="frame" x="0.0" y="187" width="375" height="187"/>
-                                    </view>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Sen-c7-XCz">
                                         <rect key="frame" x="0.0" y="374" width="375" height="187"/>
                                     </view>
@@ -652,6 +665,7 @@
                         <outlet property="searchBar" destination="frv-0X-koO" id="O1O-yB-GTN"/>
                         <outlet property="searchDisplayController" destination="SKm-9p-75U" id="GEg-Fk-UY0"/>
                         <outlet property="userEmailLabel" destination="B66-Fb-jCO" id="Tla-ly-YQq"/>
+                        <outlet property="userImageView" destination="VeN-v7-HJu" id="6fN-Gp-usa"/>
                         <outlet property="userNameLabel" destination="poJ-wN-J8u" id="lT6-ia-0DK"/>
                         <outlet property="userStateMessageLabel" destination="bg5-d7-s31" id="ijh-71-RXY"/>
                     </connections>

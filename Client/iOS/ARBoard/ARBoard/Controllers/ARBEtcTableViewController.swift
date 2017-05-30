@@ -99,6 +99,14 @@ class ARBEtcTableViewController: UITableViewController {
         self.tableView.endUpdates()
     }
     
+    fileprivate func showSignatureAlertViewController(title:String?, message:String?, alertActionTitle:String?, requestType:RequestType){
+        
+        let alertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
+            self.dataManager.deleteRequest(self, requestType: requestType, completion: nil)
+        })
+        
+        UIAlertController.showAlertViewController(self, title: title, message: message, alertActions: [alertAction, UIAlertAction.cancel])
+    }
     
 }
 
@@ -144,7 +152,12 @@ extension ARBEtcTableViewController {
         let section:Int = indexPath.section
         switch section {
         case SectionType.userInformation.rawValue:
-            dump("userInformation")
+            switch indexPath.row {
+            case 0:
+                dump("닉네임 수정")
+            default:
+                return
+            }
         case SectionType.support.rawValue:
             self.supportMailService()
         case SectionType.appInformation.rawValue:
@@ -154,25 +167,14 @@ extension ARBEtcTableViewController {
             case Signature.logIn.rawValue:
                 NotificationCenter.default.post(name: NotificationName.shouldShowSignInViewController, object: nil)
             case Signature.logOut.rawValue:
-                let alertActionTitle:String = "로그아웃"
-                
-                let logoutAlertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
-                    self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
-                })
-                
                 let alertControllerTitle:String = "정말 로그아웃 하시겠습니까?"
-                
-                UIAlertController.showAlertViewController(self, title: alertControllerTitle, message: "", alertActions: [logoutAlertAction, UIAlertAction.cancel])
+                let alertActionTitle:String = "로그아웃"
+               self.showSignatureAlertViewController(title: alertControllerTitle, message: nil, alertActionTitle: alertActionTitle, requestType: RequestType.logout)
             case Signature.delete.rawValue:
-                let alertActionTitle:String = "탈퇴"
-                
-                let logoutAlertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
-                    self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
-                })
-                
                 let alertControllerTitle:String = "정말 회원 탈퇴 하시겠습니까?"
                 let alertControllerMessage:String = "회원 탈퇴시 모든 정보가 삭제됩니다."
-                UIAlertController.showAlertViewController(self, title: alertControllerTitle, message: alertControllerMessage, alertActions: [logoutAlertAction, UIAlertAction.cancel])
+                let alertActionTitle:String = "탈퇴"
+                self.showSignatureAlertViewController(title: alertControllerTitle, message: nil, alertActionTitle: alertActionTitle, requestType: RequestType.logout)
             default:
                 return
             }
