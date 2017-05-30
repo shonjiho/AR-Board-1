@@ -13,6 +13,7 @@ class User : Mappable {
     var identifier: String?
     var userName: String?
     var userEmail: String?
+    var userImageURL: String?
     var oauthType: String?
     var oauthToken: String?
     var deviceToken: String?
@@ -22,6 +23,7 @@ class User : Mappable {
     func mapping(map: Map) {
         self.identifier <- map["id"]
         self.userName <- map["userName"]
+        self.userImageURL <- map["userImage"]
         self.userEmail <- map["userEmail"]
         self.deviceToken <- map["deviceToken"]
         self.oauthType <- map["oauthType"]

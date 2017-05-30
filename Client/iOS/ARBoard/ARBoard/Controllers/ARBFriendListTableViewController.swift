@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Kingfisher
 
 class ARBFriendListTableViewController: UITableViewController {
     
@@ -165,6 +166,9 @@ extension ARBFriendListTableViewController {
             requestFriendCell.topLabel.text = friends.friendRequests?[indexPath.row].userName
             requestFriendCell.bottomLabel.text = friends.friendRequests?[indexPath.row].userEmail
             requestFriendCell.requestButton.isHidden = false
+            let test = "http://blog.room34.com/wp-content/uploads/underdog/logo.thumbnail.png"
+            let url = URL.init(string: test)
+            requestFriendCell.thumbnailImageView.kf.setImage(with: url)
             return requestFriendCell
         case SectionType.on.value:
             let onFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
