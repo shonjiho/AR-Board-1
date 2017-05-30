@@ -37,5 +37,17 @@ public class AuthDAO extends AbstractDAO {
 		delete("auth.deleteUser",map);
 		
 	}
+
+
+	public void updateUserImage(Map<String, Object> profile) {
+		// TODO Auto-generated method stub
+
+		update("auth.updateUserImage",profile); 
+	}
+
+
+	public void updateUserName(Map<String, Object> profile) { 
+		update("auth.updateUserName",profile);  
+	}
 	 
 }

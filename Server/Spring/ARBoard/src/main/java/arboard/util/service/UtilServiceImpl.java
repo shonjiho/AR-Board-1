@@ -29,8 +29,7 @@ public class UtilServiceImpl implements UtilService {
 	public List<Map<String, Object>> getFriendList(String id) {
 
 		Map<String, Object> param = new HashMap<String, Object>();
-		param.put("id", id);
-
+		param.put("id", id); 
 		return utilDAO.selectFriendList(param);
 
 	}
@@ -55,6 +54,7 @@ public class UtilServiceImpl implements UtilService {
 			jsonObject.put("id", userProfile.get("id"));
 			jsonObject.put("userName", userProfile.get("userName"));
 			jsonObject.put("userEmail", userProfile.get("userEmail"));
+			jsonObject.put("userImage", (userProfile.containsKey("userImage"))?userProfile.get("userImage"):null);
 			jsonArray.add(jsonObject);
 		}
 		return jsonArray;

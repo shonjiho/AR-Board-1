@@ -12,6 +12,9 @@ public interface AuthService {
 	Map<String,Object> getUserInfo(Map<String, Object> map) throws Exception;
 
 	void userDelete(Map<String, Object> profile);
+
+	void changeUserName(Map<String, Object> profile);
+	
 	
 
 }

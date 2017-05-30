@@ -19,6 +19,7 @@ import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
 import arboard.auth.exception.SessionExpireExcpetion;
 import arboard.auth.exception.SessionUnAuthorizedException;
+import arboard.auth.exception.UnKnownException;
 import arboard.auth.service.AuthService; 
  
 
@@ -98,18 +99,35 @@ public class AuthController {
 	
 	// GET /profile
 	// Description : get user profile.
-	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/profile", method = RequestMethod.GET)
+	
+	
+	@SuppressWarnings({ "unchecked" })
+	@RequestMapping(value = "/user", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object profile(HttpSession session) throws Exception {
+	public void changeUserName(@RequestParam(value="userName",required=false) String newName,HttpSession session) throws Exception {
+		
+		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile"); 
+		
+		if(profile == null){ 
+			throw new SessionUnAuthorizedException(session);
+		} 
+		if(newName == null){
+			throw new UnKnownException();
+		}
+		profile.put("userName",newName);
+		authService.changeUserName(profile); 
+	}
+	
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/user", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object getprofile(HttpSession session) throws Exception {
 		
 		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
 		if(profile == null){ 
 			throw new SessionUnAuthorizedException(session);
 		}
-		Map<String, Object> userProfile = authService.getUserInfo(profile);
-		
+		Map<String, Object> userProfile = authService.getUserInfo(profile); 
 		return userProfile;
 	}
-	
 }

@@ -48,18 +48,20 @@ public class AuthServiceImpl implements AuthService {
 		 
 		//map ->  name email oauthToken oauthType userId
 		Map<String, Object> userProfile = authDAO.selectUserProfileToEmail(map);
-		
+		 
 		//if user is not found , generate user data and show profile
 		if(userProfile == null){
 			authDAO.insertUser(map);
 			userProfile = authDAO.selectUserProfileToId(map);
 		}else{ 
+			if(!userProfile.containsKey("userImage")){
+				userProfile.put("userImage", null);
+			} 
+			authDAO.updateUserImage(userProfile);
 			authDAO.updateUserToken(map);
 		}
 		
-		if(!userProfile.containsKey("userImage")){
-			userProfile.put("userImage", null);
-		}
+		
 		 
 		log.debug("user profile"+userProfile);
 		return userProfile;
@@ -70,6 +72,13 @@ public class AuthServiceImpl implements AuthService {
 	public void userDelete(Map<String, Object> profile) {
 		authDAO.deleteUser(profile);  
 		utilDAO.deleteAllFriend(profile);
+	}
+
+	@Override
+	public void changeUserName(Map<String, Object> profile) {
+		Map<String, Object> userProfile ;
+		 authDAO.updateUserName(profile);
+		 
 	}
 
 }
