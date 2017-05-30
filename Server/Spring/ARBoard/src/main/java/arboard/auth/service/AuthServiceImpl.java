@@ -56,6 +56,7 @@ public class AuthServiceImpl implements AuthService {
 		}else{ 
 			authDAO.updateUserToken(map);
 		}
+		
 		if(!userProfile.containsKey("userImage")){
 			userProfile.put("userImage", null);
 		}
