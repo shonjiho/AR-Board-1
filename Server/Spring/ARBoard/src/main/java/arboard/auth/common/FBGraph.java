@@ -175,6 +175,7 @@ public class FBGraph {
 		//call API method 
 		String result = req_getFBGraphProfile(accessToken);
 		Map<String, Object> fbProfile = new HashMap<String, Object>();
+		
 		try {
 			JSONObject json = new JSONObject(result);
 
@@ -182,8 +183,9 @@ public class FBGraph {
 
 			fbProfile.put("userName", json.get("name"));
 
-			fbProfile.put("userEmail", json.get("email"));
+			fbProfile.put("userEmail", json.get("email"));  
 			
+			fbProfile.put("userImage", getUserImageUrl(json.getString("id")));
 			/*
 			 *  id , name , email
 			 * 
@@ -196,6 +198,12 @@ public class FBGraph {
  
 		return fbProfile;
 
+	}
+	
+	public static String getUserImageUrl(String id){
+		//http://graph.facebook.com/%3C%3E/picture
+		String urlFormat = "http://graph.facebook.com/"+id+"/picture"; 
+		return urlFormat;
 	}
 
 }

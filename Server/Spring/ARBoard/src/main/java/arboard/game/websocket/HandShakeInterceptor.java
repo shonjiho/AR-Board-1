@@ -44,8 +44,8 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 			String ip = request.getLocalAddress().getHostName().toString(); 
 			
 			//FOR TEST id - > currentTime
-			userProfile.put("id", "User"+String.valueOf((System.currentTimeMillis()/1000)%60));
-			userProfile.put("userName", ip); 
+			userProfile.put("id", "test"+String.valueOf((System.currentTimeMillis()/1000)%60));
+			userProfile.put("userName","TestUser"); 
 		}
 		
 		attributes.put("userProfile", userProfile);

@@ -53,8 +53,7 @@ public class AuthController {
 		//Login profile generate (userName,userEmail,oauthToken,oauthType)
 		Map<String, Object> profile = authService.reqFacebookProfile(oauthToken);
 		profile.put("oauthToken", oauthToken);
-		profile.put("oauthType", "facebook");
-
+		profile.put("oauthType", "facebook"); 
 		//Login recently information update or insert.
 		Map<String, Object> userProfile = authService.getUserInfo(profile);
 
@@ -73,7 +72,9 @@ public class AuthController {
 		Map<String,Object> result = new HashMap<String, Object>();
 		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
 		authService.userDelete(profile);
+		
 		result.put("delete", profile.get("userEmail"));
+		
 		return result;
 	}
 	// DELETE /logout

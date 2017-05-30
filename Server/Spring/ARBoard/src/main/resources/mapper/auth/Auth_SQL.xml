@@ -11,7 +11,8 @@
             	userName,
             	userEmail,
             	oauthToken,
-            	oauthType
+            	oauthType,
+            	userImage
             FROM user 
             WHERE userEmail=#{userEmail} 
         ]]>
@@ -24,7 +25,8 @@
             	userName,
             	userEmail,
             	oauthToken,
-            	oauthType
+            	oauthType,
+            	userImage
             FROM user 
             WHERE id=#{id} 
         ]]>
@@ -37,14 +39,16 @@
             	userName,
             	userEmail,
             	oauthType,
-            	oauthToken
+            	oauthToken,
+            	userImage
             ) 
             VALUES 
             (
                 #{userName},
                 #{userEmail},
                 #{oauthType},
-                #{oauthToken}
+                #{oauthToken},
+                #{userImage}
             );
     ]]>
 	</insert>

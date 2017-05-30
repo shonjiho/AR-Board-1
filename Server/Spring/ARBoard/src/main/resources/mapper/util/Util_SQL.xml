@@ -5,7 +5,7 @@
 	<select id="selectFriendList" parameterType="hashmap"
 		resultType="hashmap">
         <![CDATA[ 
-        	SELECT id, userName , userEmail 
+        	SELECT id, userName , userEmail ,userImage
         	FROM user JOIN relationship ON user.id=relationship.id2  
         	WHERE relationship.id1=#{id} and state='Y';
         ]]>
@@ -13,7 +13,7 @@
 	<select id="selectUserToEmail" parameterType="hashmap"
 		resultType="hashmap">
         <![CDATA[ 
-        	SELECT id,userName,userEmail,IFNULL(state,'N') as state 
+        	SELECT id,userName,userEmail,userImage,IFNULL(state,'N') as state 
         	FROM user LEFT JOIN (
         		SELECT id1,id2,state 
         		FROM relationship 
@@ -41,7 +41,7 @@
 		resultType="hashmap">
         <![CDATA[  
         
-        	SELECT id,userName,userEmail 
+        	SELECT id,userName,userEmail,userImage 
         	FROM user JOIN relationship ON id1=id 
         	WHERE id2=#{receiverId} and state='N';
         ]]>
@@ -68,5 +68,9 @@
 	<delete id="deleteFriend" parameterType="hashmap">
 		DELETE FROM relationship
 		WHERE (id1=#{senderId} and id2= #{receiverId}) or (id1=#{receiverId} and id2= #{senderId})  
+	</delete>
+	<delete id="deleteAllFriend" parameterType="hashmap">
+		DELETE FROM relationship
+		WHERE id1=#{userId} or id2= #{userId}
 	</delete>
 </mapper>

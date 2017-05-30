@@ -8,7 +8,8 @@ import org.apache.log4j.Logger;
 import org.springframework.stereotype.Service;
 
 import arboard.auth.common.FBGraph;
-import arboard.auth.dao.AuthDAO;;
+import arboard.auth.dao.AuthDAO;
+import arboard.util.dao.UtilDAO;;
 
 @Service("authservice")
 public class AuthServiceImpl implements AuthService {
@@ -16,6 +17,10 @@ public class AuthServiceImpl implements AuthService {
 
 	@Resource(name = "authDAO")
 	private AuthDAO authDAO;
+	
+	@Resource(name = "utilDAO")
+	private UtilDAO utilDAO;
+	 
 
 	@Override
 	public boolean valifyAccessToken(String accessToken) throws Exception {
@@ -33,6 +38,7 @@ public class AuthServiceImpl implements AuthService {
 	public Map<String, Object> reqFacebookProfile(String accessToken) throws Exception {
 
 		Map<String, Object> resultMap = FBGraph.getFBGraphProfile(accessToken);
+		
 		log.debug(resultMap);
 		return resultMap;
 	}
@@ -50,8 +56,10 @@ public class AuthServiceImpl implements AuthService {
 		}else{ 
 			authDAO.updateUserToken(map);
 		}
-		
-		
+		if(!userProfile.containsKey("userImage")){
+			userProfile.put("userImage", null);
+		}
+		 
 		log.debug("user profile"+userProfile);
 		return userProfile;
 
@@ -59,7 +67,8 @@ public class AuthServiceImpl implements AuthService {
 
 	@Override
 	public void userDelete(Map<String, Object> profile) {
-		authDAO.deleteUser(profile); 
+		authDAO.deleteUser(profile);  
+		utilDAO.deleteAllFriend(profile);
 	}
 
 }
