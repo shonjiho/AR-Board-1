@@ -7,9 +7,12 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] GameObject uiRoot;
 	// [SerializeField] UILabel moneyLabel;
 	[SerializeField] UIButton diceButton;
+	[SerializeField] UIImageButton MapButton;
 	[SerializeField] List<GameObject> playerStateWindows;
 	[SerializeField] UILabel diceLabel;
+	[SerializeField] UILabel gameOverLabel;
 	[SerializeField] GameObject buildMenu;
+	[SerializeField] ChargeMenu chargeMenu;
 
 	static UIManager instance;
 	const string STRING_NAME_LABEL = "NameLabel";
@@ -17,6 +20,7 @@ public class UIManager : MonoBehaviour {
 	const string STRING_HOTEL = "Hotel";
 	const string STRING_BUILDING = "Building";
 	const string STRING_MOTEL = "Motel";
+	const string STRING_EMPTY_LABEL = "EmptyLabel";
 
 	public static UIManager Instance
 	{
@@ -106,7 +110,16 @@ public class UIManager : MonoBehaviour {
 			nameLabel.text = playerStates[i].PlayerName;
 			UILabel moneyLabel = playerStateWindows[i].transform.FindChild(STRING_MONEY_LABEL).GetComponent<UILabel>();
 			// Debug.LogError(playerStates[i].Money);
-			moneyLabel.text = "" + playerStates[i].Money;
+
+			if(playerStates[i].IsEnd())
+			{
+				moneyLabel.text = "GAME OVER";
+			}
+			else
+			{
+				moneyLabel.text = "" + playerStates[i].Money;
+			}
+			
 		}
 
 	}
@@ -128,9 +141,13 @@ public class UIManager : MonoBehaviour {
 			Debug.LogError("buildMenu is null!!");
 			return;
 		}
+
 		GameObject hotelButton = buildMenu.transform.FindChild(STRING_HOTEL).gameObject;
 		GameObject buildingButton = buildMenu.transform.FindChild(STRING_BUILDING).gameObject;
 		GameObject motelButton = buildMenu.transform.FindChild(STRING_MOTEL).gameObject;
+		GameObject emptyLabel = buildMenu.transform.FindChild(STRING_EMPTY_LABEL).gameObject;
+
+		emptyLabel.SetActive(false);
 
 		if(scaffolding.BuildLevel < 3)
 		{
@@ -139,6 +156,7 @@ public class UIManager : MonoBehaviour {
 		else
 		{
 			hotelButton.gameObject.SetActive(false);
+			emptyLabel.SetActive(true);
 		}
 
 		if(scaffolding.BuildLevel < 2)
@@ -166,4 +184,51 @@ public class UIManager : MonoBehaviour {
 	{
 		buildMenu.SetActive(false);
 	}
+
+	public void ShowChargeMenu(int cost)
+	{
+		// diceLabel.gameObject.SetActive(false);
+		
+		if(chargeMenu.Show(cost))
+		{
+			MapButton.gameObject.SetActive(false);
+			for(int i=0; i<playerStateWindows.Count; i++)
+			{
+				playerStateWindows[i].gameObject.SetActive(false);
+			}
+			gameOverLabel.gameObject.SetActive(false);
+		}
+	}
+
+	public void ShowGameOver(bool isWin)
+	{
+		MapButton.gameObject.SetActive(false);
+		for(int i=0; i<playerStateWindows.Count; i++)
+		{
+			playerStateWindows[i].gameObject.SetActive(true);
+		}
+		if(isWin)
+		{
+			gameOverLabel.text = "GAME WIN";
+		}
+		else
+		{
+			gameOverLabel.text = "GAME OVER";
+		}
+		gameOverLabel.gameObject.SetActive(true);
+	}
+
+	public void HideChargeMenu()
+	{
+		// diceLabel.gameObject.SetActive(true);
+		MapButton.gameObject.SetActive(true);
+		for(int i=0; i<playerStateWindows.Count; i++)
+		{
+			playerStateWindows[i].gameObject.SetActive(true);
+		}
+		gameOverLabel.gameObject.SetActive(false);
+		chargeMenu.Hide();
+	}
+
+
 }

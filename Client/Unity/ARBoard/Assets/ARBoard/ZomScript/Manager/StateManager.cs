@@ -29,16 +29,43 @@ public class StateManager : MonoBehaviour {
 	List<Scaffolding> scaffoldings;
 	int playerNumber = 0;
 
+	int currentTurn = 0;
+
+	public int CurrentTurn
+	{
+		get
+		{
+			return currentTurn;
+			
+		} 
+	}
+
+	public void SetNextTurn()
+	{
+		currentTurn++;
+		if(currentTurn >= 4)
+		{
+			currentTurn = 0;
+		}
+	}
+
 	public void SetNewGameStateTEST()
 	{
 		string[] arr = {"GameStart", "0", "test1", "test2", "test3", "test4"};
 		SetNewGameState(arr);
+		GameManager.Instance.TestBuild();
+		GameManager.Instance.TestBuild2(12);
+		GameManager.Instance.TestBuild2(13);
+		GameManager.Instance.TestBuild2(14);
 	}
 
 	public void SetNewGameState(string[] replySplitArr)
 	{
-		this.playerNumber = int.Parse(replySplitArr[1]);
+		playerNumber = int.Parse(replySplitArr[1]);
 		scaffoldings = new List<Scaffolding>();
+		currentTurn = 0;
+
+		
 
 		GameObject goScaffoldings = GameObject.FindWithTag("Scaffoldings");
 		if(goScaffoldings == null)
@@ -56,6 +83,8 @@ public class StateManager : MonoBehaviour {
 				continue;
 			}
 
+			scaffolding.RefreshState(i);
+
 			scaffoldings.Add(scaffolding);
 		}
 
@@ -67,7 +96,7 @@ public class StateManager : MonoBehaviour {
 
 		// playerStates = new List<PlayerState>();
 
-		Debug.LogError("replySplitArr : " + replySplitArr.Length);
+		// Debug.LogError("replySplitArr : " + replySplitArr.Length);
 		for(int i=0; i<replySplitArr.Length; i++)
 		{
 			Debug.Log(replySplitArr[i]);
@@ -79,12 +108,27 @@ public class StateManager : MonoBehaviour {
 			playerStates[i].transform.position = GetPlayerScaffoldingLocatePosition(playerStates[i]);
 		}
 
+		// GameObject[] builds = GameObject.FindGameObjectsWithTag(SettingManager.STRING_BUILD);
+		// for(int i=0; i<builds.Length; i++)
+		// {
+		// 	Destroy(builds[i]);
+		// }
 
 	}
 
 	public int GetMyPlayerNumber()
 	{
 		return playerNumber;
+	}
+
+	//test
+	public void TestAddMyPlayerNumber()
+	{
+		playerNumber++;
+		if(playerNumber >= 4)
+		{
+			playerNumber = 0;
+		}
 	}
 
 	public Vector3 GetPlayerScaffoldingLocatePosition(PlayerState playerState)
@@ -117,5 +161,26 @@ public class StateManager : MonoBehaviour {
 	public Scaffolding GetScaffolding(int location)
 	{
 		return scaffoldings[location];
+	}
+
+	public bool IsSurviveOne()
+	{
+		int check = 0;
+		for(int i=0; i<playerStates.Count; i++)
+		{
+			if(playerStates[i].IsEnd() == false)
+			{
+				check++;
+			}
+		}
+
+		if(check == 1)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
 	}
 }

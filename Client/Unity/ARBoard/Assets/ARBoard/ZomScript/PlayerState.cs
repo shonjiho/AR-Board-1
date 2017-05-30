@@ -8,13 +8,36 @@ public class PlayerState : MonoBehaviour {
 	int playerNum;
 	int money;
 	int location;
+	bool end = false;
 
 	public void RefreshState(int playerNum, string playerName)
 	{
 		this.playerNum = playerNum;
 		this.playerName = playerName;
-		money = 3000;
+		end = false;
+		money = SettingManager.START_MONEY;
 		location = 0;
+	}
+
+	public bool IsEnd()
+	{
+		return end;
+	}
+
+	public void Dead()
+	{
+		end = true;
+
+		for(int i=0; i<SettingManager.SCAFFOLDINGS_COUNT; i++)
+		{
+			Scaffolding scaffolding = StateManager.Instance.GetScaffolding(i);
+			if(scaffolding.OwnerPlayerNum == playerNum)
+			{
+				scaffolding.RefreshState(i);
+			}
+		}
+
+		UIManager.Instance.RefreshUI();
 	}
 	
 	public int Money

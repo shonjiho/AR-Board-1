@@ -11,6 +11,8 @@ public class GameManager : MonoBehaviour {
 	public GameObject gameObjectLevel3;
 	public GameObject gameObjectLevel2;
 	public GameObject gameObjectLevel1;
+	public GameObject buyCheck;
+	
 
 	StateManager stateManager = null;
 	UIManager uiManager = null;
@@ -79,7 +81,7 @@ public class GameManager : MonoBehaviour {
 
 	public void ReplyProcess(string reply)
 	{
-		Debug.Log("Receive: "  + reply);
+		// Debug.Log("Receive: "  + reply);
 		string[] replySplitArr = reply.Split(',');
 		switch(replySplitArr[0])
 		{
@@ -91,9 +93,21 @@ public class GameManager : MonoBehaviour {
 			// case SettingManager.SM_END_GAME_START_WAIT_TIME :
 			// 	StartGame();
 			// 	break;
-			case SettingManager.SM_GET_DICE_RESULT :
-				
+			case SettingManager.SM_DICE_RESULT :
 				MovePlayer(replySplitArr);
+				break;
+			case SettingManager.SM_BUILD_OBJECT : 
+				BuildObject(replySplitArr);
+				NextTurn(replySplitArr);
+				break;
+			case SettingManager.SM_END_TURN :
+				NextTurn(replySplitArr);
+				break;
+			case SettingManager.SM_CHARGE :
+				Charge(replySplitArr);
+				break;
+			case SettingManager.SM_PLAYER_DEAD :
+				PlayerDead(replySplitArr);
 				break;
 		}
 	}
@@ -124,6 +138,7 @@ public class GameManager : MonoBehaviour {
 	{
 		// stateManager.SetNewGameState(replySplitArr);
 		stateManager.SetNewGameStateTEST();
+		uiManager.HideChargeMenu();
 		uiManager.RefreshUI();
 		StartGame();
 	}
@@ -140,6 +155,11 @@ public class GameManager : MonoBehaviour {
 
 	IEnumerator DiceProcess()
 	{
+		if(stateManager.IsSurviveOne())
+		{
+			uiManager.ShowGameOver(true);
+			yield break;
+		}
 		UIButton diceButton = uiManager.GetDiceButton();
 		diceButton.gameObject.SetActive(true);
 
@@ -171,8 +191,10 @@ public class GameManager : MonoBehaviour {
 
 		int diceValue = (int)UnityEngine.Random.Range(1, 12);
 
-		string request = "DiceResult," + stateManager.GetMyPlayerNumber() + "," + diceValue;
-		Debug.LogError(request);
+		diceValue = 3;
+
+		string request = SettingManager.SM_DICE_RESULT + "," + stateManager.GetMyPlayerNumber() + "," + diceValue;
+		// Debug.LogError(request);
 
 		w.SendString(request);
 
@@ -188,6 +210,7 @@ public class GameManager : MonoBehaviour {
 
 		StartCoroutine(MoveProcess(playerNum, moveValue));
 	}
+
 
 	IEnumerator MoveProcess(int playerNum, int moveValue)
 	{
@@ -244,19 +267,22 @@ public class GameManager : MonoBehaviour {
 			if(playerState.Location == SettingManager.SCAFFOLDINGS_COUNT)
 			{
 				playerState.Location = 0;
+				playerState.Money += 1000;
 			}
 
 			targetPosition = stateManager.GetPlayerScaffoldingLocatePosition(playerState);
 			playerState.transform.LookAt(targetPosition);
 
-			while(playerState.transform.position != targetPosition)
+			Vector3 beforeVec = targetPosition;
+			while(playerState.transform.position != targetPosition && beforeVec != playerState.transform.position)
 			{
 				float step = speed * Time.deltaTime;
+				beforeVec = playerState.transform.position;
 				playerState.transform.position = Vector3.MoveTowards(playerState.transform.position, targetPosition, step);
 				yield return new WaitForSeconds(0.02f);
 			}
 		}
-		
+
 		if(playerNum == stateManager.GetMyPlayerNumber())
 		{
 			if(stateManager.GetScaffolding(playerState.Location).isMyScaffolding())
@@ -269,81 +295,412 @@ public class GameManager : MonoBehaviour {
 				}
 				else
 				{
-
+					EndTurn();
 				}
 				
 			}
 			else
 			{
 				//벌금
-
+				CalculateCost(playerState, stateManager.GetScaffolding(playerState.Location));
 			}
+		}
+	}
+
+	void CalculateCost(PlayerState playerState, Scaffolding scaffolding)
+	{
+		int cost = 0;
+		switch(scaffolding.BuildLevel)
+		{
+			case 1 :
+				cost =  SettingManager.INT_COST_MOTEL;
+				break;
+			case 2 :
+				cost = SettingManager.INT_COST_BUILDING * 2;
+				break;
+			case 3 : 
+				cost = SettingManager.INT_COST_HOTEL * 3;
+				break;
+		}
+
+		if(playerState.Money - cost >= 0)
+		{
+			string request = SettingManager.SM_CHARGE + "," + stateManager.GetMyPlayerNumber() + "," + cost + "," + SettingManager.STRING_SEND_BUILD_NULL;
+			w.SendString(request);
+		}
+		else
+		{
+			//돈이 부족할때
+			uiManager.ShowChargeMenu(cost);
+		}
+	}
+
+	public void CalculateCostSell(bool[] checkArr, List<Scaffolding> scaffoldings, int cost)
+	{
+		string strScaf = string.Empty;
+		for(int i=0;i<checkArr.Length; i++)
+		{
+			if(checkArr[i])
+			{
+				strScaf += (""+ scaffoldings[i].ScaffoldingNum + "|");
+			}
+		}
+
+		string request = SettingManager.SM_CHARGE + "," + stateManager.GetMyPlayerNumber() + "," + cost + "," + strScaf;
+		w.SendString(request);
+	}
+
+
+	void Charge(string[] replySplitArr)
+	{
+		int playerNum = int.Parse(replySplitArr[1]);
+		int cost = int.Parse(replySplitArr[2]);
+		string[] sellList = replySplitArr[3].Split('|');
+
+		if(sellList[0] != SettingManager.STRING_SEND_BUILD_NULL)
+		{
+			
+			for(int i=0;i<sellList.Length; i++)
+			{
+				if(sellList[i] == string.Empty)
+					continue;
+
+				int scafNum = int.Parse(sellList[i]);
+				Scaffolding scaffolding = stateManager.GetScaffolding(scafNum);
+				switch(scaffolding.BuildLevel)
+				{
+					case 1 :
+						stateManager.playerStates[playerNum].Money += SettingManager.INT_COST_MOTEL;
+						break;
+					case 2 :
+						stateManager.playerStates[playerNum].Money += SettingManager.INT_COST_BUILDING;
+						break;
+					case 3 :
+						stateManager.playerStates[playerNum].Money += SettingManager.INT_COST_HOTEL;
+						break;
+				}
+				scaffolding.RefreshState(scaffolding.ScaffoldingNum);
+				
+			}
+		}
+
+		stateManager.playerStates[playerNum].Money -= cost;
+		uiManager.RefreshUI();
+		NextTurn(replySplitArr);
+		
+	}
+
+
+	public void PlayerDead(int playerNum)
+	{
+		string request = SettingManager.SM_PLAYER_DEAD + "," + playerNum;
+		w.SendString(request);
+	}
+
+	public void PlayerDead(string[] replySplitArr)
+	{
+		int playerNum = int.Parse(replySplitArr[1]);
+		stateManager.playerStates[playerNum].Dead();
+
+		if(playerNum == stateManager.GetMyPlayerNumber())
+			EndTurn();
+	}
+
+
+	public void TestBuild()
+	{
+		int playerNum = 3;
+		int level = 3;
+		GameObject goBuild;
+		if(level == 1)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_MOTEL;
+		}
+		else if(level == 2)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_BUILDING;
+		}
+		else
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_HOTEL;
+		}
+		int location = 3;
+		stateManager.GetScaffolding(location).OwnerPlayerNum = playerNum;
+		stateManager.GetScaffolding(location).BuildLevel = level;
+
+		goBuild.tag = SettingManager.STRING_BUILD;
+		
+		Scaffolding scaffolding = stateManager.GetScaffolding(location);
+
+		if(scaffolding.transform.FindChild(SettingManager.STRING_BUILD) != null)
+		{
+			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUILD).gameObject);
+		}
+
+		goBuild.name = SettingManager.STRING_BUILD;
+		goBuild.transform.parent = scaffolding.transform;
+		if(location > 0 && location < 9)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, -3);
+		}
+		else if(location > 9 && location < 18)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
+		}
+		else if(location > 18 && location < 27)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, 3);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
+		}
+		else
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
+		}
+		
+		uiManager.RefreshUI();
+	}
+
+	public void TestBuild2(int i)
+	{
+		int playerNum = 0;
+		int level = 3;
+		GameObject goBuild;
+		if(level == 1)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_MOTEL;
+		}
+		else if(level == 2)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_BUILDING;
+		}
+		else
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_HOTEL;
+		}
+		int location = i;
+		stateManager.GetScaffolding(location).OwnerPlayerNum = playerNum;
+		stateManager.GetScaffolding(location).BuildLevel = level;
+
+		goBuild.tag = SettingManager.STRING_BUILD;
+		
+		Scaffolding scaffolding = stateManager.GetScaffolding(location);
+
+		GameObject goBuyCheck = (GameObject)Instantiate(buyCheck);
+
+		if(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK) != null)
+		{
+			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK).gameObject);
+		}
+
+		if(scaffolding.transform.FindChild(SettingManager.STRING_BUILD) != null)
+		{
+			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUILD).gameObject);
+		}
+
+		goBuyCheck.name = SettingManager.STRING_BUYCHECK;
+		goBuyCheck.transform.parent = scaffolding.transform;
+		goBuyCheck.transform.localScale = new Vector3(3f, 3f, 3f);
+		goBuyCheck.transform.localPosition = new Vector3(0, 0.116f, 0.098f);
+		goBuyCheck.GetComponent<SpriteRenderer>().color = SettingManager.GetColor(playerNum);
+		// Debug.LogError(goBuyCheck.GetComponent<SpriteRenderer>().color);
+
+		goBuild.name = SettingManager.STRING_BUILD;
+		goBuild.transform.parent = scaffolding.transform;
+		if(location > 0 && location < 9)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, -3);
+		}
+		else if(location > 9 && location < 18)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
+		}
+		else if(location > 18 && location < 27)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, 3);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
+		}
+		else
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
+		}
+		
+		uiManager.RefreshUI();
+	}
+
+	void BuildObject(string[] replySplitArr)
+	{
+		int playerNum = int.Parse(replySplitArr[1]);
+		int level = int.Parse(replySplitArr[2]);
+		GameObject goBuild;
+		if(level == 1)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_MOTEL;
+		}
+		else if(level == 2)
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_BUILDING;
+		}
+		else
+		{
+			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
+			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_HOTEL;
+		}
+		int location = stateManager.playerStates[playerNum].Location;
+		stateManager.GetScaffolding(location).BuildLevel = level;
+		stateManager.GetScaffolding(location).OwnerPlayerNum = playerNum;
+
+		goBuild.tag = SettingManager.STRING_BUILD;
+
+		GameObject goBuyCheck = (GameObject)Instantiate(buyCheck);
+		
+		Scaffolding scaffolding = stateManager.GetScaffolding(location);
+
+		if(scaffolding.transform.FindChild(SettingManager.STRING_BUILD) != null)
+		{
+			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUILD).gameObject);
+		}
+
+		goBuild.name = SettingManager.STRING_BUILD;
+		goBuild.transform.parent = scaffolding.transform;
+
+		if(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK) != null)
+		{
+			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK).gameObject);
+		}
+
+		goBuyCheck.name = SettingManager.STRING_BUYCHECK;
+		goBuyCheck.transform.parent = scaffolding.transform;
+		goBuyCheck.transform.localScale = new Vector3(3f, 3f, 3f);
+		goBuyCheck.transform.localPosition = new Vector3(0, 0.116f, 0.098f);
+		goBuyCheck.GetComponent<SpriteRenderer>().color = SettingManager.GetColor(playerNum);
+
+		if(location > 0 && location < 9)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, -3);
+		}
+		else if(location > 9 && location < 18)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
+		}
+		else if(location > 18 && location < 27)
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(0, 0, 3);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
+		}
+		else
+		{
+			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
+			goBuild.transform.localPosition = new Vector3(3, 0, 0);
+			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
+		}
+		
+		uiManager.RefreshUI();
+
+	}
+
+	void EndTurn()
+	{
+		string request = SettingManager.SM_END_TURN + "," + stateManager.GetMyPlayerNumber();
+		w.SendString(request);
+	}
+
+	void NextTurn(string[] replySplitArr)
+	{
+		stateManager.SetNextTurn();
+		stateManager.TestAddMyPlayerNumber();
+		if(stateManager.CurrentTurn == stateManager.GetMyPlayerNumber())
+		{
+			if(stateManager.playerStates[stateManager.GetMyPlayerNumber()].IsEnd())
+			{
+				EndTurn();
+			}
+			else
+			{
+				StartCoroutine(DiceProcess());
+			}
+			
 		}
 	}
 
 
 
 
+	bool CheckMoney(int money)
+	{
+		if(stateManager.playerStates[stateManager.GetMyPlayerNumber()].Money >= money)
+		{
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+	}
 
 
+	public void BuildHotel()
+	{
+		if(!CheckMoney(SettingManager.INT_COST_HOTEL))
+		{
+			return;
+		}
+		string request = SettingManager.SM_BUILD_OBJECT + "," + stateManager.GetMyPlayerNumber() + "," + 3;
+		w.SendString(request);
+		UIManager.Instance.HideBuildMenu();
+	}
 
+	public void BuildBuilding()
+	{
+		if(!CheckMoney(SettingManager.INT_COST_BUILDING))
+		{
+			return;
+		}
+		string request = SettingManager.SM_BUILD_OBJECT + "," + stateManager.GetMyPlayerNumber() + "," + 2;
+		w.SendString(request);
+		UIManager.Instance.HideBuildMenu();
+	}
 
+	public void BuildMotel()
+	{
+		if(!CheckMoney(SettingManager.INT_COST_MOTEL))
+		{
+			return;
+		}
+		string request = SettingManager.SM_BUILD_OBJECT + "," + stateManager.GetMyPlayerNumber() + "," + 1;
+		w.SendString(request);
+		UIManager.Instance.HideBuildMenu();
+	}
 
+	public void BuildCancle()
+	{
+		EndTurn();
+		UIManager.Instance.HideBuildMenu();
+	}
 
-
-	// public void BuildGameObject(int userNum, int level)
-	// {
-	// 	GameObject goBuild;
-	// 	if(level == 1)
-	// 	{
-	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
-	// 	}
-	// 	else if(level == 2)
-	// 	{
-	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
-	// 	}
-	// 	else
-	// 	{
-	// 		goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
-	// 	}
-
-	// 	if(scaffoldings[userStates[userNum].Location].transform.FindChild("Build") != null)
-	// 	{
-	// 		Destroy(scaffoldings[userStates[userNum].Location].transform.FindChild("Build").gameObject);
-	// 	}
-
-	// 	goBuild.name = "Build";
-	// 	goBuild.transform.parent = scaffoldings[userStates[userNum].Location].transform;
-	// 	if(userStates[userNum].Location > 0 && userStates[userNum].Location < 9)
-	// 	{
-	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-	// 		goBuild.transform.localPosition = new Vector3(0, 0, -3);
-	// 	}
-	// 	else if(userStates[userNum].Location > 9 && userStates[userNum].Location < 18)
-	// 	{
-	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-	// 		goBuild.transform.localPosition = new Vector3(-3, 0, 0);
-	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
-	// 	}
-	// 	else if(userStates[userNum].Location > 18 && userStates[userNum].Location < 27)
-	// 	{
-	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-	// 		goBuild.transform.localPosition = new Vector3(0, 0, 3);
-	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
-	// 	}
-	// 	else
-	// 	{
-	// 		goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-	// 		goBuild.transform.localPosition = new Vector3(3, 0, 0);
-	// 		goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
-	// 	}
-		
-	// }
-
-	// public void BuildLevel3()
-	// {
-	// 	BuildLevel3(myUserNum);
-	// }
 
 	// public void BuildLevel3(int userNum)
 	// {
@@ -373,11 +730,7 @@ public class GameManager : MonoBehaviour {
 
 	// }
 
-	// public void BuildLevel2()
-	// {
-	// 	BuildLevel2(myUserNum);
-	// }
-
+	
 	// public void BuildLevel2(int userNum)
 	// {
 	// 	if(userNum>=userStates.Count)
@@ -401,10 +754,7 @@ public class GameManager : MonoBehaviour {
 	// 	}
 	// }
 
-	// public void BuildLevel1()
-	// {
-	// 	BuildLevel1(myUserNum);
-	// }
+	
 
 	// public void BuildLevel1(int userNum)
 	// {
@@ -431,9 +781,6 @@ public class GameManager : MonoBehaviour {
 	// 	}
 	// }
 
-	// public void BuildCancle()
-	// {
-	// 	UIManager.Instance.HideBuildMenu();
-	// }
+	
 
 }
