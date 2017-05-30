@@ -24,6 +24,7 @@ class ARBEtcTableViewController: UITableViewController {
         case provision = 0, homepage
     }
     
+    
     struct Section {
 //        static let headerTitles: [String] = ["개인정보", "지원", "알림 설정", "정보", " "]
 //        static let rowTitles: [[String]] = [["닉네임 변경"], ["앱에 대해 의견 보내기"], ["알림 설정 하기"], ["이용약관 및 개인정보 취급 방침", "공식 홈페이지"], ["로그인", "로그아웃", "회원 탈퇴"]]
@@ -108,6 +109,26 @@ class ARBEtcTableViewController: UITableViewController {
         UIAlertController.showAlertViewController(self, title: title, message: message, alertActions: [alertAction, UIAlertAction.cancel])
     }
     
+    fileprivate func editUserInformationAlertViewController(title:String?, message:String?, alertActionTitle:String?){
+        
+        let alertController:UIAlertController = UIAlertController.init(title: title, message: message, preferredStyle: .alert)
+        
+        let textFieldPlaceholder:String = "바꿀 닉네임을 적어주세요."
+        
+        alertController.addTextField { (textField) in
+            textField.placeholder = textFieldPlaceholder
+        }
+        
+        let alertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .default, handler: { (action) in
+            let newUserName:String? = alertController.textFields?.first?.text
+            self.dataManager.updateRequest(self, requestType: RequestType.user, isShowActivityIndicator: true, value: newUserName, completion: nil)
+        })
+        
+        alertController.addAction(alertAction)
+        alertController.addAction(UIAlertAction.cancel)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension ARBEtcTableViewController {
@@ -155,6 +176,9 @@ extension ARBEtcTableViewController {
             switch indexPath.row {
             case 0:
                 dump("닉네임 수정")
+                let alertTitle:String = "닉네임 변경"
+                let alertActionTitle:String = "수정"
+                self.editUserInformationAlertViewController(title: alertTitle, message: nil, alertActionTitle: alertActionTitle)
             default:
                 return
             }
@@ -174,7 +198,7 @@ extension ARBEtcTableViewController {
                 let alertControllerTitle:String = "정말 회원 탈퇴 하시겠습니까?"
                 let alertControllerMessage:String = "회원 탈퇴시 모든 정보가 삭제됩니다."
                 let alertActionTitle:String = "탈퇴"
-                self.showSignatureAlertViewController(title: alertControllerTitle, message: nil, alertActionTitle: alertActionTitle, requestType: RequestType.logout)
+                self.showSignatureAlertViewController(title: alertControllerTitle, message: alertControllerMessage, alertActionTitle: alertActionTitle, requestType: RequestType.logout)
             default:
                 return
             }

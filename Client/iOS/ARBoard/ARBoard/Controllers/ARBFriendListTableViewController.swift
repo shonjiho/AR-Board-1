@@ -166,15 +166,26 @@ extension ARBFriendListTableViewController {
             requestFriendCell.topLabel.text = friends.friendRequests?[indexPath.row].userName
             requestFriendCell.bottomLabel.text = friends.friendRequests?[indexPath.row].userEmail
             requestFriendCell.requestButton.isHidden = false
-            let test = "http://blog.room34.com/wp-content/uploads/underdog/logo.thumbnail.png"
-            let url = URL.init(string: test)
-            requestFriendCell.thumbnailImageView.kf.setImage(with: url)
+            if let userImageUrlString = friends.friendRequests?[indexPath.row].userImageURL {
+                let userImageUrl = URL.init(string: userImageUrlString)
+                requestFriendCell.thumbnailImageView.kf.setImage(with: userImageUrl)
+            } else {
+                
+            }
+            
             return requestFriendCell
         case SectionType.on.value:
             let onFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
             onFriendCell.topLabel.text = friends.onFriends?[indexPath.row].userName
             onFriendCell.bottomLabel.text = friends.onFriends?[indexPath.row].userEmail
             onFriendCell.selectedBackgroundView = UIVisualEffectView.dark
+            
+            if let userImageUrlString = friends.friendRequests?[indexPath.row].userImageURL {
+                let userImageUrl = URL.init(string: userImageUrlString)
+                onFriendCell.thumbnailImageView.kf.setImage(with: userImageUrl)
+            } else {
+                
+            }
             return onFriendCell
         case SectionType.off.value:
             let offFriendcell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
