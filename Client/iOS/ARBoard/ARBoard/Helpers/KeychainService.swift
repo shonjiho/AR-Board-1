@@ -39,7 +39,7 @@ public class KeychainService: NSObject {
     }
     
     public class func loadDeviceToken() -> String? {
-        guard let token = self.load(Key.deviceToken) as? String else {
+        guard let token = self.load(Key.deviceToken) as String? else {
             return nil
         }
         return token
