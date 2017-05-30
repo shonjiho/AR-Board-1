@@ -14,6 +14,7 @@ class ARBFriendRequestTableViewCell: UITableViewCell {
     @IBOutlet weak var forSpacingView: UIView!
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bottomLabel: UILabel!
+    @IBOutlet weak var thumbnailImageView: UIImageView!
     
     override func awakeFromNib() {
         super.awakeFromNib()

@@ -73,7 +73,7 @@
             </objects>
             <point key="canvasLocation" x="3324" y="65"/>
         </scene>
-        <!--AR 부루마블-->
+        <!--AR 마블-->
         <scene sceneID="Zd9-dr-rDf">
             <objects>
                 <viewController id="gzp-2w-Wh6" customClass="ARBGameJoinViewController" customModule="ARBoard" customModuleProvider="target" sceneMemberID="viewController">
@@ -99,7 +99,7 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="게임 시작" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gYD-Ap-qNU">
-                                <rect key="frame" x="147.5" y="320.5" width="82" height="26.5"/>
+                                <rect key="frame" x="146.5" y="320.5" width="82" height="26.5"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
@@ -116,7 +116,7 @@
                             <constraint firstItem="D2u-eT-haL" firstAttribute="centerX" secondItem="VtF-Zs-2Vm" secondAttribute="centerX" id="lHd-uH-3F9"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="AR 부루마블" id="iZ2-r3-Y54"/>
+                    <navigationItem key="navigationItem" title="AR 마블" id="iZ2-r3-Y54"/>
                     <connections>
                         <outlet property="currentStateLabel" destination="w60-zU-tLP" id="aKI-pj-PIk"/>
                         <outlet property="joinView" destination="D2u-eT-haL" id="W4d-sp-y1O"/>
@@ -378,23 +378,23 @@
                                                     </connections>
                                                 </button>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="aLB-Zg-S8Y">
-                                                    <rect key="frame" x="20" y="5" width="285" height="60"/>
+                                                    <rect key="frame" x="55" y="5" width="251" height="60"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="WF6-d0-UDV">
-                                                            <rect key="frame" x="0.0" y="0.0" width="285" height="29"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="251" height="29"/>
                                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Cf2-Xa-Eda">
-                                                            <rect key="frame" x="0.0" y="36" width="285" height="1"/>
+                                                            <rect key="frame" x="0.0" y="36" width="251" height="1"/>
                                                             <color key="backgroundColor" white="1" alpha="0.10000000000000001" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="1" id="xOD-8b-fEA"/>
                                                             </constraints>
                                                         </view>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="nEZ-xb-jDU">
-                                                            <rect key="frame" x="0.0" y="44" width="285" height="16"/>
+                                                            <rect key="frame" x="0.0" y="44" width="251" height="16"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
@@ -404,13 +404,22 @@
                                                         <constraint firstItem="Cf2-Xa-Eda" firstAttribute="width" secondItem="aLB-Zg-S8Y" secondAttribute="width" id="ccE-Xz-hIy"/>
                                                     </constraints>
                                                 </stackView>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="PU1-aO-ur4">
+                                                    <rect key="frame" x="0.0" y="9.5" width="50" height="50"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="50" id="jVh-3b-uSH"/>
+                                                        <constraint firstAttribute="width" secondItem="PU1-aO-ur4" secondAttribute="height" multiplier="1:1" id="rqj-Bh-gVC"/>
+                                                    </constraints>
+                                                </imageView>
                                             </subviews>
                                             <constraints>
-                                                <constraint firstAttribute="trailing" secondItem="aLB-Zg-S8Y" secondAttribute="trailing" constant="50" id="4zl-yp-MbF"/>
+                                                <constraint firstItem="Kn4-rg-6gJ" firstAttribute="leading" secondItem="aLB-Zg-S8Y" secondAttribute="trailing" constant="5" id="1WJ-F1-L6Q"/>
                                                 <constraint firstAttribute="trailing" secondItem="Kn4-rg-6gJ" secondAttribute="trailing" id="Ak1-cJ-qZG"/>
+                                                <constraint firstItem="PU1-aO-ur4" firstAttribute="centerY" secondItem="X0A-XZ-k4G" secondAttribute="centerY" id="Dhc-C5-anK"/>
                                                 <constraint firstItem="aLB-Zg-S8Y" firstAttribute="top" secondItem="X0A-XZ-k4G" secondAttribute="top" constant="5" id="F94-Y4-iL6"/>
-                                                <constraint firstItem="aLB-Zg-S8Y" firstAttribute="leading" secondItem="X0A-XZ-k4G" secondAttribute="leading" constant="20" id="N0n-IF-9B7"/>
+                                                <constraint firstItem="PU1-aO-ur4" firstAttribute="leading" secondItem="X0A-XZ-k4G" secondAttribute="leading" id="Zbo-fM-zn5"/>
                                                 <constraint firstItem="Kn4-rg-6gJ" firstAttribute="centerY" secondItem="X0A-XZ-k4G" secondAttribute="centerY" id="jwN-CN-ueU"/>
+                                                <constraint firstItem="aLB-Zg-S8Y" firstAttribute="leading" secondItem="PU1-aO-ur4" secondAttribute="trailing" constant="5" id="xd6-hp-scn"/>
                                                 <constraint firstAttribute="bottom" secondItem="aLB-Zg-S8Y" secondAttribute="bottom" constant="5" id="yyw-o8-4w8"/>
                                             </constraints>
                                         </view>
@@ -427,6 +436,7 @@
                                     <outlet property="bottomLabel" destination="nEZ-xb-jDU" id="0EO-mw-RwM"/>
                                     <outlet property="forSpacingView" destination="X0A-XZ-k4G" id="n9t-8d-fC5"/>
                                     <outlet property="requestButton" destination="Kn4-rg-6gJ" id="JOC-e3-u8p"/>
+                                    <outlet property="thumbnailImageView" destination="PU1-aO-ur4" id="cYO-Mz-m9u"/>
                                     <outlet property="topLabel" destination="WF6-d0-UDV" id="T33-89-QvI"/>
                                 </connections>
                             </tableViewCell>
@@ -440,24 +450,31 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="szN-wm-SWz">
                                             <rect key="frame" x="10" y="5" width="355" height="70"/>
                                             <subviews>
+                                                <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="fIi-KI-udq">
+                                                    <rect key="frame" x="0.0" y="9.5" width="50" height="50"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" secondItem="fIi-KI-udq" secondAttribute="height" multiplier="1:1" id="zWv-B5-GzJ"/>
+                                                        <constraint firstAttribute="width" constant="50" id="zf8-Ai-iZ7"/>
+                                                    </constraints>
+                                                </imageView>
                                                 <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="7" translatesAutoresizingMaskIntoConstraints="NO" id="bmI-vR-tm3">
-                                                    <rect key="frame" x="20" y="5" width="315" height="60"/>
+                                                    <rect key="frame" x="55" y="5" width="280" height="60"/>
                                                     <subviews>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumFontSize="12" translatesAutoresizingMaskIntoConstraints="NO" id="asc-VX-Tkb">
-                                                            <rect key="frame" x="0.0" y="0.0" width="315" height="29"/>
+                                                            <rect key="frame" x="0.0" y="0.0" width="280" height="29"/>
                                                             <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="18"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="u1p-F8-6CS">
-                                                            <rect key="frame" x="0.0" y="36" width="315" height="1"/>
+                                                            <rect key="frame" x="0.0" y="36" width="280" height="1"/>
                                                             <color key="backgroundColor" white="1" alpha="0.10000000000000001" colorSpace="calibratedWhite"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="1" id="9aN-ac-XhK"/>
                                                             </constraints>
                                                         </view>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="252" text="Label" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="lIb-hS-Vld">
-                                                            <rect key="frame" x="0.0" y="44" width="315" height="16"/>
+                                                            <rect key="frame" x="0.0" y="44" width="280" height="16"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                                                             <color key="textColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             <nil key="highlightedColor"/>
@@ -469,10 +486,12 @@
                                                 </stackView>
                                             </subviews>
                                             <constraints>
+                                                <constraint firstItem="fIi-KI-udq" firstAttribute="centerY" secondItem="szN-wm-SWz" secondAttribute="centerY" id="BLh-Ia-g4k"/>
                                                 <constraint firstAttribute="trailing" secondItem="bmI-vR-tm3" secondAttribute="trailing" constant="20" id="Oz1-HK-16e"/>
                                                 <constraint firstAttribute="bottom" secondItem="bmI-vR-tm3" secondAttribute="bottom" constant="5" id="RkA-Hq-tiU"/>
+                                                <constraint firstItem="bmI-vR-tm3" firstAttribute="leading" secondItem="fIi-KI-udq" secondAttribute="trailing" constant="5" id="VAY-hq-ef6"/>
+                                                <constraint firstItem="fIi-KI-udq" firstAttribute="leading" secondItem="szN-wm-SWz" secondAttribute="leading" id="afc-Kx-1cN"/>
                                                 <constraint firstItem="bmI-vR-tm3" firstAttribute="top" secondItem="szN-wm-SWz" secondAttribute="top" constant="5" id="g6N-lT-q2m"/>
-                                                <constraint firstItem="bmI-vR-tm3" firstAttribute="leading" secondItem="szN-wm-SWz" secondAttribute="leading" constant="20" id="tKy-r0-5kC"/>
                                             </constraints>
                                         </view>
                                     </subviews>
@@ -487,6 +506,7 @@
                                 <connections>
                                     <outlet property="bottomLabel" destination="lIb-hS-Vld" id="3VN-q8-xmT"/>
                                     <outlet property="forSpacingView" destination="szN-wm-SWz" id="uC0-E3-vqa"/>
+                                    <outlet property="thumbnailImageView" destination="fIi-KI-udq" id="2gL-PN-hcO"/>
                                     <outlet property="topLabel" destination="asc-VX-Tkb" id="7lG-eY-nvc"/>
                                 </connections>
                             </tableViewCell>
@@ -519,7 +539,7 @@
                     </state>
                 </button>
             </objects>
-            <point key="canvasLocation" x="2015" y="1519"/>
+            <point key="canvasLocation" x="2013.5999999999999" y="1518.8905547226389"/>
         </scene>
         <!--친구 추가-->
         <scene sceneID="e47-8T-YRF">
