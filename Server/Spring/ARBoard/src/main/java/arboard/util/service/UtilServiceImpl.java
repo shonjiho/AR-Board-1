@@ -30,8 +30,14 @@ public class UtilServiceImpl implements UtilService {
 
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("id", id); 
-		return utilDAO.selectFriendList(param);
-
+		List<Map<String, Object>> resultList = utilDAO.selectFriendList(param);
+		
+		//for test, need refactoring!.
+		for(Map<String,Object> userinfo:resultList){
+			Dirty_addUserImagecolumn(userinfo);
+		}
+		
+		return resultList;
 	}
 
 	// Get Active User method.
@@ -67,8 +73,9 @@ public class UtilServiceImpl implements UtilService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("email", email);
 		param.put("id", id);
-		return utilDAO.selectUser(param);
-		 
+		Map<String,Object> result =  utilDAO.selectUser(param);
+		Dirty_addUserImagecolumn(result);
+		return result;
 	}
 
 	@Override
@@ -105,9 +112,12 @@ public class UtilServiceImpl implements UtilService {
 		Map<String, Object> param = new HashMap<String, Object>();
 		param.put("receiverId", receiverId);
 		
-		List<Map<String, Object>> requestlist = utilDAO.selectFriendRequestList(param);
+		List<Map<String, Object>> resultList = utilDAO.selectFriendRequestList(param);
  
-		return requestlist;
+		for(Map<String,Object> userinfo:resultList){
+			Dirty_addUserImagecolumn(userinfo);
+		}
+		return resultList;
 	}
 
 	
@@ -140,6 +150,14 @@ public class UtilServiceImpl implements UtilService {
 		param.put("senderId", senderId);
 		param.put("receiverId", receiverId);  
 		utilDAO.deleteFriend(param);
+	}
+	
+	//---------------------------need refactoring method------
+	public Map<String,Object> Dirty_addUserImagecolumn(Map<String,Object> map){
+		if(!map.containsKey("userImage")){
+			map.put("userImage", null);
+		}
+		return map;
 	}
 
 }
