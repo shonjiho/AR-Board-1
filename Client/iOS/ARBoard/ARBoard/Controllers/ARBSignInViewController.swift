@@ -31,12 +31,15 @@ extension ARBSignInViewController: FBSDKLoginButtonDelegate {
         dump(accessTokenString)
         dataManager.authRequest(self, domain: OAuthDomain.facebook, token: accessTokenString) { (isSuccess) in
             if isSuccess {
-                self.dismiss(animated: true, completion: nil)
+                DispatchQueue.main.async {
+                   self.dismiss(animated: true, completion: nil)
+                }
             }
         }
     }
     // 로그아웃
     func loginButtonDidLogOut(_ loginButton: FBSDKLoginButton!) {
         dump("facebook LogOut")
+        self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
     }
 }

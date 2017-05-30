@@ -109,9 +109,10 @@ class ARBFriendListTableViewController: UITableViewController {
         }
     }
     func showAlertController(identifier:String?){
-        let title:String = "메시지 보내기"
-        let message:String = "게임에 초대하시겠습니까?"
-        let alertController:UIAlertController = UIAlertController.init(title: title, message: message, preferredStyle: .actionSheet)
+        let title:String = "게임에 초대하시겠습니까?"
+//        let message:String = "게임에 초대하시겠습니까?"
+        let alertController:UIAlertController = UIAlertController.init(title: title, message: nil, preferredStyle: .actionSheet)
+        
         let inviteAction:UIAlertAction = UIAlertAction.init(title: "초대", style: .default) { (action) in
             
         }

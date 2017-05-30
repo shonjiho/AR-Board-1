@@ -93,14 +93,14 @@
                             </label>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D2u-eT-haL">
                                 <rect key="frame" x="121" y="267" width="134" height="134"/>
-                                <color key="backgroundColor" red="1" green="0.17406964302062988" blue="0.33518385887145996" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <color key="backgroundColor" red="0.86274509803921573" green="0.18823529411764706" blue="0.33333333333333331" alpha="1" colorSpace="custom" customColorSpace="adobeRGB1998"/>
                                 <constraints>
                                     <constraint firstAttribute="width" secondItem="D2u-eT-haL" secondAttribute="height" multiplier="1:1" id="410-lf-h9t"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="게임 시작" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gYD-Ap-qNU">
-                                <rect key="frame" x="156" y="323" width="63.5" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <rect key="frame" x="147.5" y="320.5" width="82" height="26.5"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <color key="textColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -131,7 +131,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="CO5-qy-qHt" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="glL-S5-ExP">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="glL-S5-ExP">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -288,13 +288,13 @@
             </objects>
             <point key="canvasLocation" x="2015" y="2270"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--게임-->
         <scene sceneID="H0U-Pz-21V">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="50R-xD-Oq3" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="3PI-gM-xaA"/>
+                    <tabBarItem key="tabBarItem" title="게임" image="Game" id="3PI-gM-xaA"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ePm-Xc-mfF">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="ePm-Xc-mfF">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -313,7 +313,7 @@
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Rac-GT-8M1" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" systemItem="more" id="DFC-Be-kgM"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Z2j-jB-xPU">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="Z2j-jB-xPU">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -326,13 +326,13 @@
             </objects>
             <point key="canvasLocation" x="1076" y="2270"/>
         </scene>
-        <!--Navigation Controller-->
+        <!--친구목록-->
         <scene sceneID="7Il-oo-AfT">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="vPd-R3-NAB" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" systemItem="favorites" id="A7A-lG-6dd"/>
+                    <tabBarItem key="tabBarItem" title="친구목록" image="FriendList" id="A7A-lG-6dd"/>
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="0db-dh-kWQ">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="0db-dh-kWQ">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -653,7 +653,7 @@
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="2VK-RW-jCc" sceneMemberID="viewController">
                     <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="6XH-2i-2ps">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" misplaced="YES" id="6XH-2i-2ps">
                         <rect key="frame" x="0.0" y="0.0" width="375" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </navigationBar>
@@ -668,6 +668,8 @@
         </scene>
     </scenes>
     <resources>
+        <image name="FriendList" width="25" height="25"/>
+        <image name="Game" width="25" height="25"/>
         <image name="Temp" width="750" height="750"/>
     </resources>
 </document>
