@@ -104,7 +104,7 @@ public class AuthController {
 	@SuppressWarnings({ "unchecked" })
 	@RequestMapping(value = "/user", method = RequestMethod.PUT)
 	@ResponseStatus(HttpStatus.OK)
-	public void changeUserName(@RequestParam(value="userName",required=false) String newName,HttpSession session) throws Exception {
+	public @ResponseBody Object changeUserName(@RequestParam(value="userName",required=false) String newName,HttpSession session) throws Exception {
 		
 		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile"); 
 		
@@ -116,6 +116,8 @@ public class AuthController {
 		}
 		profile.put("userName",newName);
 		authService.changeUserName(profile); 
+		
+		return profile;
 	}
 	
 	@SuppressWarnings("unchecked")
