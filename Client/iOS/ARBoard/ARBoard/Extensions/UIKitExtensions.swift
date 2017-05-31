@@ -97,3 +97,11 @@ extension UITabBarController {
         return super.shouldAutorotate
     }
 }
+
+extension UIImageView {
+    func setRounded() {
+        let radius = self.frame.width / 2
+        self.layer.cornerRadius = radius //instead of let radius =
+        self.layer.masksToBounds = true
+    }
+}

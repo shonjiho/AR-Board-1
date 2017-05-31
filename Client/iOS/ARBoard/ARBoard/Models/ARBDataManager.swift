@@ -114,7 +114,7 @@ class ARBDataManager : NSObject {
             })
         }
     }
-    func createRequest(_ viewController: UIViewController, requestType: RequestType, identifier:String?, completion: ((Any?) -> Void)?){
+    func createRequest(_ viewController: UIViewController, requestType: RequestType, identifier:String?, completion: (() -> Void)?){
         
         guard let identifier = identifier else {
             return
@@ -123,27 +123,29 @@ class ARBDataManager : NSObject {
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-//            "http://125.130.223.88/arboard/friend/\(identifier)/request"
+            // http://125.130.223.88/arboard/friend/request/15
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathComponent(path: URL.friend.request)
                                  .appendingPathComponent(path: identifier)
-                                 .appendingPathComponent(path: URL.request)
         case .user:
-//            "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
-                                 .appendingPathComponent(path: requestType.description)
-                                 .appendingPathQuery(key: URL.email, value: identifier)
+            dump("createRequest user")
         default:
             return
         }
         dump("Request URL : \(requestUrl)")
         
-        let requestCloser = Alamofire.request(requestUrl)
+        let requestCloser = Alamofire.request(requestUrl, method: .post)
         requestCloser.response { (dataResponse) in
             guard dataResponse.response?.statusCode == 200 else {
                 dump("Error Status Code : \(dataResponse.response?.statusCode)")
+                self.showFailIndicator()
                 return
             }
             dump(dataResponse.response?.statusCode)
+            self.showSuccessIndicator()
+            if let completion = completion{
+                completion()
+            }
         }
     }
     
@@ -162,13 +164,13 @@ class ARBDataManager : NSObject {
                 return
             }
 //            requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
+            requestUrl = URL.base.appendingPathComponent(path: URL.friend.value)
                                  .appendingPathComponent(path: requestType.description)
-                                 .appendingPathQuery(key: URL.email, value: identifier)
+                                 .appendingPathQuery(key: URL.User.email, value: identifier)
         default:
             return
         }
-        
+        dump("Request URL : \(requestUrl)")
         let requestCloser = Alamofire.request(requestUrl)
         
         switch requestType {
@@ -179,14 +181,17 @@ class ARBDataManager : NSObject {
                 }
                 guard dataResponse.response?.statusCode == 200 else {
                     // Example
-                    let error = NetworkError(title: "로그인", message: "로그인 하세요")
+                    let error = NetworkError(title: "로그인", message: "로그인이 필요한 서비스 입니다.")
+                    FBSDKLoginManager().logOut()
                     UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
                     
                     completion(false)
                     return
                 }
                 self.friends = dataResponse.result.value
-                completion(true)
+                DispatchQueue.main.async {
+                    completion(true)
+                }
             }
         case .user:
             requestCloser.responseObject { (dataResponse: DataResponse<User>) in
@@ -202,24 +207,97 @@ class ARBDataManager : NSObject {
         
     }
     
-    func deleteRequest(_ viewController: UIViewController, requestType: RequestType, identifier: String? = nil, completion: ((Any?) -> Void)?){
-        guard self.isCurrentUser else {
+    func updateRequest(_ requestType: RequestType, isShowActivityIndicator: Bool = false, key:String?=nil, value:Any?=nil, completion: (() -> Void)?){
+        if isShowActivityIndicator {
+            self.showActivityIndicator()
+        }
+        var requestUrl:String = ""
+        switch requestType {
+        case .friend:
+            guard let key = key else {
+                return
+            }
+            // http://125.130.223.88/arboard/friend/response/3
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathComponent(path: URL.friend.response)
+                                 .appendingPathComponent(path: key)
+        case .user:
+            guard let value = value as? String else {
+                return
+            }
+            //http://125.130.223.88/arboard/user?userName=Yutae
             
+            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathQuery(key: URL.User.userName, value: value)
+        default:
+            return
+        }
+        dump("Request URL : \(requestUrl)")
+        let requestCloser = Alamofire.request(requestUrl, method: .put)
+        
+        switch requestType {
+        case .user:
+            requestCloser.responseObject { (dataResponse: DataResponse<User>) in
+                if isShowActivityIndicator {
+                    self.hideActivityIndicator()
+                }
+                guard dataResponse.response?.statusCode == 200 else {
+                    self.showFailIndicator()
+                    dump("Error Status Code : \(dataResponse.response?.statusCode)")
+                    return
+                }
+                self.showSuccessIndicator()
+                
+                self.currentUser = dataResponse.result.value
+                NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
+            }
+        case .friend:
+            requestCloser.response(completionHandler: { (dataResponse) in
+                self.hideActivityIndicator()
+                
+                guard dataResponse.response?.statusCode == 200 else {
+                    self.showFailIndicator()
+                    return
+                }
+                self.showSuccessIndicator()
+                NotificationCenter.default.post(name: NotificationName.friendStateChange, object: nil)
+            })
+        default:
+            return
+        }
+    }
+    
+    func deleteRequest(_ requestType: RequestType, indexPath:IndexPath? = nil, identifier: String? = nil, completion: (() -> Void)?){
+        guard self.isCurrentUser else {
             return
         }
         self.showActivityIndicator()
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-            //            requestUrl = "http://125.130.223.88/arboard/friend/list"
-            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
-                .appendingPathComponent(path: URL.list)
+            guard let identifier = identifier, let section = indexPath?.section else {
+                
+                return
+            }
+            switch section {
+            case 0:
+                // http://125.130.223.88/arboard/friend/request/3
+                requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                    .appendingPathComponent(path: URL.friend.request)
+                    .appendingPathComponent(path: identifier)
+            case 1, 2:
+                 // http://125.130.223.88/arboard/friend/1
+                requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                     .appendingPathComponent(path: identifier)
+            default:
+                return
+            }
         case .user, .logout:
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
         default:
             return
         }
-        
+        dump("Request URL : \(requestUrl)")
 //        let requestCloser = Alamofire.request(requestUrl, method: .delete)
         
         Alamofire.request(requestUrl, method: .delete).response(completionHandler: { (dataResponse) in
@@ -241,6 +319,23 @@ class ARBDataManager : NSObject {
                 self.friends = nil
                 FBSDKLoginManager().logOut()
                 NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
+            case .friend:
+                guard let indexPath = indexPath else {
+                    return
+                }
+                switch indexPath.section {
+                case 0:
+                    self.friends?.friendRequests?.remove(at: indexPath.row)
+                case 1:
+                    self.friends?.onFriends?.remove(at: indexPath.row)
+                case 2:
+                    self.friends?.offFriends?.remove(at: indexPath.row)
+                default:
+                    fatalError()
+                }
+                if let completion = completion {
+                    completion()
+                }
             default:
                 return
             }

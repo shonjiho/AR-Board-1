@@ -10,13 +10,14 @@ import Foundation
 import ObjectMapper
 
 class User : Mappable {
-    var identifier: String?
+    var identifier: Int?
     var userName: String?
     var userEmail: String?
     var userImageURL: String?
     var oauthType: String?
     var oauthToken: String?
     var deviceToken: String?
+    var relationshipState: String?
     required init?(map: Map){
         
     }
@@ -28,5 +29,7 @@ class User : Mappable {
         self.deviceToken <- map["deviceToken"]
         self.oauthType <- map["oauthType"]
         self.oauthToken <- map["oauthToken"]
+        
+        self.relationshipState <- map["state"]
     }
 }
