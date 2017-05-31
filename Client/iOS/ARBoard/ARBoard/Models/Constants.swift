@@ -22,18 +22,17 @@ enum OAuthDomain {
 }
 
 enum RequestType {
-    case friend
     case user
     case logout
-    
+    case friend
     var description:String {
         switch self {
-        case .friend:
-            return "friend"
         case .user:
             return "user"
         case .logout:
             return "logout"
+        case .friend:
+            return "friend"
         }
     }
 
@@ -60,5 +59,6 @@ struct NotificationName{
     static let reloadSectionsEtcTableViewController: NSNotification.Name = NSNotification.Name(rawValue: "loginSuccessWillReloadSectionsEtcTableViewController")
     
     static let userStateChange:NSNotification.Name = NSNotification.Name(rawValue: "userStateChange")
+    static let friendStateChange:NSNotification.Name = NSNotification.Name(rawValue: "friendStateChange")
 }
 

@@ -47,7 +47,7 @@ class ARBFriendListTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.setupFriendListView()
-       
+        self.fetchFriendList()
     }
     
     @IBAction func addAction(_ sender: Any) {
@@ -58,7 +58,6 @@ class ARBFriendListTableViewController: UITableViewController {
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.fetchFriendList()
     }
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -83,6 +82,9 @@ class ARBFriendListTableViewController: UITableViewController {
         
         // User State Notification
         NotificationCenter.default.addObserver(self, selector: #selector(self.userStateChange(notification:)), name: NotificationName.userStateChange, object: nil)
+        
+        // Friend State Notification
+        NotificationCenter.default.addObserver(self, selector: #selector(self.friendStateChange(notification:)), name: NotificationName.friendStateChange, object: nil)
     }
     
     deinit {
@@ -94,6 +96,10 @@ class ARBFriendListTableViewController: UITableViewController {
         self.tableView.reloadData()
     }
     
+    @objc fileprivate func friendStateChange(notification: NSNotification) {
+        dump("friendStateChange")
+        self.fetchFriendList(completion: nil)
+    }
     
     fileprivate func setupRefreshControl(){
         self.pullUpRefreshControl = UIRefreshControl.init()
@@ -161,7 +167,7 @@ extension ARBFriendListTableViewController {
 
         switch section {
         case SectionType.request.value:
-            guard let requestFriendUser = friends.friendRequests?[indexPath.row] else {
+            guard let requestFriendUser = friends.friendRequests?[indexPath.row], let userIdentifier = requestFriendUser.identifier else {
                 return UITableViewCell.init()
             }
             
@@ -169,7 +175,7 @@ extension ARBFriendListTableViewController {
             requestFriendCell.selectionStyle = .none
             requestFriendCell.topLabel.text = requestFriendUser.userName
             requestFriendCell.bottomLabel.text = requestFriendUser.userEmail
-            requestFriendCell.requestButton.isHidden = false
+            requestFriendCell.userIdentifier = String.init(describing: userIdentifier)
             if let userImageUrlString = requestFriendUser.userImageURL {
                 let userImageUrl = URL.init(string: userImageUrlString)
                 requestFriendCell.thumbnailImageView.kf.setImage(with: userImageUrl)
@@ -206,7 +212,6 @@ extension ARBFriendListTableViewController {
             offFriendCell.topLabel.text = offFriendUser.userName
             offFriendCell.bottomLabel.text = offFriendUser.userEmail
             offFriendCell.thumbnailImageView.image = UIImage.init(named: "OffProfile")
-
             return offFriendCell
         default:
             print("Error")
@@ -216,9 +221,59 @@ extension ARBFriendListTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard indexPath.section == SectionType.on.value ,let friends = self.dataManager.friends, let onFriends = friends.onFriends else {
+        guard indexPath.section == SectionType.on.value ,let friends = self.dataManager.friends, let onFriends = friends.onFriends, let identifier = onFriends[indexPath.row].identifier else {
             return
         }
-        self.showAlertController(identifier: onFriends[indexPath.row].identifier)
+        self.showAlertController(identifier: String.init(describing: identifier))
+    }
+    
+    // Cell Height Auto Sizing
+    override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    override func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
+    override func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, editActionsForRowAt indexPath: IndexPath) -> [UITableViewRowAction]? {
+        let section:Int = indexPath.section
+        let selectedRow:Int = indexPath.row
+        guard dataManager.isCurrentUser, let friends = self.dataManager.friends else {
+            dump("ERROR")
+            return nil
+        }
+        
+        let selectedFriendUser:User?
+        let tableViewRowActionTitle:String
+        
+        switch section {
+        case SectionType.request.value:
+            tableViewRowActionTitle = "거절"
+            selectedFriendUser = friends.friendRequests?[selectedRow]
+        case SectionType.on.value:
+            tableViewRowActionTitle = "삭제"
+            selectedFriendUser = friends.onFriends?[selectedRow]
+        case SectionType.off.value:
+            tableViewRowActionTitle = "삭제"
+            selectedFriendUser = friends.offFriends?[selectedRow]
+            
+        default:
+            fatalError()
+        }
+        
+        guard let identifier = selectedFriendUser?.identifier else {
+            return nil
+        }
+        let userIdentifier = String.init(describing: identifier)
+        let tableViewRowAction = UITableViewRowAction.init(style: .destructive, title: tableViewRowActionTitle, handler: { (action, indexPath) in
+            self.dataManager.deleteRequest(.friend, indexPath: indexPath, identifier: userIdentifier, completion: {
+                tableView.deleteRows(at: [indexPath], with: .automatic)
+            })
+        })
+        return [tableViewRowAction]
     }
 }

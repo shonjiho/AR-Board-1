@@ -103,7 +103,7 @@ class ARBEtcTableViewController: UITableViewController {
     fileprivate func showSignatureAlertViewController(title:String?, message:String?, alertActionTitle:String?, requestType:RequestType){
         
         let alertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .destructive, handler: { (action) in
-            self.dataManager.deleteRequest(self, requestType: requestType, completion: nil)
+            self.dataManager.deleteRequest(requestType, completion: nil)
         })
         
         UIAlertController.showAlertViewController(self, title: title, message: message, alertActions: [alertAction, UIAlertAction.cancel])
@@ -121,7 +121,7 @@ class ARBEtcTableViewController: UITableViewController {
         
         let alertAction:UIAlertAction = UIAlertAction.init(title: alertActionTitle, style: .default, handler: { (action) in
             let newUserName:String? = alertController.textFields?.first?.text
-            self.dataManager.updateRequest(self, requestType: RequestType.user, isShowActivityIndicator: true, value: newUserName, completion: nil)
+            self.dataManager.updateRequest(RequestType.user, isShowActivityIndicator: true, value: newUserName, completion: nil)
         })
         
         alertController.addAction(alertAction)

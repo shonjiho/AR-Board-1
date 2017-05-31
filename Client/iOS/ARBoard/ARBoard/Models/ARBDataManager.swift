@@ -126,10 +126,10 @@ class ARBDataManager : NSObject {
 //            "http://125.130.223.88/arboard/friend/\(identifier)/request"
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
                                  .appendingPathComponent(path: identifier)
-                                 .appendingPathComponent(path: URL.request)
+                                 .appendingPathComponent(path: requestType.description)
         case .user:
 //            "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
+            requestUrl = URL.base.appendingPathComponent(path: URL.friend.value)
                                  .appendingPathComponent(path: requestType.description)
                                  .appendingPathQuery(key: URL.User.email, value: identifier)
         default:
@@ -162,7 +162,7 @@ class ARBDataManager : NSObject {
                 return
             }
 //            requestUrl = "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            requestUrl = URL.base.appendingPathComponent(path: URL.friend)
+            requestUrl = URL.base.appendingPathComponent(path: URL.friend.value)
                                  .appendingPathComponent(path: requestType.description)
                                  .appendingPathQuery(key: URL.User.email, value: identifier)
         default:
@@ -179,14 +179,17 @@ class ARBDataManager : NSObject {
                 }
                 guard dataResponse.response?.statusCode == 200 else {
                     // Example
-                    let error = NetworkError(title: "로그인", message: "로그인 하세요")
+                    let error = NetworkError(title: "로그인", message: "로그인이 필요한 서비스 입니다.")
+                    FBSDKLoginManager().logOut()
                     UIAlertController.errorShowAlerViewController(viewController, statusCode: (dataResponse.response?.statusCode)!, error: error)
                     
                     completion(false)
                     return
                 }
                 self.friends = dataResponse.result.value
-                completion(true)
+                DispatchQueue.main.async {
+                    completion(true)
+                }
             }
         case .user:
             requestCloser.responseObject { (dataResponse: DataResponse<User>) in
@@ -202,15 +205,20 @@ class ARBDataManager : NSObject {
         
     }
     
-    func updateRequest(_ viewController: UIViewController, requestType: RequestType, isShowActivityIndicator: Bool = false, key:String?=nil, value:Any?=nil, completion: ((Any?) -> Void)?){
+    func updateRequest(_ requestType: RequestType, isShowActivityIndicator: Bool = false, key:String?=nil, value:Any?=nil, completion: (() -> Void)?){
         if isShowActivityIndicator {
             self.showActivityIndicator()
         }
         var requestUrl:String = ""
         switch requestType {
         case .friend:
+            guard let key = key else {
+                return
+            }
+            // http://125.130.223.88/arboard/friend/response/3
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
-                .appendingPathComponent(path: URL.list)
+                                 .appendingPathComponent(path: URL.friend.response)
+                                 .appendingPathComponent(path: key)
         case .user:
             guard let value = value as? String else {
                 return
@@ -241,29 +249,53 @@ class ARBDataManager : NSObject {
                 self.currentUser = dataResponse.result.value
                 NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
             }
+        case .friend:
+            requestCloser.response(completionHandler: { (dataResponse) in
+                self.hideActivityIndicator()
+                
+                guard dataResponse.response?.statusCode == 200 else {
+                    self.showFailIndicator()
+                    return
+                }
+                self.showSuccessIndicator()
+                NotificationCenter.default.post(name: NotificationName.friendStateChange, object: nil)
+            })
         default:
             return
         }
     }
     
-    func deleteRequest(_ viewController: UIViewController, requestType: RequestType, identifier: String? = nil, completion: ((Any?) -> Void)?){
+    func deleteRequest(_ requestType: RequestType, indexPath:IndexPath? = nil, identifier: String? = nil, completion: (() -> Void)?){
         guard self.isCurrentUser else {
-            
             return
         }
         self.showActivityIndicator()
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-            //            requestUrl = "http://125.130.223.88/arboard/friend/list"
-            requestUrl = URL.base.appendingPathComponent(path: requestType.description)
-                .appendingPathComponent(path: URL.list)
+            guard let identifier = identifier, let section = indexPath?.section else {
+                
+                return
+            }
+            switch section {
+            case 0:
+                // http://125.130.223.88/arboard/friend/request/3
+                requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                    .appendingPathComponent(path: URL.friend.request)
+                    .appendingPathComponent(path: identifier)
+            case 1, 2:
+                 // http://125.130.223.88/arboard/friend/1
+                requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                     .appendingPathComponent(path: identifier)
+            default:
+                return
+            }
         case .user, .logout:
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
         default:
             return
         }
-        
+        dump("Request URL : \(requestUrl)")
 //        let requestCloser = Alamofire.request(requestUrl, method: .delete)
         
         Alamofire.request(requestUrl, method: .delete).response(completionHandler: { (dataResponse) in
@@ -285,6 +317,23 @@ class ARBDataManager : NSObject {
                 self.friends = nil
                 FBSDKLoginManager().logOut()
                 NotificationCenter.default.post(name: NotificationName.userStateChange, object: nil)
+            case .friend:
+                guard let indexPath = indexPath else {
+                    return
+                }
+                switch indexPath.section {
+                case 0:
+                    self.friends?.friendRequests?.remove(at: indexPath.row)
+                case 1:
+                    self.friends?.onFriends?.remove(at: indexPath.row)
+                case 2:
+                    self.friends?.offFriends?.remove(at: indexPath.row)
+                default:
+                    fatalError()
+                }
+                if let completion = completion {
+                    completion()
+                }
             default:
                 return
             }

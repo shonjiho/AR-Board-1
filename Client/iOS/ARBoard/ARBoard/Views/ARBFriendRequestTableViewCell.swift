@@ -15,19 +15,22 @@ class ARBFriendRequestTableViewCell: UITableViewCell {
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var bottomLabel: UILabel!
     @IBOutlet weak var thumbnailImageView: UIImageView!
+    var userIdentifier:String?
     
     override func awakeFromNib() {
         super.awakeFromNib()
         self.forSpacingView.backgroundColor = UIColor.white.withAlphaComponent(0.05)
         self.forSpacingView.layer.cornerRadius = 10.0
         self.bottomLabel.textColor = UIColor.withAlphaWhiteColor
-        self.requestButton.isHidden = true
         
         self.thumbnailImageView.setRounded()
     }
 
     @IBAction func requestAction(_ sender: Any) {
-        
+        guard let userIdentifier = userIdentifier else {
+            return
+        }
+        ARBDataManager.getInstance().updateRequest(.friend, key: userIdentifier, completion: nil)
     }
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)

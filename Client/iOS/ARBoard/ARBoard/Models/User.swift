@@ -10,7 +10,7 @@ import Foundation
 import ObjectMapper
 
 class User : Mappable {
-    var identifier: String?
+    var identifier: Int?
     var userName: String?
     var userEmail: String?
     var userImageURL: String?

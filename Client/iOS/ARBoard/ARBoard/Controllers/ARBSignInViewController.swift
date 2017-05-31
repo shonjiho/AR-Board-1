@@ -40,6 +40,6 @@ extension ARBSignInViewController: FBSDKLoginButtonDelegate {
     // 로그아웃
     func loginButtonDidLogOut(_ loginButton: FBSDKLoginButton!) {
         dump("facebook LogOut")
-        self.dataManager.deleteRequest(self, requestType: RequestType.logout, completion: nil)
+        self.dataManager.deleteRequest(RequestType.logout, completion: nil)
     }
 }
