@@ -114,7 +114,7 @@ class ARBDataManager : NSObject {
             })
         }
     }
-    func createRequest(_ viewController: UIViewController, requestType: RequestType, identifier:String?, completion: ((Any?) -> Void)?){
+    func createRequest(_ viewController: UIViewController, requestType: RequestType, identifier:String?, completion: (() -> Void)?){
         
         guard let identifier = identifier else {
             return
@@ -123,27 +123,29 @@ class ARBDataManager : NSObject {
         var requestUrl:String = ""
         switch requestType {
         case .friend:
-//            "http://125.130.223.88/arboard/friend/\(identifier)/request"
+            // http://125.130.223.88/arboard/friend/request/15
             requestUrl = URL.base.appendingPathComponent(path: requestType.description)
+                                 .appendingPathComponent(path: URL.friend.request)
                                  .appendingPathComponent(path: identifier)
-                                 .appendingPathComponent(path: requestType.description)
         case .user:
-//            "http://125.130.223.88/arboard/friend/user?email=\(identifier)"
-            requestUrl = URL.base.appendingPathComponent(path: URL.friend.value)
-                                 .appendingPathComponent(path: requestType.description)
-                                 .appendingPathQuery(key: URL.User.email, value: identifier)
+            dump("createRequest user")
         default:
             return
         }
         dump("Request URL : \(requestUrl)")
         
-        let requestCloser = Alamofire.request(requestUrl)
+        let requestCloser = Alamofire.request(requestUrl, method: .post)
         requestCloser.response { (dataResponse) in
             guard dataResponse.response?.statusCode == 200 else {
                 dump("Error Status Code : \(dataResponse.response?.statusCode)")
+                self.showFailIndicator()
                 return
             }
             dump(dataResponse.response?.statusCode)
+            self.showSuccessIndicator()
+            if let completion = completion{
+                completion()
+            }
         }
     }
     
@@ -168,7 +170,7 @@ class ARBDataManager : NSObject {
         default:
             return
         }
-        
+        dump("Request URL : \(requestUrl)")
         let requestCloser = Alamofire.request(requestUrl)
         
         switch requestType {

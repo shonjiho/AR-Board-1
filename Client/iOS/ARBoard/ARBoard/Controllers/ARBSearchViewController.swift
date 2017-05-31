@@ -17,6 +17,7 @@ class ARBSearchViewController: UIViewController {
     @IBOutlet weak var requestButton: UIButton!
     @IBOutlet weak var userImageView: UIImageView!
     
+    var searchedUserIdentifier:String?
     let dataManager:ARBDataManager = ARBDataManager.getInstance()
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,16 +37,34 @@ class ARBSearchViewController: UIViewController {
         self.searchBar.tintColor = UIColor.white
         self.searchBar.showsCancelButton = true
         
+        
     }
     fileprivate func configureUI(_ user:User){
+        
         DispatchQueue.main.async {
-//            self.userEmailLabel.isHidden = false
-//            self.userStateMessageLabel.isHidden = false
-            self.requestButton.isHidden = false
-            
             self.userNameLabel.text = user.userName
             self.userEmailLabel.text = user.userEmail
-//            self.userNameLabel.text = user.userName
+            
+            if let userIdentifier = user.identifier {
+                self.searchedUserIdentifier = String.init(describing : userIdentifier)
+            }
+            if let userImageUrlString = user.userImageURL {
+                let userImageUrl = URL.init(string: "\(userImageUrlString)?type=large")
+                self.userImageView.kf.setImage(with: userImageUrl)
+                self.userImageView.setRounded()
+            } else {
+                self.userImageView.image = UIImage.init(named: "OffProfile")
+                self.userImageView.setRounded()
+            }
+            
+            if let relationshipState = user.relationshipState, relationshipState == "N"{
+                self.requestButton.isHidden = false
+            } else {
+                self.requestButton.isHidden = true
+                self.userStateMessageLabel.text = "현재 친구 관계입니다."
+            }
+            self.view.layoutIfNeeded()
+            self.view.updateConstraintsIfNeeded()
         }
     }
     fileprivate func resetUI(){
@@ -53,12 +72,16 @@ class ARBSearchViewController: UIViewController {
         self.userEmailLabel.text = ""
         self.userStateMessageLabel.text = ""
         self.requestButton.isHidden = true
+        self.view.layoutIfNeeded()
+        self.view.updateConstraintsIfNeeded()
     }
     @IBAction func requestAction(_ sender: Any) {
-        guard !self.requestButton.isHidden, let text = self.searchBar.text else {
+        guard !self.requestButton.isHidden, let searchedUserIdentifier = self.searchedUserIdentifier else {
             return
         }
-        self.dataManager.createRequest(self, requestType: RequestType.friend, identifier: text, completion: nil)
+        self.dataManager.createRequest(self, requestType: RequestType.friend, identifier: searchedUserIdentifier) {
+          self.dismiss(animated: true, completion: nil)
+        }
     }
     @IBAction func cancelAction(_ sender: Any) {
         self.searchBar.endEditing(true)

@@ -17,6 +17,7 @@ class User : Mappable {
     var oauthType: String?
     var oauthToken: String?
     var deviceToken: String?
+    var relationshipState: String?
     required init?(map: Map){
         
     }
@@ -28,5 +29,7 @@ class User : Mappable {
         self.deviceToken <- map["deviceToken"]
         self.oauthType <- map["oauthType"]
         self.oauthToken <- map["oauthToken"]
+        
+        self.relationshipState <- map["state"]
     }
 }
