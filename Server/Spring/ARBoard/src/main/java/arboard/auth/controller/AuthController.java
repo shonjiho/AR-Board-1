@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
-import arboard.auth.exception.SessionExpireExcpetion;
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.auth.exception.UnKnownException;
 import arboard.auth.service.AuthService; 
@@ -114,7 +113,9 @@ public class AuthController {
 		if(newName == null){
 			throw new UnKnownException();
 		}
-		profile.put("userName",newName);
+  
+		profile.put("userName",newName); 
+		
 		authService.changeUserName(profile); 
 		
 		return profile;

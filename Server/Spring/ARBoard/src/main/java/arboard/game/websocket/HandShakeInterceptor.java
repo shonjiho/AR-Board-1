@@ -7,15 +7,21 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.stereotype.Component;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.WebSocketSession;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
+@Component
 public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 
+	@Autowired
+	GameSocketHandler websocketHandler;
+	
 	protected Logger log = Logger.getLogger(this.getClass());
 
 	// before Handshake
@@ -32,8 +38,8 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 		
 		HttpServletRequest req = ssreq.getServletRequest(); 
 		HttpSession httpSession = req.getSession(); 
-		String SessionId = httpSession.getId(); 
-		log.debug("Connected JSESSION ID :" + SessionId); 
+		String SessionID = httpSession.getId(); 
+		log.debug("Connected JSESSION ID :" + SessionID); 
 
 		@SuppressWarnings("unchecked")
 		Map<String, Object> userProfile = (Map<String, Object>) httpSession.getAttribute("userProfile");
@@ -41,12 +47,11 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 		//TEST
 		if(userProfile == null){
 			userProfile = new HashMap<String,Object>(); 
-			String ip = request.getLocalAddress().getHostName().toString(); 
-			
+			String ip = request.getLocalAddress().getHostName().toString();  
 			//FOR TEST id - > currentTime
-			userProfile.put("id", "test"+String.valueOf((System.currentTimeMillis()/1000)%60));
+			userProfile.put("id", "testid$"+String.valueOf((System.currentTimeMillis()/1000)%60));
 			userProfile.put("userName","TestUser"); 
-		}
+		} 
 		
 		attributes.put("userProfile", userProfile);
 
@@ -58,11 +63,11 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 		}  
 		attributes.put("status", status);
 
-		Object gameKey = httpSession.getAttribute("gameKey"); 
-		
+		Object gameKey = httpSession.getAttribute("gameKey");  
+		 
 		//TEST
 		if(gameKey ==  null){
-			gameKey = new String("everybodyRoom");
+			gameKey = websocketHandler.getRandomGame();
 		}
 		
 		attributes.put("gameKey", gameKey); 

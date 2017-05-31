@@ -21,39 +21,44 @@ public class Game extends Thread {
 		return gameKey;
 	}
 
+	public int MaxMember;
 	public List<GameMember> gameMembers;
 	public int gameState;
-	public int gameCount=5;
-	
-//	public Game(GameSocketHandler handler, String gameKey) {
-//		gameMembers = new ArrayList<GameMember>();
-//		gameSockethandler = handler;
-//		this.gameState = GAME_STATE_ROOM;
-//		this.gameKey = gameKey;
-//	}
-	
-	public static Game init(){
+	public int gameCount = 5;
+
+	public static Game init() {
 		Game game = new Game();
-		game.gameMembers =  new ArrayList<GameMember>();
+		game.gameMembers = new ArrayList<GameMember>();
 		game.gameState = GAME_STATE_ROOM;
+		game.MaxMember = 4;// default;
 		return game;
-	} 
-	public Game setGameSocketHandler(GameSocketHandler handler){
+	}
+
+	public Game setGameSocketHandler(GameSocketHandler handler) {
 		this.gameSockethandler = handler;
 		return this;
 	}
-	public Game setKey(String gameKey){ 
+
+	public Game setKey(String gameKey) {
 		this.gameKey = gameKey;
 		return this;
 	}
+
 	public Game addMember(GameMember member) {
 		gameMembers.add(member);
 		return this;
 	}
 
-	public void broadcast(String msg) {
+	public synchronized void broadcast(String msg) {
+		 
 		for (GameMember m : gameMembers) {
-			m.MessageSend(msg);
+			if (m.isInvalidSession()) {
+				m.MessageSend(msg);
+				//m.connect();
+			} else {
+				//m.disconnect();
+				gameMembers.remove(m);
+			}
 		}
 	}
 
@@ -90,18 +95,17 @@ public class Game extends Thread {
 		// parsing
 		String first = parsedMsg[0];
 		if (first.equals("StartTurn") && gameState == GAME_STATE_ROOM) {
-			//System.out.println("GAME START SIGNAL!!! - " + first);
+			// System.out.println("GAME START SIGNAL!!! - " + first);
 			gameState = GAME_STATE_READY;
-			
-		}
 
-		broadcast(msg); 
+		}
+		broadcast(msg);
 
 	}
 
 	@Override
 	public void run() {
-		long drainTime = 1000; // message term 
+		long drainTime = 1000; // message term
 		int turn = 0;
 		long beforeTime = System.currentTimeMillis();
 		while (true) {
@@ -115,24 +119,28 @@ public class Game extends Thread {
 
 			case GAME_STATE_ROOM:
 				broadcast(Game_readyInfo());// Game state broadcast.
+				if (gameMembers.size() == 0) {
+					gameClose();
+				}
 				break;
 
-			case GAME_STATE_READY: 
-				
-				if(gameCount > 0){ 
+			case GAME_STATE_READY:
+
+				if (gameCount > 0) {
 					gameCount--;
-					broadcast(gameCount+".");
+					broadcast(gameCount + ".");
 					break;
 				}
+				
 				broadcast("Wait....(Setting Order)");
 				// Game_makeRandomOrder();
 				Game_sendOrderToEachMember();
 				gameState = GAME_STATE_RUNNING;
-				
+
 				break;
 
 			case GAME_STATE_RUNNING:
-				if(turn == 0){
+				if (turn == 0) {
 					broadcast("GAME START");
 				}
 				turn++;
@@ -144,11 +152,10 @@ public class Game extends Thread {
 				break;
 
 			case GAME_STATE_FINISH:
-				// game exit 
+				// game exit
 				broadcast("[" + turn + "]Game State - " + gameState);
 				break;
 			}
-
 
 			if (gameState == GAME_STATE_FINISH) {
 				gameClose();

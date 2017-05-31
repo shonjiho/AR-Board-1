@@ -2,6 +2,7 @@ package arboard.game.websocket;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	protected Logger log = Logger.getLogger(this.getClass());
 
 	// Game List
-	public Map<String, Game> gameList = new HashMap<String, Game>(); // < GameKey , Game >
+	public Map<String, Game> gameList = new HashMap<String, Game>(); // <GameKey,Game>
 	public Map<WebSocketSession, GameMember> gameUsers = new HashMap<WebSocketSession, GameMember>();
 
 	public GameSocketHandler() {
@@ -37,31 +38,29 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		}
 	}
 
-	public String convertByteBuffertoString(ByteBuffer b){
+	public String convertByteBuffertoString(ByteBuffer b) {
 		return new String(b.array());
 	}
+
 	// Message handler
 	@Override
 	public void handleMessage(WebSocketSession session, WebSocketMessage<?> message) throws Exception {
-  
-		
-		//System.out.print("[DEBUG] Message Type : "+message.getClass());  
+
+		// System.out.print("[DEBUG] Message Type : "+message.getClass());
 		String payloadMessage;
-		
-		if( message instanceof TextMessage){
+
+		if (message instanceof TextMessage) {
 			payloadMessage = message.getPayload().toString();
-		}else{
-			//Binary Type
-			ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();  
-			payloadMessage = new String (byteBuffer.array()); 
+		} else {
+			// Binary Type
+			ByteBuffer byteBuffer = (ByteBuffer) message.getPayload();
+			payloadMessage = new String(byteBuffer.array());
 		}
-		
-		
-		
-		//String userId = getUserId(session);
+
+		// String userId = getUserId(session);
 		String gameKey = getGameKey(session);
 		GameMember gameMember = gameUsers.get(session);
-		
+
 		Game game = gameList.get(gameKey);
 		if (game != null) {
 			game.messagehandle(gameMember, payloadMessage);
@@ -76,8 +75,11 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionEstablished(WebSocketSession session) throws Exception {
 
-		super.afterConnectionEstablished(session); 
+		super.afterConnectionEstablished(session);
 
+		Game game;
+		GameMember member;
+		
 		String userId = getUserId(session);
 		String userName = getUserName(session);
 		String gameKey = getGameKey(session);
@@ -88,30 +90,26 @@ public class GameSocketHandler extends TextWebSocketHandler {
 			session.close();
 		}
 
-		Game game;
-		GameMember member;
-		if (gameList.containsKey(gameKey)) {
-			game = gameList.get(gameKey); 
-			member = new GameMember(session, userId);
-			game.addMember(member);
-		} else {
 
-			member = new GameMember(session, userId);
-			//game generate.
-			game = Game.init()
-					.setGameSocketHandler(this)
-					.setKey(gameKey)
-					.addMember(member); 
-			//game list put
-			gameList.put(gameKey, game); 
-			// game thread start.
-			game.start();
-			
-			System.out.println("[DEBUG]SESSION FORMAT : "+session.getId()); 
-			
-		} 
-		gameUsers.put(session, member);
+		member = new GameMember(session)
+				.setUserId(userId)
+				.setUserName(userName); 
 		
+		if (gameList.containsKey(gameKey)) {
+			game = gameList.get(gameKey);
+		} else { 
+			// game generate.
+			game = Game.init().setGameSocketHandler(this)
+					.setKey(gameKey);
+			// game list put
+			gameList.put(gameKey, game);
+			// game thread start.
+			game.start();  
+		}
+
+		game.addMember(member);
+		gameUsers.put(session, member);
+
 		log.debug("Attend Game ( key - " + gameKey + " )");
 
 	}
@@ -120,15 +118,8 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	@Override
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		super.afterConnectionClosed(session, status); 
-//		if(gameUsers.containsKey(session)){
-//			GameMember member = gameUsers.get(session);
-//			Game game = member.myGame;
-//			synchronized (member.myGame) { 
-//				if(game != null){
-//					game.gameMembers.remove(member);
-//				}
-//			}
-//		} 
+		
+		
 		System.out.println(
 				"DisConnect User. [ userId :" + getUserId(session) + ", userName :" + getUserName(session) + "]");
 
@@ -143,6 +134,41 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	// game put
 	public void insertGame(String key, Game game) {
 		gameList.put(key, game);
+	}
+
+	// getRandomGameKey.
+	public String getRandomGame() {
+		String gameKey;
+		Map<String, Game> gameSet = this.gameList;
+		ArrayList<Game> allGameList = new ArrayList<Game>(gameSet.values());
+		ArrayList<Game> idleGameList = new ArrayList<Game>(); 
+		for(Game game :allGameList){
+			//Check whether can attend this game. 
+			if(game.gameMembers.size() >= game.MaxMember)  continue; // Check Max count of member 
+			if(game.gameState > Game.GAME_STATE_ROOM)  continue;		// Check game state 
+			idleGameList.add(game); 
+		}
+		while(true){
+			if (idleGameList.size() != 0) { 
+				int random = (int) (Math.random() / idleGameList.size());
+				Game game = idleGameList.get(random);   
+				
+				// Check game state
+				if((game.gameMembers.size() >= game.MaxMember)|| (game.gameState > Game.GAME_STATE_ROOM))  { 		 
+					idleGameList.remove(game);
+					continue;
+				}
+				
+				gameKey = game.getGameKey();
+				break; 
+			} else{
+				long timeStamp = System.currentTimeMillis();
+				gameKey = Long.toString(timeStamp);
+				log.debug("Gernerate Game : "+gameKey); 
+				break;
+			}
+		}	 
+		return gameKey;
 	}
 
 	/*
