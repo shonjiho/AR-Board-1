@@ -43,7 +43,7 @@ public class GameSocketConnectController {
 			bufObject.put("member", memberlist); 
 			for(GameMember member: game.gameMembers){
 				 
-				memberlist.add((member.connected)?"[o]":"[x]"+member.userName);
+				memberlist.add(member.userName);
 			}  
 			bufObject.put("gameState", game.gameState);
 			gameObjectList.add(bufObject);
