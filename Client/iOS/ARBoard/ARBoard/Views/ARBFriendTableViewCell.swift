@@ -23,6 +23,7 @@ class ARBFriendTableViewCell: UITableViewCell {
         self.forSpacingView.layer.cornerRadius = 10.0
         self.bottomLabel.textColor = UIColor.withAlphaWhiteColor
         
+        self.thumbnailImageView.setRounded()
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {

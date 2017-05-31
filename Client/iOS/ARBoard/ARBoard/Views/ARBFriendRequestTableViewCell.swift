@@ -22,6 +22,8 @@ class ARBFriendRequestTableViewCell: UITableViewCell {
         self.forSpacingView.layer.cornerRadius = 10.0
         self.bottomLabel.textColor = UIColor.withAlphaWhiteColor
         self.requestButton.isHidden = true
+        
+        self.thumbnailImageView.setRounded()
     }
 
     @IBAction func requestAction(_ sender: Any) {

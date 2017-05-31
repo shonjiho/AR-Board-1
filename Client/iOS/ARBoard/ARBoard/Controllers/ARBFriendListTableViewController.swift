@@ -161,38 +161,53 @@ extension ARBFriendListTableViewController {
 
         switch section {
         case SectionType.request.value:
+            guard let requestFriendUser = friends.friendRequests?[indexPath.row] else {
+                return UITableViewCell.init()
+            }
+            
             let requestFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendRequestTableViewCell
             requestFriendCell.selectionStyle = .none
-            requestFriendCell.topLabel.text = friends.friendRequests?[indexPath.row].userName
-            requestFriendCell.bottomLabel.text = friends.friendRequests?[indexPath.row].userEmail
+            requestFriendCell.topLabel.text = requestFriendUser.userName
+            requestFriendCell.bottomLabel.text = requestFriendUser.userEmail
             requestFriendCell.requestButton.isHidden = false
-            if let userImageUrlString = friends.friendRequests?[indexPath.row].userImageURL {
+            if let userImageUrlString = requestFriendUser.userImageURL {
                 let userImageUrl = URL.init(string: userImageUrlString)
                 requestFriendCell.thumbnailImageView.kf.setImage(with: userImageUrl)
             } else {
-                
+                requestFriendCell.thumbnailImageView.image = UIImage.init(named: "OnProfile")
             }
             
             return requestFriendCell
         case SectionType.on.value:
-            let onFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
-            onFriendCell.topLabel.text = friends.onFriends?[indexPath.row].userName
-            onFriendCell.bottomLabel.text = friends.onFriends?[indexPath.row].userEmail
-            onFriendCell.selectedBackgroundView = UIVisualEffectView.dark
+            guard let onFriendUser = friends.onFriends?[indexPath.row] else {
+                return UITableViewCell.init()
+            }
             
-            if let userImageUrlString = friends.friendRequests?[indexPath.row].userImageURL {
+            let onFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
+            
+            onFriendCell.topLabel.text = onFriendUser.userName
+            onFriendCell.bottomLabel.text = onFriendUser.userEmail
+            onFriendCell.selectedBackgroundView = UIVisualEffectView.dark
+            if let userImageUrlString = onFriendUser.userImageURL {
                 let userImageUrl = URL.init(string: userImageUrlString)
                 onFriendCell.thumbnailImageView.kf.setImage(with: userImageUrl)
             } else {
-                
+                onFriendCell.thumbnailImageView.image = UIImage.init(named: "OnProfile")
             }
             return onFriendCell
         case SectionType.off.value:
-            let offFriendcell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
-            offFriendcell.selectionStyle = .none
-            offFriendcell.topLabel.text =  friends.offFriends?[indexPath.row].userName
-            offFriendcell.bottomLabel.text =  friends.offFriends?[indexPath.row].userEmail
-            return offFriendcell
+            guard let offFriendUser = friends.offFriends?[indexPath.row] else {
+                return UITableViewCell.init()
+            }
+            
+            let offFriendCell = tableView.dequeueReusableCell(withIdentifier: Section.cellIdentifier(of: section), for: indexPath) as! ARBFriendTableViewCell
+            
+            offFriendCell.selectionStyle = .none
+            offFriendCell.topLabel.text = offFriendUser.userName
+            offFriendCell.bottomLabel.text = offFriendUser.userEmail
+            offFriendCell.thumbnailImageView.image = UIImage.init(named: "OffProfile")
+
+            return offFriendCell
         default:
             print("Error")
             return UITableViewCell.init()
