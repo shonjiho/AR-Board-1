@@ -119,6 +119,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	public void afterConnectionClosed(WebSocketSession session, CloseStatus status) throws Exception {
 		super.afterConnectionClosed(session, status); 
 		
+		gameUsers.get(session).disconnect();
 		
 		System.out.println(
 				"DisConnect User. [ userId :" + getUserId(session) + ", userName :" + getUserName(session) + "]");
@@ -157,8 +158,7 @@ public class GameSocketHandler extends TextWebSocketHandler {
 				if((game.gameMembers.size() >= game.MaxMember)|| (game.gameState > Game.GAME_STATE_ROOM))  { 		 
 					idleGameList.remove(game);
 					continue;
-				}
-				
+				} 
 				gameKey = game.getGameKey();
 				break; 
 			} else{

@@ -50,18 +50,34 @@ public class Game extends Thread {
 	}
 
 	public synchronized void broadcast(String msg) {
-		 
+		
 		for (GameMember m : gameMembers) {
 			if (m.isInvalidSession()) {
 				m.MessageSend(msg);
-				//m.connect();
+				m.connect();
 			} else {
-				//m.disconnect();
-				gameMembers.remove(m);
+				m.disconnect(); 
+			}
+		} 
+		
+	}
+	public void gameMemberSessionClear(){
+		ArrayList<GameMember> out_members = new ArrayList<GameMember>();
+		for(GameMember member:gameMembers){
+			if(!member.connected){
+				out_members.add(member);
 			}
 		}
+		for(GameMember member:out_members){
+			try {
+				member.closeSocket();
+			} catch (Exception e) { 
+				e.printStackTrace();
+			}
+			gameMembers.remove(member);
+		}
 	}
-
+	
 	public void gameClose() {
 		broadcast("NF");
 
@@ -120,7 +136,7 @@ public class Game extends Thread {
 			case GAME_STATE_ROOM:
 				broadcast(Game_readyInfo());// Game state broadcast.
 				if (gameMembers.size() == 0) {
-					gameClose();
+					gameState = GAME_STATE_FINISH;
 				}
 				break;
 
@@ -153,15 +169,16 @@ public class Game extends Thread {
 
 			case GAME_STATE_FINISH:
 				// game exit
-				broadcast("[" + turn + "]Game State - " + gameState);
+				broadcast("[" + turn + "]Game State - " + gameState); 
 				break;
 			}
-
+			
+			gameMemberSessionClear();
+			
 			if (gameState == GAME_STATE_FINISH) {
 				gameClose();
 				break;
-			}
-
+			} 
 		}
 
 	}

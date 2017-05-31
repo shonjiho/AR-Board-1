@@ -50,8 +50,8 @@ public class GameMember  {
 		if(isInvalidSession()){
 			
 			try {
-				session.sendMessage(new TextMessage(str));
-				//session.sendMessage(new BinaryMessage(str.getBytes()));
+				//session.sendMessage(new TextMessage(str));
+				session.sendMessage(new BinaryMessage(str.getBytes()));
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
