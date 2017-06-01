@@ -50,34 +50,35 @@ public class Game extends Thread {
 	}
 
 	public synchronized void broadcast(String msg) {
-		
+
 		for (GameMember m : gameMembers) {
 			if (m.isInvalidSession()) {
 				m.MessageSend(msg);
 				m.connect();
 			} else {
-				m.disconnect(); 
+				m.disconnect();
 			}
-		} 
-		
+		}
+
 	}
-	public void gameMemberSessionClear(){
+
+	public void gameMemberSessionClear() {
 		ArrayList<GameMember> out_members = new ArrayList<GameMember>();
-		for(GameMember member:gameMembers){
-			if(!member.connected){
+		for (GameMember member : gameMembers) {
+			if (!member.connected) {
 				out_members.add(member);
 			}
 		}
-		for(GameMember member:out_members){
+		for (GameMember member : out_members) {
 			try {
 				member.closeSocket();
-			} catch (Exception e) { 
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 			gameMembers.remove(member);
 		}
 	}
-	
+
 	public void gameClose() {
 		broadcast("NF");
 
@@ -103,25 +104,14 @@ public class Game extends Thread {
 			System.out.println("no member Access");
 			return;
 		}
-		String[] parsedMsg = msg.split(",");
-		int num = parsedMsg.length;
-		if (num == 0)
-			return;
-
-		// parsing
-		String first = parsedMsg[0];
-		if (first.equals("StartTurn") && gameState == GAME_STATE_ROOM) {
-			// System.out.println("GAME START SIGNAL!!! - " + first);
-			gameState = GAME_STATE_READY;
-
-		}
+		//Game Command Parse.
+		Game_parseCommand(msg);
 		broadcast(msg);
-
 	}
 
 	@Override
 	public void run() {
-		long drainTime = 1000; // message term
+		long drainTime = 100; // message term
 		int turn = 0;
 		long beforeTime = System.currentTimeMillis();
 		while (true) {
@@ -134,51 +124,58 @@ public class Game extends Thread {
 			switch (gameState) {
 
 			case GAME_STATE_ROOM:
-				broadcast(Game_readyInfo());// Game state broadcast.
-				if (gameMembers.size() == 0) {
+				// broadcast(Game_readyInfo());// Game state broadcast.
+				 
+				int n = gameMembers.size();
+				if ( n == 0 ) {
 					gameState = GAME_STATE_FINISH;
+				}else if(n == 1){
+					gameState = GAME_STATE_READY;
 				}
+				
 				break;
 
 			case GAME_STATE_READY:
 
-				if (gameCount > 0) {
-					gameCount--;
-					broadcast(gameCount + ".");
-					break;
-				}
-				
-				broadcast("Wait....(Setting Order)");
-				// Game_makeRandomOrder();
+				// if (gameCount > 0) {
+				// gameCount--;
+				// broadcast(gameCount + ".");
+				// break;
+				// }
+				//
+				// broadcast("Wait....(Setting Order)");
+
 				Game_sendOrderToEachMember();
 				gameState = GAME_STATE_RUNNING;
 
 				break;
 
 			case GAME_STATE_RUNNING:
-				if (turn == 0) {
-					broadcast("GAME START");
-				}
-				turn++;
-				if (turn == 60) {
-					gameState = GAME_STATE_FINISH;
-				}
+				// if (turn == 0) {
+				// broadcast("GAME START");
+				// }
+				// turn++;
+				// if (turn == 60) {
+				// gameState = GAME_STATE_FINISH;
+				// }
+				//
+				// broadcast("[" + turn + "]Game State - " + gameState);
 
-				broadcast("[" + turn + "]Game State - " + gameState);
 				break;
-
+			
 			case GAME_STATE_FINISH:
 				// game exit
-				broadcast("[" + turn + "]Game State - " + gameState); 
+				broadcast("[" + turn + "]Game State - " + gameState);
 				break;
 			}
-			
+
 			gameMemberSessionClear();
-			
+
 			if (gameState == GAME_STATE_FINISH) {
 				gameClose();
 				break;
 			} 
+				
 		}
 
 	}
@@ -216,14 +213,6 @@ public class Game extends Thread {
 		return result;
 	}
 
-	/*
-	 * GameMethod make random order.
-	 * 
-	 */
-	private void Game_makeRandomOrder() {
-
-	}
-
 	private void Game_sendOrderToEachMember() {
 		for (GameMember member : gameMembers) {
 			String startInfo = Game_startInfo(member);
@@ -231,4 +220,19 @@ public class Game extends Thread {
 		}
 	}
 
+	private void Game_parseCommand(String command) {
+		String[] parsedMsg = command.split(",");
+		int num = parsedMsg.length;
+		if (num == 0)
+			return; 
+		// parsing
+		String command1 = parsedMsg[0];
+		if (command1.equals("StartTurn") && gameState == GAME_STATE_ROOM) {
+			// System.out.println("GAME START SIGNAL!!! - " + first);
+			gameState = GAME_STATE_READY;
+
+		} else if (command1.equals("Stop")){ 
+			gameState = GAME_STATE_FINISH; 
+		}
+	}
 }

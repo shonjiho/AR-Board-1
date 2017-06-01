@@ -3,6 +3,7 @@ package arboard.game.websocket;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -32,13 +33,19 @@ public class HandShakeInterceptor extends HttpSessionHandshakeInterceptor {
 	public boolean beforeHandshake(ServerHttpRequest request, ServerHttpResponse response, WebSocketHandler wsHandler,
 			Map<String, Object> attributes) throws Exception {
 
-		log.debug("Before Handshake");  
-		ServletServerHttpRequest ssreq = (ServletServerHttpRequest) request;
+		log.debug("Before Handshake");   
+		ServletServerHttpRequest ssreq = (ServletServerHttpRequest) request; 
 		log.debug("URI:" + request.getURI());  
 		
 		HttpServletRequest req = ssreq.getServletRequest(); 
+		
+//		Cookie[] cookies = req.getCookies();
+//		for(int i = 0;i<cookies.length;i++){
+//			log.debug("COOKIE:"+cookies[i].getValue());
+//		} 
 		HttpSession httpSession = req.getSession(); 
 		String SessionID = httpSession.getId(); 
+		
 		log.debug("Connected JSESSION ID :" + SessionID); 
 
 		@SuppressWarnings("unchecked")
