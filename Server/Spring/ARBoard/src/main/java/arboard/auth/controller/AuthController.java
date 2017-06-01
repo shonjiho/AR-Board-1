@@ -83,7 +83,7 @@ public class AuthController {
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/logout", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object logout(HttpSession session)  {
+	public void logout(HttpSession session)  {
 
 		Map<String,Object> profile = (Map<String, Object>) session.getAttribute("userProfile");
 		if(profile == null){ 
@@ -92,8 +92,7 @@ public class AuthController {
 		Map<String,Object> result = new HashMap<String, Object>();
 		session.removeAttribute("userProfile");
 		session.removeAttribute("status");
-		result.put("logout", "Success"); 
-		return result;
+		session.invalidate(); 
 	}
 	
 	// GET /profile
