@@ -2,9 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using WebSocketSharp.Net;
+
+using System.Runtime.InteropServices;
 
 
 public class GameManager : MonoBehaviour {
+
+
+	[DllImport("__Internal")]
+	private static extern void UnityPluginSetSession();
+	[DllImport("__Internal")]
+	private static extern void UnityPluginGameEnd();
+
 
 	WebSocket w;
 	
@@ -52,18 +62,38 @@ public class GameManager : MonoBehaviour {
 
 	public void GameSetting()
 	{
-		w = new WebSocket(new Uri(SettingManager.SERVER_ADDRESS));
-		StartCoroutine(ServerConnect());
 
+
+		w = new WebSocket(new Uri(SettingManager.SERVER_ADDRESS));
+
+
+		// iOSPluginSessionString();
+
+		
+		// GetSessionID("" + (int)UnityEngine.Random.Range(100000, 999999));
 	}
 
-	IEnumerator ServerConnect () {
+	public void GetSessionID(string id)
+	{
+		// uiManager.testLabel.text = result;
+		StartCoroutine(ServerConnect(id));
+	}
+
+	IEnumerator ServerConnect (string id) {
 		Debug.Log("server connect start");
-		yield return StartCoroutine(w.Connect());
-		SetNewGame(new string[5]);
+		Cookie cookie = new Cookie("JSESSIONID", id);
+		
+		// yield return StartCoroutine(w.Connect());
+
+		yield return StartCoroutine(w.ConnectByCookie(cookie));
+		// SetNewGame(new string[5]);
 		while (true)
 		{
+			
 			string reply = w.RecvString();
+
+			Debug.Log(reply);
+			
 			if (reply != null)
 			{
 				ReplyProcess(reply);
@@ -85,15 +115,16 @@ public class GameManager : MonoBehaviour {
 		string[] replySplitArr = reply.Split(',');
 		switch(replySplitArr[0])
 		{
-			// case "Welcome ARBOARD!!" : 
-			// case SettingManager.SM_GAME_START :
-			// 	Debug.Log("SM_GAME_START");
-			// 	SetNewGame(replySplitArr);
-			// 	break;
+			case SettingManager.SM_GAME_START :
+				// Debug.LogError("SM_GAME_START" + reply);
+				SetNewGame(replySplitArr);
+				StartGame();
+				break;
 			// case SettingManager.SM_END_GAME_START_WAIT_TIME :
 			// 	StartGame();
 			// 	break;
 			case SettingManager.SM_DICE_RESULT :
+				Debug.Log(reply);
 				MovePlayer(replySplitArr);
 				break;
 			case SettingManager.SM_BUILD_OBJECT : 
@@ -108,6 +139,9 @@ public class GameManager : MonoBehaviour {
 				break;
 			case SettingManager.SM_PLAYER_DEAD :
 				PlayerDead(replySplitArr);
+				break;
+			case SettingManager.SM_GAME_END :
+				UnityPluginGameEnd();
 				break;
 		}
 	}
@@ -136,8 +170,8 @@ public class GameManager : MonoBehaviour {
 
 	void SetNewGame(string[] replySplitArr)
 	{
-		// stateManager.SetNewGameState(replySplitArr);
-		stateManager.SetNewGameStateTEST();
+		stateManager.SetNewGameState(replySplitArr);
+		// stateManager.SetNewGameStateTEST();
 		uiManager.HideChargeMenu();
 		uiManager.RefreshUI();
 		StartGame();
@@ -158,6 +192,8 @@ public class GameManager : MonoBehaviour {
 		if(stateManager.IsSurviveOne())
 		{
 			uiManager.ShowGameOver(true);
+			yield return new WaitForSeconds(5f);
+			w.SendString(SettingManager.SM_GAME_END + "," + stateManager.playerStates[stateManager.GetMyPlayerNumber()].PlayerName);
 			yield break;
 		}
 		UIButton diceButton = uiManager.GetDiceButton();
@@ -178,7 +214,7 @@ public class GameManager : MonoBehaviour {
 			}
 			else
 			{	//true면 확대사이즈
-				diceButton.transform.localScale = new Vector3(diceButtonBaseScale.x * 1.1f, diceButtonBaseScale.y * 1.1f, diceButtonBaseScale.z * 1.1f);
+				diceButton.transform.localScale = new Vector3(diceButtonBaseScale.x * 1.05f, diceButtonBaseScale.y * 1.05f, diceButtonBaseScale.z * 1.05f);
 				zoomFlag = false;
 			}
 
@@ -191,7 +227,8 @@ public class GameManager : MonoBehaviour {
 
 		int diceValue = (int)UnityEngine.Random.Range(1, 12);
 
-		diceValue = 3;
+		// if(stateManager.GetMyPlayerNumber() == 0)
+		// 	diceValue = 3;
 
 		string request = SettingManager.SM_DICE_RESULT + "," + stateManager.GetMyPlayerNumber() + "," + diceValue;
 		// Debug.LogError(request);
@@ -224,7 +261,7 @@ public class GameManager : MonoBehaviour {
 		Vector3 diceLabelBaseScale = diceLabel.transform.localScale;
 		diceLabel.gameObject.SetActive(true);
 
-		for(int i=0; i<200; i += 10)
+		for(int i=0; i<80; i += 4)
 		{
 			diceLabel.transform.localScale = new Vector3(diceLabelBaseScale.x + i, diceLabelBaseScale.y + i, diceLabelBaseScale.z + i);
 
@@ -268,6 +305,7 @@ public class GameManager : MonoBehaviour {
 			{
 				playerState.Location = 0;
 				playerState.Money += 1000;
+				uiManager.RefreshUI();
 			}
 
 			targetPosition = stateManager.GetPlayerScaffoldingLocatePosition(playerState);
@@ -406,145 +444,6 @@ public class GameManager : MonoBehaviour {
 			EndTurn();
 	}
 
-
-	public void TestBuild()
-	{
-		int playerNum = 3;
-		int level = 3;
-		GameObject goBuild;
-		if(level == 1)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_MOTEL;
-		}
-		else if(level == 2)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_BUILDING;
-		}
-		else
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_HOTEL;
-		}
-		int location = 3;
-		stateManager.GetScaffolding(location).OwnerPlayerNum = playerNum;
-		stateManager.GetScaffolding(location).BuildLevel = level;
-
-		goBuild.tag = SettingManager.STRING_BUILD;
-		
-		Scaffolding scaffolding = stateManager.GetScaffolding(location);
-
-		if(scaffolding.transform.FindChild(SettingManager.STRING_BUILD) != null)
-		{
-			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUILD).gameObject);
-		}
-
-		goBuild.name = SettingManager.STRING_BUILD;
-		goBuild.transform.parent = scaffolding.transform;
-		if(location > 0 && location < 9)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, -3);
-		}
-		else if(location > 9 && location < 18)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
-		}
-		else if(location > 18 && location < 27)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, 3);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
-		}
-		else
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
-		}
-		
-		uiManager.RefreshUI();
-	}
-
-	public void TestBuild2(int i)
-	{
-		int playerNum = 0;
-		int level = 3;
-		GameObject goBuild;
-		if(level == 1)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel1);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_MOTEL;
-		}
-		else if(level == 2)
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel2);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_BUILDING;
-		}
-		else
-		{
-			goBuild = (GameObject)GameObject.Instantiate(gameObjectLevel3);
-			stateManager.playerStates[playerNum].Money -= SettingManager.INT_COST_HOTEL;
-		}
-		int location = i;
-		stateManager.GetScaffolding(location).OwnerPlayerNum = playerNum;
-		stateManager.GetScaffolding(location).BuildLevel = level;
-
-		goBuild.tag = SettingManager.STRING_BUILD;
-		
-		Scaffolding scaffolding = stateManager.GetScaffolding(location);
-
-		GameObject goBuyCheck = (GameObject)Instantiate(buyCheck);
-
-		if(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK) != null)
-		{
-			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUYCHECK).gameObject);
-		}
-
-		if(scaffolding.transform.FindChild(SettingManager.STRING_BUILD) != null)
-		{
-			Destroy(scaffolding.transform.FindChild(SettingManager.STRING_BUILD).gameObject);
-		}
-
-		goBuyCheck.name = SettingManager.STRING_BUYCHECK;
-		goBuyCheck.transform.parent = scaffolding.transform;
-		goBuyCheck.transform.localScale = new Vector3(3f, 3f, 3f);
-		goBuyCheck.transform.localPosition = new Vector3(0, 0.116f, 0.098f);
-		goBuyCheck.GetComponent<SpriteRenderer>().color = SettingManager.GetColor(playerNum);
-		// Debug.LogError(goBuyCheck.GetComponent<SpriteRenderer>().color);
-
-		goBuild.name = SettingManager.STRING_BUILD;
-		goBuild.transform.parent = scaffolding.transform;
-		if(location > 0 && location < 9)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, -3);
-		}
-		else if(location > 9 && location < 18)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(-3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 90, 0);
-		}
-		else if(location > 18 && location < 27)
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(0, 0, 3);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 180, 0);
-		}
-		else
-		{
-			goBuild.transform.localScale = new Vector3(0.12f, 0.12f, 0.12f);
-			goBuild.transform.localPosition = new Vector3(3, 0, 0);
-			goBuild.transform.rotation *= Quaternion.Euler(0, 270, 0);
-		}
-		
-		uiManager.RefreshUI();
-	}
-
 	void BuildObject(string[] replySplitArr)
 	{
 		int playerNum = int.Parse(replySplitArr[1]);
@@ -631,7 +530,7 @@ public class GameManager : MonoBehaviour {
 	void NextTurn(string[] replySplitArr)
 	{
 		stateManager.SetNextTurn();
-		stateManager.TestAddMyPlayerNumber();
+		// stateManager.TestAddMyPlayerNumber();
 		if(stateManager.CurrentTurn == stateManager.GetMyPlayerNumber())
 		{
 			if(stateManager.playerStates[stateManager.GetMyPlayerNumber()].IsEnd())

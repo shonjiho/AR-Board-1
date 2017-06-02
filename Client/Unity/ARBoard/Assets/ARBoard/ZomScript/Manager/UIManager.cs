@@ -14,6 +14,8 @@ public class UIManager : MonoBehaviour {
 	[SerializeField] GameObject buildMenu;
 	[SerializeField] ChargeMenu chargeMenu;
 
+	public UILabel testLabel;
+
 	static UIManager instance;
 	const string STRING_NAME_LABEL = "NameLabel";
 	const string STRING_MONEY_LABEL = "MoneyLabel";
@@ -106,10 +108,17 @@ public class UIManager : MonoBehaviour {
 		for(int i=0; i<playerStateWindows.Count; i++)
 		{
 			UILabel nameLabel = playerStateWindows[i].transform.FindChild(STRING_NAME_LABEL).GetComponent<UILabel>();
-			// Debug.LogError(playerStates[i].PlayerName);
-			nameLabel.text = playerStates[i].PlayerName;
 			UILabel moneyLabel = playerStateWindows[i].transform.FindChild(STRING_MONEY_LABEL).GetComponent<UILabel>();
-			// Debug.LogError(playerStates[i].Money);
+			
+
+			if(playerStates[i].gameObject.activeSelf == false)
+			{
+				nameLabel.text = string.Empty;
+				moneyLabel.text = string.Empty;
+				return;
+			}
+
+			nameLabel.text = playerStates[i].PlayerName;
 
 			if(playerStates[i].IsEnd())
 			{
@@ -210,6 +219,7 @@ public class UIManager : MonoBehaviour {
 		if(isWin)
 		{
 			gameOverLabel.text = "GAME WIN";
+			
 		}
 		else
 		{

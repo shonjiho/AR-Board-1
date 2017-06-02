@@ -116,6 +116,18 @@ public class WebSocket
 			yield return 0;
 	}
 
+	public IEnumerator ConnectByCookie(WebSocketSharp.Net.Cookie cookie)
+	{
+		m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
+		m_Socket.SetCookie(cookie);
+		m_Socket.OnMessage += (sender, e) => m_Messages.Enqueue (e.RawData);
+		m_Socket.OnOpen += (sender, e) => m_IsConnected = true;
+		m_Socket.OnError += (sender, e) => m_Error = e.Message;
+		m_Socket.ConnectAsync();
+		while (!m_IsConnected && m_Error == null)
+			yield return 0;
+	}
+
 	public void Send(byte[] buffer)
 	{
 		m_Socket.Send(buffer);

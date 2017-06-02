@@ -5,6 +5,8 @@ using UnityEngine;
 public class StateManager : MonoBehaviour {
 	static StateManager instance;
 
+	// public int playerNumber
+
 	public static StateManager Instance
 	{
 		get
@@ -29,6 +31,8 @@ public class StateManager : MonoBehaviour {
 	List<Scaffolding> scaffoldings;
 	int playerNumber = 0;
 
+	public int PlayPeopleCnt = 0;
+
 	int currentTurn = 0;
 
 	public int CurrentTurn
@@ -43,25 +47,29 @@ public class StateManager : MonoBehaviour {
 	public void SetNextTurn()
 	{
 		currentTurn++;
-		if(currentTurn >= 4)
+		if(currentTurn >= PlayPeopleCnt)
 		{
 			currentTurn = 0;
 		}
 	}
 
-	public void SetNewGameStateTEST()
-	{
-		string[] arr = {"GameStart", "0", "test1", "test2", "test3", "test4"};
-		SetNewGameState(arr);
-		GameManager.Instance.TestBuild();
-		GameManager.Instance.TestBuild2(12);
-		GameManager.Instance.TestBuild2(13);
-		GameManager.Instance.TestBuild2(14);
-	}
+	// public void SetNewGameStateTEST()
+	// {
+	// 	string[] arr = {"GameStart", "0", "test1", "test2", "test3", "test4"};
+	// 	SetNewGameState(arr);
+	// 	GameManager.Instance.TestBuild();
+	// 	GameManager.Instance.TestBuild2(12);
+	// 	GameManager.Instance.TestBuild2(13);
+	// 	GameManager.Instance.TestBuild2(14);
+	// 	playerStates[0].Money += 1000;
+	// }
 
 	public void SetNewGameState(string[] replySplitArr)
 	{
 		playerNumber = int.Parse(replySplitArr[1]);
+		string[] playerNames = replySplitArr[2].Split('|');
+		PlayPeopleCnt = playerNames.Length;
+		Debug.Log("PlayPeopleCnt : "+ PlayPeopleCnt);
 		scaffoldings = new List<Scaffolding>();
 		currentTurn = 0;
 
@@ -97,15 +105,24 @@ public class StateManager : MonoBehaviour {
 		// playerStates = new List<PlayerState>();
 
 		// Debug.LogError("replySplitArr : " + replySplitArr.Length);
-		for(int i=0; i<replySplitArr.Length; i++)
-		{
-			Debug.Log(replySplitArr[i]);
-		}
+		// for(int i=0; i<replySplitArr.Length; i++)
+		// {
+		// 	Debug.Log(replySplitArr[i]);
+		// }
 
-		for(int i=0; i<SettingManager.PLAYER_COUNT; i++)
+		for(int i=0; i<SettingManager.MAX_PLAYER_COUNT; i++)
 		{
-			playerStates[i].RefreshState(i, replySplitArr[i+2]);
-			playerStates[i].transform.position = GetPlayerScaffoldingLocatePosition(playerStates[i]);
+			if(i<PlayPeopleCnt)
+			{
+				playerStates[i].gameObject.SetActive(true);
+				playerStates[i].RefreshState(i, playerNames[i]);
+				playerStates[i].transform.position = GetPlayerScaffoldingLocatePosition(playerStates[i]);
+			}
+			else
+			{
+				playerStates[i].gameObject.SetActive(false);
+			}
+			
 		}
 
 		// GameObject[] builds = GameObject.FindGameObjectsWithTag(SettingManager.STRING_BUILD);
