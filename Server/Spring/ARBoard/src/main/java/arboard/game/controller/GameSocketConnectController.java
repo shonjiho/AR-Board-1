@@ -8,6 +8,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -57,7 +58,16 @@ public class GameSocketConnectController {
 		return "/wsTest";
 		
 	} 
-	
+	//tester
+	@RequestMapping(value = "/game/testReady/{count}", method = RequestMethod.GET)
+	public @ResponseBody Object changeGameMember(@PathVariable int count,HttpSession session) {
+		Map<String, Object> resultObject = new HashMap<String,Object>();
+		
+		Game.readyMemberCount = count;
+		resultObject.put("ReadyNumber", Game.readyMemberCount);
+		return resultObject;
+		
+	}
 	 
 	
 }

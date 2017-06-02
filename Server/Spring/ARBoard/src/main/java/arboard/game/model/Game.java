@@ -6,6 +6,10 @@ import java.util.List;
 import arboard.game.websocket.GameSocketHandler;
 
 public class Game extends Thread {
+	//READY NUMBER of member
+	public static int readyMemberCount = 1;
+	
+	//Game State constraint.
 	public final static int GAME_STATE_ROOM = 0;
 	public final static int GAME_STATE_READY = 1;
 	public final static int GAME_STATE_RUNNING = 2;
@@ -105,8 +109,9 @@ public class Game extends Thread {
 			return;
 		}
 		//Game Command Parse.
-		Game_parseCommand(msg);
+
 		broadcast(msg);
+		Game_parseCommand(msg);
 	}
 
 	@Override
@@ -114,6 +119,7 @@ public class Game extends Thread {
 		long drainTime = 100; // message term
 		int turn = 0;
 		long beforeTime = System.currentTimeMillis();
+		
 		while (true) {
 			long currentTime = System.currentTimeMillis();
 			if ((currentTime - beforeTime) < drainTime) {
@@ -129,7 +135,7 @@ public class Game extends Thread {
 				int n = gameMembers.size();
 				if ( n == 0 ) {
 					gameState = GAME_STATE_FINISH;
-				}else if(n == 1){
+				}else if(n == readyMemberCount){
 					gameState = GAME_STATE_READY;
 				}
 				
@@ -219,7 +225,8 @@ public class Game extends Thread {
 			member.MessageSend(startInfo);
 		}
 	}
-
+	
+//client message controller
 	private void Game_parseCommand(String command) {
 		String[] parsedMsg = command.split(",");
 		int num = parsedMsg.length;
@@ -231,7 +238,7 @@ public class Game extends Thread {
 			// System.out.println("GAME START SIGNAL!!! - " + first);
 			gameState = GAME_STATE_READY;
 
-		} else if (command1.equals("Stop")){ 
+		} else if (command1.equals("GameEnd")){ 
 			gameState = GAME_STATE_FINISH; 
 		}
 	}
