@@ -1,6 +1,5 @@
 package arboard.game.controller;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import arboard.game.model.Game;
 import arboard.game.websocket.GameSocketHandler;
 
 @Controller
@@ -30,7 +28,9 @@ public class GameSocketJoinController {
 		gameKey = websocketHandler.getRandomGame();//get random game key.
 		
 		jsonObject.put("gameKey", gameKey);
+		
 		session.setAttribute("gameKey", gameKey);
+		
 		return jsonObject;
 	}
 	

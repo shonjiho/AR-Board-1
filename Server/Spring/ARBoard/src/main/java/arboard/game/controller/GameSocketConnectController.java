@@ -52,7 +52,8 @@ public class GameSocketConnectController {
 		resultObject.put("count", gameList.size());
 		return resultObject;
 	}
- 
+	
+	//test api
 	@RequestMapping(value="/wstest",method=RequestMethod.GET)
 	public String TestEchoSocket(HttpSession session){ 
 		return "/wsTest";
