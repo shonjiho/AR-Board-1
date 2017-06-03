@@ -36,8 +36,7 @@ public class UtilFriendController {
 	// list friend test method.
 	// URI - GET /friend/list/{id}
 	@RequestMapping(value = "/friend/list/{id}", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-
+	@ResponseStatus(HttpStatus.OK) 
 	public @ResponseBody Object getFriendList_test(@PathVariable String id, HttpServletResponse reponse,
 			HttpSession session) {
 
