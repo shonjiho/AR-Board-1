@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
 import arboard.game.model.Game;
 import arboard.game.model.GameMember;
@@ -28,30 +29,56 @@ public class GameSocketConnectController {
 		System.out.println("Running Game COUNT : "+websocketHandler.gameList.size()); 
 		return "/wsclient";
 	}
+//	
+//	@RequestMapping(value = "/game/list", method = RequestMethod.GET)
+//	public @ResponseBody Object getGameList(HttpSession session) {
+//
+//		Map<String, Game> gameMapObject = websocketHandler.gameList; 
+//		Map<String, Object> resultObject = new HashMap<String, Object>();
+//		ArrayList<Game> gameList= new ArrayList<Game>(gameMapObject.values());
+//		ArrayList<Map<String,Object>> gameObjectList = new ArrayList<Map<String,Object>>();
+//		resultObject.put("games", gameObjectList);
+//		for(Game game:gameList){
+//			Map<String,Object> bufObject = new HashMap<String, Object>();
+//			bufObject.put("gameKey", game.gameKey);
+//			ArrayList<Object> memberlist = new ArrayList<Object>();
+//			bufObject.put("member", memberlist); 
+//			for(GameMember member: game.gameMembers){
+//				 
+//				memberlist.add(member.userName);
+//			}  
+//			bufObject.put("gameState", game.gameState);
+//			gameObjectList.add(bufObject);
+//		} 
+//		resultObject.put("count", gameList.size());
+//		return resultObject;
+//	}
 	
 	@RequestMapping(value = "/game/list", method = RequestMethod.GET)
-	public @ResponseBody Object getGameList(HttpSession session) {
-
+	public ModelAndView getGameListView(HttpSession session) {
+		ModelAndView mv = new ModelAndView("/gameState"); 
 		Map<String, Game> gameMapObject = websocketHandler.gameList; 
 		Map<String, Object> resultObject = new HashMap<String, Object>();
 		ArrayList<Game> gameList= new ArrayList<Game>(gameMapObject.values());
-		ArrayList<Map<String,Object>> gameObjectList = new ArrayList<Map<String,Object>>();
-		resultObject.put("games", gameObjectList);
+		ArrayList<Map<String,Object>> gameObjectList = new ArrayList<Map<String,Object>>(); 
+		
+		mv.addObject("games",gameObjectList);
+		
 		for(Game game:gameList){
 			Map<String,Object> bufObject = new HashMap<String, Object>();
 			bufObject.put("gameKey", game.gameKey);
 			ArrayList<Object> memberlist = new ArrayList<Object>();
 			bufObject.put("member", memberlist); 
-			for(GameMember member: game.gameMembers){
-				 
+			for(GameMember member: game.gameMembers){ 
 				memberlist.add(member.userName);
 			}  
 			bufObject.put("gameState", game.gameState);
 			gameObjectList.add(bufObject);
-		} 
-		resultObject.put("count", gameList.size());
-		return resultObject;
+		}  
+		mv.addObject("count",gameList.size() );
+		return mv;
 	}
+	
 	
 	//test api
 	@RequestMapping(value="/wstest",method=RequestMethod.GET)

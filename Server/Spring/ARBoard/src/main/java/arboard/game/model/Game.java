@@ -7,7 +7,7 @@ import arboard.game.websocket.GameSocketHandler;
 
 public class Game extends Thread {
 	//READY NUMBER of member
-	public static int readyMemberCount = 1;
+	public static int readyMemberCount = 2;
 	
 	//Game State constraint.
 	public final static int GAME_STATE_ROOM = 0;
@@ -166,7 +166,11 @@ public class Game extends Thread {
 				// }
 				//
 				// broadcast("[" + turn + "]Game State - " + gameState);
-
+				int numOfMember = gameMembers.size();
+				if (   numOfMember== 0 ) {
+					gameState = GAME_STATE_FINISH;
+				}
+				
 				break;
 			
 			case GAME_STATE_FINISH:
@@ -199,7 +203,8 @@ public class Game extends Thread {
 		for (int i = 0; i < gameMembers.size(); i++) {
 			if (i != 0)
 				result += "|";
-			result += gameMembers.get(i).getUserId();
+			//result += gameMembers.get(i).getUserId();
+			result += gameMembers.get(i).getUserName();
 		}
 		return result;
 	}
@@ -214,7 +219,8 @@ public class Game extends Thread {
 		for (int i = 0; i < gameMembers.size(); i++) {
 			if (i != 0)
 				result += "|";
-			result += gameMembers.get(i).getUserId();
+			//result += gameMembers.get(i).getUserId();
+			result += gameMembers.get(i).getUserName();
 		}
 		return result;
 	}

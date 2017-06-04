@@ -15,6 +15,10 @@ public class GameMember  {
 		return userId;
 	}
 
+	public String getUserName() {
+		return userName;
+	}
+
 	public boolean connected= false;
 	public WebSocketSession session;
   

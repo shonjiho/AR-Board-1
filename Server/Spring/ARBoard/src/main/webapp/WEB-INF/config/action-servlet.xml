@@ -49,13 +49,7 @@
 			<bean class="arboard.game.websocket.HandShakeInterceptor"></bean>
 		</websocket:handshake-interceptors>
 	</websocket:handlers>   
-	
-	<!-- webSocket Test -->
-	<bean id="testsocketHandler" class ="arboard.game.websocket.TestSocketHandler" /> 
-	<websocket:handlers>
-		<websocket:mapping path="/websocket/test" handler="testsocketHandler"/> 
-	</websocket:handlers>
-
+	 
 
 </beans>
 
