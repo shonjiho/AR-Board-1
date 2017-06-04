@@ -82,12 +82,13 @@ public class GameSocketJoinController {
 	
 	//String pdfPath = request.getSession().getServletContext().getRealPath("/resource/pamphlet.pdf");
 	//System.out.println(new File(pdfPath).exist());
-	@RequestMapping(value = "/game/file/test", method = RequestMethod.GET)
+	@RequestMapping(value = "/game/certificatefile/exist", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object test(HttpServletRequest request,HttpSession session) {
 		Map<String,Object> result = new HashMap<String,Object>();
 		String certificatePath = request.getSession().getServletContext().getRealPath("/apns.pem");
-		System.out.println(new File(certificatePath).exists());
+		result.put("path", certificatePath);
+		result.put("exist",new File(certificatePath).exists() ); 
 		return result;
 	}
 
