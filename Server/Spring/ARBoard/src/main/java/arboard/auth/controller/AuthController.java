@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
+import arboard.auth.exception.InvalidDomainException;
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.auth.exception.UnKnownException;
 import arboard.auth.service.AuthService; 
@@ -48,8 +49,7 @@ public class AuthController {
 		}catch (AccessTokenInvalidException e){
 			e.setSession(session);
 			throw e;
-		}
-
+		} 
 		//Login profile generate (userName,userEmail,oauthToken,oauthType)
 		Map<String, Object> profile = authService.reqFacebookProfile(oauthToken);
 		profile.put("oauthToken", oauthToken);
@@ -63,6 +63,58 @@ public class AuthController {
 		
 		return userProfile;
 	}
+	
+//  new login API
+//	{
+//		oauthDomain : "FACEBOOK 멍청아",
+//		oauthToken: "qwdwqdqwd",
+//		deviceToken : "wqdwqdwqdqwdwq"
+//		}
+	@RequestMapping(value = "/auth/login", method = RequestMethod.POST)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object login(
+			@RequestParam(value="oauthDomain",required=false) String oauthDomain,
+			@RequestParam(value="oauthToken",required=false) String oauthToken,
+			@RequestParam(value="deviceToken",required=false) String deviceToken,
+			HttpSession session) throws Exception {
+		 
+		if (oauthToken == null && oauthDomain == null) { 
+			throw new AccessTokenNotFoundException();
+		}
+		
+		//VALIFY OAUTH TOKEN
+		try{
+			if (authService.valifyAccessToken(oauthToken) == false) { 
+				throw new AccessTokenInvalidException();
+			}
+		}catch (AccessTokenInvalidException e){
+			e.setSession(session);
+			throw e;
+		} 
+		
+		Map<String, Object> profile ; 
+		//Login profile generate (userName,userEmail,oauthToken,oauthDomain,deviceToken) 
+		if(oauthDomain.equals("facebook")){
+			profile = authService.reqFacebookProfile(oauthToken);
+
+		}else{
+			throw new InvalidDomainException();
+		} 
+		
+		profile.put("oauthToken", oauthToken);
+		profile.put("oauthType", oauthDomain); 
+		profile.put("deviceToken", deviceToken);
+		//Login recently information update or insert.
+		Map<String, Object> userProfile = authService.getUserInfo(profile);
+
+		//Session Information Setting.
+		session.setAttribute("status",true);
+		session.setAttribute("userProfile", userProfile);
+		
+		return userProfile;
+	}
+	
+	
 	// DELETE /user 
 	//Description : delete user. 
 	@SuppressWarnings("unchecked")
@@ -133,3 +185,11 @@ public class AuthController {
 		return userProfile;
 	}
 }
+
+////test profile
+//profile = new HashMap<String,Object>();
+//profile.put("userId", "999");
+//profile.put("userName", "Tester");
+//profile.put("userEmail", "test@arboard.com");
+//profile.put("userImage", null);
+

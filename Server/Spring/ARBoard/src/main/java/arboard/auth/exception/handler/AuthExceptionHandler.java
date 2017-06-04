@@ -14,7 +14,7 @@ import arboard.auth.exception.AccessTokenInvalidException;
 import arboard.auth.exception.AccessTokenNotFoundException;
 import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.auth.exception.UnKnownException;
-
+import arboard.auth.exception.InvalidDomainException;
 @ControllerAdvice
 public class AuthExceptionHandler {
 
@@ -72,6 +72,18 @@ public class AuthExceptionHandler {
 		body.put("error", subJSONObject);
 		return body;
 	}
-	
-
+	//InvalidDomainException
+	//400
+	@ExceptionHandler(value=InvalidDomainException.class)
+	@ResponseBody
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	public Map<String,Object> InvalidDomainException(){
+		
+		Map<String,Object> body = new HashMap<String,Object>();
+		Map<String,String> subJSONObject = new HashMap<String,String>();
+		subJSONObject.put("message", "invalid Domain");
+		subJSONObject.put("title", "INVALID_DOMAIN");
+		body.put("error", subJSONObject);
+		return body;
+	}
 }

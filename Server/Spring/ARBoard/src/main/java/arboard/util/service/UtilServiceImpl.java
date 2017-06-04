@@ -152,6 +152,17 @@ public class UtilServiceImpl implements UtilService {
 		utilDAO.deleteFriend(param);
 	}
 	
+	@Override
+	public String getDeviceToken(String friend_id) { 
+		Map<String,Object> param = new HashMap<String, Object>();
+		param.put("id", friend_id); 
+		Map<String,Object> result = utilDAO.selectDeviceToken(param);
+		String deviceToken= null;
+		if(result != null){
+			deviceToken = (String) result.get("deviceToken");
+		}
+		return deviceToken;
+	}
 	//---------------------------need refactoring method------
 	public Map<String,Object> Dirty_addUserImagecolumn(Map<String,Object> map){
 		if(!map.containsKey("userImage")){
@@ -159,5 +170,7 @@ public class UtilServiceImpl implements UtilService {
 		}
 		return map;
 	}
+
+	
 
 }

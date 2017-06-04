@@ -60,8 +60,6 @@ public class AuthServiceImpl implements AuthService {
 			authDAO.updateUserImage(userProfile);
 			authDAO.updateUserToken(map);
 		}
-		
-		
 		 
 		log.debug("user profile"+userProfile);
 		return userProfile;

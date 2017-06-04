@@ -17,6 +17,8 @@ public interface UtilService {
 	void acceptFriendRequest(String receiverId, String senderId);
 	void refuseFriendRequest(String receiverId, String senderId);
 	void removeFriend(String receiverId, String senderId);
+	String getDeviceToken(String friend_id);
+	
 	
 	
 	

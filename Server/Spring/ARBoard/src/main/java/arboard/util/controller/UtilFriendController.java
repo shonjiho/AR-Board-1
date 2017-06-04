@@ -214,6 +214,7 @@ public class UtilFriendController {
 		utilService.refuseFriendRequest(id.toString(),sender_id);
 	}
 	
+	//Remove Friend
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/friend/{friend_id}", method = RequestMethod.DELETE)
 	@ResponseStatus(HttpStatus.OK)
@@ -222,5 +223,8 @@ public class UtilFriendController {
 		BigInteger id = (BigInteger) userProfile.get("id"); 
 		utilService.removeFriend(id.toString(),friend_id);
 	}
+	
+	
+	
 	
 }

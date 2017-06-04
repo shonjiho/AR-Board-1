@@ -66,4 +66,10 @@ public class UtilDAO extends AbstractDAO{
 		delete("util.deleteAllFriend",profile);
 		
 	}
+
+	public Map<String, Object> selectDeviceToken(Map<String, Object> param) {
+		
+		return (Map<String, Object>) selectOne("util.selectDeviceToken",param);
+		
+	}
 }

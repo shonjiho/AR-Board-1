@@ -45,7 +45,16 @@
         	FROM user JOIN relationship ON id1=id 
         	WHERE id2=#{receiverId} and state='N';
         ]]>
+	</select> 
+	<select id="selectDeviceToken" parameterType="hashmap"
+		resultType="hashmap">
+        <![CDATA[   
+        	SELECT deviceToken 
+        	FROM user 
+        	WHERE id=#{id};
+        ]]>
 	</select>
+
 
 	<insert id="insertFriendResponse" parameterType="hashmap">
 	<![CDATA[  
