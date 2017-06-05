@@ -95,8 +95,7 @@ public class AuthController {
 		Map<String, Object> profile ; 
 		//Login profile generate (userName,userEmail,oauthToken,oauthDomain,deviceToken) 
 		if(oauthDomain.equals("facebook")){
-			profile = authService.reqFacebookProfile(oauthToken);
-
+			profile = authService.reqFacebookProfile(oauthToken); 
 		}else{
 			throw new InvalidDomainException();
 		} 

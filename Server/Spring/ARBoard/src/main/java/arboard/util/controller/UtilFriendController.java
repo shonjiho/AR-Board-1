@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,6 +25,9 @@ import arboard.auth.exception.SessionUnAuthorizedException;
 import arboard.util.exception.DuplicateIdExcpetion;
 import arboard.util.exception.NotFoundParameterException;
 import arboard.util.service.UtilService;
+import javapns.Push;
+import javapns.notification.PushNotificationPayload;
+import javapns.notification.PushedNotifications;
 
 @Controller
 public class UtilFriendController {
@@ -32,6 +36,13 @@ public class UtilFriendController {
 
 	@Resource(name = "utilservice")
 	private UtilService utilService;
+	
+	@Value("#{props['apns.ssl_certificate']}")
+	public String APNS_SSL_CERTIFICATE_PATH;
+
+	@Value("#{props['apns.ssl_certificate_pwd']}")
+	public String APNS_SSL_CERTIFICATE_PWD;
+	
 
 	// list friend test method.
 	// URI - GET /friend/list/{id}
@@ -170,6 +181,13 @@ public class UtilFriendController {
 		}
 		
 		utilService.requestFriend(id.toString(), receiver_id);
+		String deviceToken = utilService.getDeviceToken(receiver_id);
+		if(deviceToken != null){
+			String userName = (String) userProfile.get("userName"); 
+			pushAPNS(deviceToken, userName+"님의 친구요청이 있습니다.", session); 
+		}
+		
+		
 	}
  
 	// list request
@@ -226,5 +244,24 @@ public class UtilFriendController {
 	
 	
 	
+	public void pushAPNS(String devToken, String message,HttpSession session) {
+
+		try {
+			PushNotificationPayload payload = PushNotificationPayload.complex();
+			payload.addAlert(message); 
+			payload.addSound("default");
+ 
+
+			String certificatePath = session.getServletContext().getRealPath(APNS_SSL_CERTIFICATE_PATH);
+			System.out.println("path : "+certificatePath);
+			 
+			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, true,
+					devToken);
+  
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
 	
 }

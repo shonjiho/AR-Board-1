@@ -126,8 +126,7 @@ public class GameSocketJoinController {
 		result.put("push", "true");
 		return result;
 	}
-	
-
+	 
 	public void pushAPNS(String devToken, String message,HttpSession session) {
 
 		try {
@@ -142,11 +141,8 @@ public class GameSocketJoinController {
 			// payload, 인증서파일.p12, 인증서비빌번호, true/false, 디바이스 토큰값
 			// true : 실서버 gateway.push.apple.com
 			// false : 개발서버 gateway.sandbox.push.apple.com
-			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, false,
-					devToken);
- 
-			System.out.println("push 실패건수 :: " + notice.getFailedNotifications().size());
-			System.out.println("push 성공건수 :: " + notice.getSuccessfulNotifications().size());
+			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, true,
+					devToken); 
 
 		} catch (Exception e) {
 			e.printStackTrace();

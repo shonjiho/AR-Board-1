@@ -31,7 +31,7 @@ public class SessionAspect {
 			 return joinPoint.proceed();
 		 }
 	 }
-	 @Around("execution(* arboard.auth.controller.AuthController.profile(..))")
+	 @Around("execution(* arboard.auth.controller.AuthController.profile(..)) ")
 	 public Object SessionCheck(ProceedingJoinPoint joinPoint) throws Throwable{
 		 HttpSession session = null;
 		 for(Object obj : joinPoint.getArgs()){
@@ -46,4 +46,5 @@ public class SessionAspect {
 			 return joinPoint.proceed();
 		 }
 	 }
+	  
 }
