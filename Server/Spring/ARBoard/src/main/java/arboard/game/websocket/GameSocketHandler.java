@@ -170,6 +170,10 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		}	 
 		return gameKey;
 	}
+	public String makeGame(){
+		long timeStamp = System.currentTimeMillis(); 
+		return Long.toString(timeStamp);
+	}
 
 	/*
 	 * Getter Method

@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 
 import arboard.common.common.Apns;
 import arboard.game.exception.NoDeviceTokenException;
+import arboard.game.exception.NoGameRoomException;
 import arboard.game.websocket.GameSocketHandler;
 import arboard.util.service.UtilService;
 import javapns.Push;
@@ -60,7 +61,23 @@ public class GameSocketJoinController {
 		return jsonObject;
 	}
 
+	//attend room
+	//PUT /game/attend/{gameKey}
+	@SuppressWarnings("unchecked")
+	@RequestMapping(value = "/game/attend/{gameKey}", method = RequestMethod.PUT)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object receiveInvitation(@PathVariable String gameKey, HttpSession session) {
+		if(!websocketHandler.gameList.containsKey(gameKey)){
+			throw new NoGameRoomException(gameKey);
+		}
+		Map<String, Object> result = new HashMap<String, Object>(); 
+		session.setAttribute("gameKey", gameKey); 
+		result.put("gameKey", gameKey);
+		return gameKey;
+	}
 	// Invite friend in game
+	// GET 
+	// /game/friend/{id}
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/game/friend/{friend_id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
@@ -70,7 +87,7 @@ public class GameSocketJoinController {
 		Map<String, Object> result = new HashMap<String, Object>();
 		String gameKey;
 
-		gameKey = websocketHandler.getRandomGame();// get random game key.
+		gameKey = websocketHandler.makeGame();// get random game key.
 
 		// APNS push to firend
 		String deviceToken = utilService.getDeviceToken(friend_id);
@@ -79,8 +96,9 @@ public class GameSocketJoinController {
 		}
 		String userName = getInviteString((String) userProfile.get("userName"));
 		
-		pushAPNS(deviceToken, userName, session);
-
+		//push APNS
+		pushAPNS(deviceToken, userName, session); 
+		
 		result.put("gameKey", gameKey);
 		session.setAttribute("gameKey", gameKey);
 		return result;
@@ -89,15 +107,12 @@ public class GameSocketJoinController {
 	public String getInviteString(String inviter) {
 		return inviter + "님이 초대하셨습니다.";
 	}
-
-	// String pdfPath =
-	// request.getSession().getServletContext().getRealPath("/resource/pamphlet.pdf");
-	// System.out.println(new File(pdfPath).exist());
+ 
 	@RequestMapping(value = "/game/certificatefile/exist", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object testFilePath(HttpServletRequest request, HttpSession session) {
 		Map<String, Object> result = new HashMap<String, Object>();
-		String certificatePath = request.getSession().getServletContext().getRealPath("/apns.pem");
+		String certificatePath = request.getSession().getServletContext().getRealPath("/cert.p12");
 		result.put("path", certificatePath);
 		result.put("exist", new File(certificatePath).exists());
 		return result;
