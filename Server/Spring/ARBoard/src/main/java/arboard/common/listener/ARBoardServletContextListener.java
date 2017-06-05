@@ -23,6 +23,8 @@ public class ARBoardServletContextListener implements ServletContextListener {
 			context.setAttribute(ACTIVEUSERS_ATTRIBUTE_NAME, new HashMap<String, HttpSession>()); 
 		}
 		
+		String certificatePath = context.getRealPath("/apns.pem");
+		
 	}
 	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {

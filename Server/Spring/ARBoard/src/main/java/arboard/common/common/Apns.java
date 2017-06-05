@@ -15,7 +15,7 @@ public class Apns {
 
 	@Value("#{props['apns.ssl_certificate_pwd']}")
 	public String APNS_SSL_CERTIFICATE_PWD;
-
+ 
 	public void push(String devToken, String message) {
 
 		try {

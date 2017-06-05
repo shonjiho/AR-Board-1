@@ -10,6 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Controller;
@@ -23,19 +24,27 @@ import arboard.common.common.Apns;
 import arboard.game.exception.NoDeviceTokenException;
 import arboard.game.websocket.GameSocketHandler;
 import arboard.util.service.UtilService;
+import javapns.Push;
+import javapns.notification.PushNotificationPayload;
+import javapns.notification.PushedNotifications;
 
 @Controller
 public class GameSocketJoinController {
 
 	@Autowired
 	GameSocketHandler websocketHandler;
-	 
-	@Resource(name="apns")
-	private Apns apns;
+ 
 
 	@Resource(name = "utilservice")
 	private UtilService utilService;
-	
+
+	// "#{props['hello.number']}"
+	@Value("#{props['apns.ssl_certificate']}")
+	public String APNS_SSL_CERTIFICATE_PATH;
+
+	@Value("#{props['apns.ssl_certificate_pwd']}")
+	public String APNS_SSL_CERTIFICATE_PWD;
+
 	// Get Game Room
 	@RequestMapping(value = "/game/join", method = RequestMethod.GET)
 	public @ResponseBody Object getGameRandomkey(HttpSession session) {
@@ -51,45 +60,82 @@ public class GameSocketJoinController {
 		return jsonObject;
 	}
 
-	
 	// Invite friend in game
 	@SuppressWarnings("unchecked")
 	@RequestMapping(value = "/game/friend/{friend_id}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object inviteFriend(@PathVariable String friend_id, HttpSession session) {
-		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile"); 
-		
+		Map<String, Object> userProfile = (Map<String, Object>) session.getAttribute("userProfile");
+
 		Map<String, Object> result = new HashMap<String, Object>();
 		String gameKey;
-		
+
 		gameKey = websocketHandler.getRandomGame();// get random game key.
-		
-		//APNS push to  firend 
+
+		// APNS push to firend
 		String deviceToken = utilService.getDeviceToken(friend_id);
-		if(deviceToken == null){ 
+		if (deviceToken == null) {
 			throw new NoDeviceTokenException();
 		}
-		apns.push(deviceToken, getInviteString((String)userProfile.get("userName")));
+		String userName = getInviteString((String) userProfile.get("userName"));
 		
-		result.put("gameKey", gameKey); 
-		session.setAttribute("gameKey", gameKey); 
+		pushAPNS(deviceToken, userName, session);
+
+		result.put("gameKey", gameKey);
+		session.setAttribute("gameKey", gameKey);
 		return result;
 	}
-	
-	public String getInviteString(String inviter){
-		return inviter+"님이 초대하셨습니다.";
+
+	public String getInviteString(String inviter) {
+		return inviter + "님이 초대하셨습니다.";
 	}
-	
-	//String pdfPath = request.getSession().getServletContext().getRealPath("/resource/pamphlet.pdf");
-	//System.out.println(new File(pdfPath).exist());
+
+	// String pdfPath =
+	// request.getSession().getServletContext().getRealPath("/resource/pamphlet.pdf");
+	// System.out.println(new File(pdfPath).exist());
 	@RequestMapping(value = "/game/certificatefile/exist", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object test(HttpServletRequest request,HttpSession session) {
-		Map<String,Object> result = new HashMap<String,Object>();
+	public @ResponseBody Object testFilePath(HttpServletRequest request, HttpSession session) {
+		Map<String, Object> result = new HashMap<String, Object>();
 		String certificatePath = request.getSession().getServletContext().getRealPath("/apns.pem");
 		result.put("path", certificatePath);
-		result.put("exist",new File(certificatePath).exists() ); 
+		result.put("exist", new File(certificatePath).exists());
 		return result;
+	}
+	
+	@RequestMapping(value = "/game/test/push", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object testPush(HttpServletRequest request, HttpSession session) { 
+		Map<String, Object> result = new HashMap<String, Object>(); 
+		pushAPNS("C886DB959FA4D4199A30ECDB7FC2849C9A525B00C4DA4A65086D42895ECD7ED2","형 싸움 잘해요?",session); 
+		result.put("push", "true");
+		return result;
+	}
+	
+
+	public void pushAPNS(String devToken, String message,HttpSession session) {
+
+		try {
+			PushNotificationPayload payload = PushNotificationPayload.complex();
+			payload.addAlert(message); 
+			payload.addSound("default");
+ 
+
+			String certificatePath = session.getServletContext().getRealPath(APNS_SSL_CERTIFICATE_PATH);
+			System.out.println("path : "+certificatePath);
+			
+			// payload, 인증서파일.p12, 인증서비빌번호, true/false, 디바이스 토큰값
+			// true : 실서버 gateway.push.apple.com
+			// false : 개발서버 gateway.sandbox.push.apple.com
+			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, false,
+					devToken);
+ 
+			System.out.println("push 실패건수 :: " + notice.getFailedNotifications().size());
+			System.out.println("push 성공건수 :: " + notice.getSuccessfulNotifications().size());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
