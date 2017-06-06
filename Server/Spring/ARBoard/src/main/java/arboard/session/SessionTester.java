@@ -53,6 +53,7 @@ public class SessionTester {
 			jsonObject.put("id", userProfile.get("id"));
 			jsonObject.put("userName", userProfile.get("userName"));
 			jsonObject.put("userEmail", userProfile.get("userEmail"));
+			jsonObject.put("gameKey", httpSession.getAttribute("gameKey"));
 			jsonArray.add(jsonObject);
 		}
 
