@@ -95,12 +95,12 @@ public class GameSocketJoinController {
 			throw new NoDeviceTokenException();
 		}
 		String userName = getInviteString((String) userProfile.get("userName"));
-		
+
+		session.setAttribute("gameKey", gameKey);
 		//push APNS
 		pushAPNS(deviceToken, userName, session); 
 		
 		result.put("gameKey", gameKey);
-		session.setAttribute("gameKey", gameKey);
 		return result;
 	}
 
@@ -118,25 +118,25 @@ public class GameSocketJoinController {
 		return result;
 	}
 	
-	@RequestMapping(value = "/game/test/push", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object testPush(HttpServletRequest request, HttpSession session) { 
-		Map<String, Object> result = new HashMap<String, Object>(); 
-		pushAPNS("C886DB959FA4D4199A30ECDB7FC2849C9A525B00C4DA4A65086D42895ECD7ED2","형 싸움 잘해요?",session); 
-		result.put("push", "true");
-		return result;
-	}
+//	@RequestMapping(value = "/game/test/push", method = RequestMethod.GET)
+//	@ResponseStatus(HttpStatus.OK)
+//	public @ResponseBody Object testPush(HttpServletRequest request, HttpSession session) { 
+//		Map<String, Object> result = new HashMap<String, Object>(); 
+//		pushAPNS("C886DB959FA4D4199A30ECDB7FC2849C9A525B00C4DA4A65086D42895ECD7ED2","형 싸움 잘해요?",session); 
+//		result.put("push", "true");
+//		return result;
+//	}
 	 
 	public void pushAPNS(String devToken, String message,HttpSession session) {
 
 		try {
 			PushNotificationPayload payload = PushNotificationPayload.complex();
 			payload.addAlert(message); 
+			payload.addCustomDictionary("gameKey", session.getAttribute("gameKey"));
 			payload.addSound("default");
  
 
-			String certificatePath = session.getServletContext().getRealPath(APNS_SSL_CERTIFICATE_PATH);
-			System.out.println("path : "+certificatePath);
+			String certificatePath = session.getServletContext().getRealPath(APNS_SSL_CERTIFICATE_PATH); 
 			
 			// payload, 인증서파일.p12, 인증서비빌번호, true/false, 디바이스 토큰값
 			// true : 실서버 gateway.push.apple.com
