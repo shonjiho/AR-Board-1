@@ -59,7 +59,7 @@ public class UtilAPNSController {
 			// payload, 인증서파일.p12, 인증서비빌번호, true/false, 디바이스 토큰값
 			// true : 실서버 gateway.push.apple.com
 			// false : 개발서버 gateway.sandbox.push.apple.com
-			PushedNotifications notice = Push.payload(payload, apns.APNS_SSL_CERTIFICATE, apns.APNS_SSL_CERTIFICATE_PWD, true,
+			PushedNotifications notice = Push.payload(payload, apns.APNS_SSL_CERTIFICATE, apns.APNS_SSL_CERTIFICATE_PWD, false,
 					devToken);
 
 			System.out.println("push 실패건수 :: " + notice.getFailedNotifications().size());

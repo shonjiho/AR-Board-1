@@ -64,7 +64,7 @@ public class GameSocketJoinController {
 	//attend room
 	//PUT /game/attend/{gameKey}
 	@SuppressWarnings("unchecked")
-	@RequestMapping(value = "/game/attend/{gameKey}", method = RequestMethod.PUT)
+	@RequestMapping(value = "/game/join/{gameKey}", method = RequestMethod.GET)
 	@ResponseStatus(HttpStatus.OK)
 	public @ResponseBody Object receiveInvitation(@PathVariable String gameKey, HttpSession session) {
 		if(!websocketHandler.gameList.containsKey(gameKey)){
@@ -108,31 +108,40 @@ public class GameSocketJoinController {
 		return inviter + "님이 초대하셨습니다.";
 	}
  
-	@RequestMapping(value = "/game/certificatefile/exist", method = RequestMethod.GET)
-	@ResponseStatus(HttpStatus.OK)
-	public @ResponseBody Object testFilePath(HttpServletRequest request, HttpSession session) {
-		Map<String, Object> result = new HashMap<String, Object>();
-		String certificatePath = request.getSession().getServletContext().getRealPath("/cert.p12");
-		result.put("path", certificatePath);
-		result.put("exist", new File(certificatePath).exists());
-		return result;
-	}
+//	@RequestMapping(value = "/game/certificatefile/exist", method = RequestMethod.GET)
+//	@ResponseStatus(HttpStatus.OK)
+//	public @ResponseBody Object testFilePath(HttpServletRequest request, HttpSession session) {
+//		Map<String, Object> result = new HashMap<String, Object>();
+//		String certificatePath = request.getSession().getServletContext().getRealPath("/cert.p12");
+//		result.put("path", certificatePath);
+//		result.put("exist", new File(certificatePath).exists());
+//		return result;
+//	}
 	
 //	@RequestMapping(value = "/game/test/push", method = RequestMethod.GET)
 //	@ResponseStatus(HttpStatus.OK)
 //	public @ResponseBody Object testPush(HttpServletRequest request, HttpSession session) { 
 //		Map<String, Object> result = new HashMap<String, Object>(); 
-//		pushAPNS("C886DB959FA4D4199A30ECDB7FC2849C9A525B00C4DA4A65086D42895ECD7ED2","형 싸움 잘해요?",session); 
+//		pushAPNS("7A64867DE409B0B4AFE92A2D293FC5F25BC26ADD470A88D7C66C03AA7332CEA8","이거 왓으면 카톡점",session); 
 //		result.put("push", "true");
 //		return result;
 //	}
-	 
+	@RequestMapping(value = "/game/test/make", method = RequestMethod.GET)
+	@ResponseStatus(HttpStatus.OK)
+	public @ResponseBody Object makeGameTEST(HttpServletRequest request, HttpSession session) { 
+		Map<String, Object> result = new HashMap<String, Object>(); 
+		String gameKey = websocketHandler.makeGame();
+		result.put("key", gameKey);
+		return result;
+	} 
+	
 	public void pushAPNS(String devToken, String message,HttpSession session) {
 
 		try {
 			PushNotificationPayload payload = PushNotificationPayload.complex();
 			payload.addAlert(message); 
-			payload.addCustomDictionary("gameKey", session.getAttribute("gameKey"));
+			payload.addCustomDictionary("gameKey", session.getAttribute("gameKey")); 
+			payload.addCustomDictionary("type", "game"); 
 			payload.addSound("default");
  
 
@@ -141,8 +150,10 @@ public class GameSocketJoinController {
 			// payload, 인증서파일.p12, 인증서비빌번호, true/false, 디바이스 토큰값
 			// true : 실서버 gateway.push.apple.com
 			// false : 개발서버 gateway.sandbox.push.apple.com
-			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, true,
+			PushedNotifications notice = Push.payload(payload, certificatePath, APNS_SSL_CERTIFICATE_PWD, false,
 					devToken); 
+			System.out.println("Success : "+notice.getSuccessfulNotifications().size());
+			
 
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -97,6 +97,9 @@ public class GameSocketHandler extends TextWebSocketHandler {
 		
 		if (gameList.containsKey(gameKey)) {
 			game = gameList.get(gameKey);
+			if(!game.isAlive()){
+				game.start();
+			}
 		} else { 
 			// game generate.
 			game = Game.init().setGameSocketHandler(this)
@@ -172,7 +175,12 @@ public class GameSocketHandler extends TextWebSocketHandler {
 	}
 	public String makeGame(){
 		long timeStamp = System.currentTimeMillis(); 
-		return Long.toString(timeStamp);
+		String key = Long.toString(timeStamp);
+		Game game = Game.init().setGameSocketHandler(this)
+				.setKey(key);
+		// game list put
+		gameList.put(key, game);
+		return key;
 	}
 
 	/*

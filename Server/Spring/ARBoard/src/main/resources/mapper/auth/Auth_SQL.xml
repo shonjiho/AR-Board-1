@@ -12,6 +12,7 @@
             	userEmail,
             	oauthToken,
             	oauthType,
+            	deviceToken,
             	userImage
             FROM user 
             WHERE userEmail=#{userEmail} 
@@ -26,6 +27,7 @@
             	userEmail,
             	oauthToken,
             	oauthType,
+            	deviceToken,
             	userImage
             FROM user 
             WHERE id=#{id} 

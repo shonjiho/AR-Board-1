@@ -181,13 +181,12 @@ public class UtilFriendController {
 		}
 		
 		utilService.requestFriend(id.toString(), receiver_id);
-		String deviceToken = utilService.getDeviceToken(receiver_id);
-		if(deviceToken != null){
-			String userName = (String) userProfile.get("userName"); 
-			pushAPNS(deviceToken, userName+"님의 친구요청이 있습니다.", session); 
-		}
-		
-		
+//		String deviceToken = utilService.getDeviceToken(receiver_id);
+//		if(deviceToken != null){
+//			String userName = (String) userProfile.get("userName"); 
+//			pushAPNS(deviceToken, userName+"님의 친구요청이 있습니다.", session); 
+//		}
+		 
 	}
  
 	// list request
@@ -249,6 +248,7 @@ public class UtilFriendController {
 		try {
 			PushNotificationPayload payload = PushNotificationPayload.complex();
 			payload.addAlert(message); 
+			payload.addCustomDictionary("type", "friend");
 			payload.addSound("default");
  
 
