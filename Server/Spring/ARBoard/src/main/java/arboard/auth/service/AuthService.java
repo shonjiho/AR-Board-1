@@ -5,14 +5,15 @@ import java.util.Map;
 
 public interface AuthService {
  
-	Map<String,Object> reqFacebookProfile(String accessToken) throws Exception;
-
+	//from Facebook Graph API.
+	Map<String,Object> reqFacebookProfile(String accessToken) throws Exception; 
 	boolean valifyAccessToken(String accessToken) throws Exception;
-
+	
+	//Get User Information from Database.
 	Map<String,Object> getUserInfo(Map<String, Object> map) throws Exception;
-
-	void userDelete(Map<String, Object> profile);
-
+	
+	//Change User Database.
+	void userDelete(Map<String, Object> profile); 
 	void changeUserName(Map<String, Object> profile);
 	
 	
