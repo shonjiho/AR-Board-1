@@ -1,9 +1,10 @@
-# AR-Board-1
+# AR-Board Project
+>2017 Capstone Design Project
+### Architecture
+<img src="./doc/img/arch.PNG" alt="arch" width=300 height=300></img>
+### Runtime Image
+<img src="./doc/img/view.PNG" alt="view" width=300 height=300></img>
 
-2017 Capstone Design Project
-
-![view](./doc/img/view.PNG)
-![arch](./doc/img/arch.PNG)
 
 # Spring REST SERVER Back End
 
