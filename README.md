@@ -1,7 +1,7 @@
 # AR-Board Project
 >2017 Capstone Design Project
 ### Architecture
-<img src="./doc/img/arch.PNG" alt="arch" width=300 height=300></img>
+<img src="./doc/img/arch_game_start.png" alt="arch" width=900 height=400></img>
 
 # Spring REST SERVER Backend
 ## 3.Tech Stack
